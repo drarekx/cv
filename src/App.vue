@@ -1,44 +1,124 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex h-screen">
-    <!-- Menú lateral -->
-    <nav class="w-1/5 bg-gray-800 text-white p-5 flex flex-col">
-      <ul class="space-y-4">
-        <li><a href="#inicio" class="hover:text-blue-400">Inicio</a></li>
-        <li><a href="#sobre-mi" class="hover:text-blue-400">Sobre mí</a></li>
-        <li><a href="#experiencia" class="hover:text-blue-400">Experiencia</a></li>
-        <li><a href="#proyectos" class="hover:text-blue-400">Proyectos</a></li>
-        <li><a href="#contacto" class="hover:text-blue-400">Contacto</a></li>
-      </ul>
-    </nav>
+  <div class="min-h-screen bg-gray-100 py-10">
+    <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-8">
+      <div class="flex flex-col md:flex-row">
+        <!-- Left section (Foto y Datos de contacto) -->
+        <div class="w-full md:w-1/3 text-center md:text-left">
+          <img src="https://media.licdn.com/dms/image/v2/D4D03AQGqT-t39MPcGA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1695049957282?e=1733356800&v=beta&t=vJ0P33zO51tNL4Up2is14Z9dI_eRWYThRSXXtCJEsTU" alt="Foto de perfil" class="w-32 h-32 mx-auto md:mx-0 rounded-full mb-4" />
+          <h1 class="text-2xl font-bold">Gerard Fortea Castellsague</h1>
+          <h2 class="text-gray-500">Desenvolupador web Fullstack</h2>
+          <div class="mt-4">
+            <p class="font-semibold">Dades de contacte</p>
+            <p>Direcció: C/Olot 25, Tortellà, Girona, Espanya</p>
+            <p>Telèfon: +34 616 27 10 11</p>
+            <p>Email: fortea.gerard@mail.com</p>
+            <p class="flex">
+              <a href="https://www.linkedin.com/in/gerard-fortea-a3863741/" target="_blank"> 
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
+                  <path fill="#0288D1" d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5V37z"></path><path fill="#FFF" d="M12 19H17V36H12zM14.485 17h-.028C12.965 17 12 15.888 12 14.499 12 13.08 12.995 12 14.514 12c1.521 0 2.458 1.08 2.486 2.499C17 15.887 16.035 17 14.485 17zM36 36h-5v-9.099c0-2.198-1.225-3.698-3.192-3.698-1.501 0-2.313 1.012-2.707 1.99C24.957 25.543 25 26.511 25 27v9h-5V19h5v2.616C25.721 20.5 26.85 19 29.738 19c3.578 0 6.261 2.25 6.261 7.274L36 36 36 36z"></path>
+                </svg> 
+              </a>
 
-    <!-- Contenido principal -->
-    <div class="w-4/5 p-10 bg-white overflow-y-auto">
-      <section id="inicio">
-        <h1 class="text-4xl font-bold mb-5">Bienvenido a Mi CV</h1>
-        <p class="text-lg">Este es el resumen de mis habilidades, experiencias y proyectos.</p>
-      </section>
+              <a href="https://github.com/drarekx" target="_blank"> 
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
+                  <path d="M17.791,46.836C18.502,46.53,19,45.823,19,45v-5.4c0-0.197,0.016-0.402,0.041-0.61C19.027,38.994,19.014,38.997,19,39 c0,0-3,0-3.6,0c-1.5,0-2.8-0.6-3.4-1.8c-0.7-1.3-1-3.5-2.8-4.7C8.9,32.3,9.1,32,9.7,32c0.6,0.1,1.9,0.9,2.7,2c0.9,1.1,1.8,2,3.4,2 c2.487,0,3.82-0.125,4.622-0.555C21.356,34.056,22.649,33,24,33v-0.025c-5.668-0.182-9.289-2.066-10.975-4.975 c-3.665,0.042-6.856,0.405-8.677,0.707c-0.058-0.327-0.108-0.656-0.151-0.987c1.797-0.296,4.843-0.647,8.345-0.714 c-0.112-0.276-0.209-0.559-0.291-0.849c-3.511-0.178-6.541-0.039-8.187,0.097c-0.02-0.332-0.047-0.663-0.051-0.999 c1.649-0.135,4.597-0.27,8.018-0.111c-0.079-0.5-0.13-1.011-0.13-1.543c0-1.7,0.6-3.5,1.7-5c-0.5-1.7-1.2-5.3,0.2-6.6 c2.7,0,4.6,1.3,5.5,2.1C21,13.4,22.9,13,25,13s4,0.4,5.6,1.1c0.9-0.8,2.8-2.1,5.5-2.1c1.5,1.4,0.7,5,0.2,6.6c1.1,1.5,1.7,3.2,1.6,5 c0,0.484-0.045,0.951-0.11,1.409c3.499-0.172,6.527-0.034,8.204,0.102c-0.002,0.337-0.033,0.666-0.051,0.999 c-1.671-0.138-4.775-0.28-8.359-0.089c-0.089,0.336-0.197,0.663-0.325,0.98c3.546,0.046,6.665,0.389,8.548,0.689 c-0.043,0.332-0.093,0.661-0.151,0.987c-1.912-0.306-5.171-0.664-8.879-0.682C35.112,30.873,31.557,32.75,26,32.969V33 c2.6,0,5,3.9,5,6.6V45c0,0.823,0.498,1.53,1.209,1.836C41.37,43.804,48,35.164,48,25C48,12.318,37.683,2,25,2S2,12.318,2,25 C2,35.164,8.63,43.804,17.791,46.836z"></path>
+                </svg>
+              </a>
+            </p>
+          </div>
 
-      <section id="sobre-mi" class="mt-10">
-        <h2 class="text-3xl font-semibold mb-3">Sobre mí</h2>
-        <p class="text-lg">Descripción breve sobre ti.</p>
-      </section>
+          <div class="mt-8">
+            <h3 class="font-semibold">Habilidades</h3>
+            <ul class="mt-2 space-y-2">
+              <li>Liderazgo</li>
+              <li>Comunicación</li>
+              <li>Trabajo bajo presión</li>
+              <li>Gestión de equipo</li>
+              <li>Gestión de proyectos</li>
+            </ul>
+          </div>
+        </div>
 
-      <section id="experiencia" class="mt-10">
-        <h2 class="text-3xl font-semibold mb-3">Experiencia</h2>
-        <p class="text-lg">Descripción de tu experiencia profesional.</p>
-      </section>
+        <!-- Right section (Experiencia, Educación, etc.) -->
+        <div class="w-full md:w-2/3 md:pl-8 mt-8 md:mt-0">
+          <h2 class="text-xl font-semibold mb-4">Experiencia</h2>
+          <div class="mb-6">
+            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
+            <p class="text-gray-600">
+              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
+              - Mantenimiento de sitios web.
+              - Soporte en el análisis y desarrollo del backend.
+            </p>
+          </div>
 
-      <section id="proyectos" class="mt-10">
-        <h2 class="text-3xl font-semibold mb-3">Proyectos</h2>
-        <p class="text-lg">Resumen de los proyectos en los que has trabajado.</p>
-      </section>
+          <div class="mb-6">
+            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
+            <p class="text-gray-600">
+              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
+              - Mantenimiento de sitios web.
+              - Soporte en el análisis y desarrollo del backend.
+            </p>
+          </div>
 
-      <section id="contacto" class="mt-10">
-        <h2 class="text-3xl font-semibold mb-3">Contacto</h2>
-        <p class="text-lg">Información de contacto.</p>
-      </section>
+          <div class="mb-6">
+            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
+            <p class="text-gray-600">
+              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
+              - Mantenimiento de sitios web.
+              - Soporte en el análisis y desarrollo del backend.
+            </p>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
+            <p class="text-gray-600">
+              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
+              - Mantenimiento de sitios web.
+              - Soporte en el análisis y desarrollo del backend.
+            </p>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
+            <p class="text-gray-600">
+              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
+              - Mantenimiento de sitios web.
+              - Soporte en el análisis y desarrollo del backend.
+            </p>
+          </div>
+          
+
+          <h2 class="text-xl font-semibold mb-4">Educación</h2>
+          <div class="mb-6">
+            <h3 class="font-bold">TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES WEB - IOC (01/09/2024 – 01/06/2025 )</h3>
+          </div>
+          <div class="mb-6">
+            <h3 class="font-bold">TÈCNIC EN INFORMÀTICA DE GESTIÓ - Gesem (01/09/2004 – 01/06/2007)</h3>
+          </div>
+
+          <h2 class="text-xl font-semibold mb-4">Software</h2>
+          <ul class="list-disc list-inside">
+            <li>AutoCAD</li>
+            <li>SketchUp</li>
+            <li>Revit</li>
+          </ul>
+
+          <h2 class="text-xl font-semibold mb-4">Idiomas</h2>
+          <ul class="list-disc list-inside">
+            <li>Català - Materna </li>
+            <li>Castellpa - Materna </li>
+            <li>Inglés - B1</li>
+          </ul>
+
+          <h2 class="text-xl font-semibold mb-4">Actividad extracurricular</h2>
+          <ul class="list-disc list-inside">
+            <li>Colaborador en Arquitectos Sin Fronteras</li>
+            <li>Curso avanzado de AutoCAD (140 horas) - Eduin Academy</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
