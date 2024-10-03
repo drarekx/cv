@@ -2,9 +2,22 @@
 
 <template>
   <div class="min-h-screen bg-gray-100 py-10">
-    <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-8">
+    <div class="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-10">
+      <div class="flex">
+            <div class="w-full md:w-2/5">
+              <h1 class="text-4xl font-bold">Gerard Fortea Castellsague</h1>
+              <h2 class="mt-1 text-gray-500">Desenvolupador web Fullstack</h2>
+            </div>
+            <div class="w-full md:w-3/5">
+              <p class="text-sm">
+            Soy un programador con más de 15 años de experiencia en el desarrollo web. Me caracterizo por ser creativo,
+resolutivo y altamente responsable.Mantengo un enfoque constante en la adquisición de nuevas habilidades y el
+aprendizaje de las últimas tecnologías del sector. Busco un entorno laboral que me ofrezca retos y oportunidades para
+crecer tanto a nivel profesional como personal
+          </p>
+            </div>
+        </div>
       <div class="flex flex-col md:flex-row">
-        <!-- Left section (Foto y Datos de contacto) -->
         <div class="w-full md:w-1/3 text-center md:text-left">
           <img src="https://media.licdn.com/dms/image/v2/D4D03AQGqT-t39MPcGA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1695049957282?e=1733356800&v=beta&t=vJ0P33zO51tNL4Up2is14Z9dI_eRWYThRSXXtCJEsTU" alt="Foto de perfil" class="w-32 h-32 mx-auto md:mx-0 rounded-full mb-4" />
           <h1 class="text-2xl font-bold">Gerard Fortea Castellsague</h1>
@@ -41,63 +54,115 @@
           </div>
         </div>
 
+
         <!-- Right section (Experiencia, Educación, etc.) -->
         <div class="w-full md:w-2/3 md:pl-8 mt-8 md:mt-0">
-          <h2 class="text-xl font-semibold mb-4">Experiencia</h2>
-          <div class="mb-6">
-            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
-            <p class="text-gray-600">
-              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
-              - Mantenimiento de sitios web.
-              - Soporte en el análisis y desarrollo del backend.
-            </p>
+          
+          <h2 class="text-xl font-semibold mb-4 mt-4 border-b-4">Experiencia</h2>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>02/2020</div>
+              <div>05/2023</div>
+            </div>
+            <div class="w-3/4">
+              <h3 class="font-bold">Desenvolupador senior Front-end </h3>
+              <h5 class="text-xs">Editorial Oceano - Barcelona</h5>
+              <ul class="list-disc text-gray-600 text-sm mt-3">
+                <li>Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.</li>
+                <li>Mantenimiento de sitios web.</li>
+                <li>Soporte en el análisis y desarrollo del backend.</li>
+              </ul>
+
+            </div>  
           </div>
 
-          <div class="mb-6">
-            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
-            <p class="text-gray-600">
-              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
-              - Mantenimiento de sitios web.
-              - Soporte en el análisis y desarrollo del backend.
-            </p>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>09/2017</div>
+              <div>02/2020</div>
+            </div>
+            <div class="w-3/4">
+              <h3 class="font-bold">Programador web senior FullStack </h3>
+              <h5 class="text-xs">LABSYSTEMS ARQUITECTURA I GESTIO,S.L.  - Barcelona</h5>
+              <ul class="list-disc text-gray-600 text-sm mt-3">
+                <li>Gestión, anàlisis y desenvolipament de diferents negocis online</li>
+                <li>Desenvolupament de software destinat al sector vacacional.</li>
+              </ul>
+            </div>  
           </div>
 
-          <div class="mb-6">
-            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
-            <p class="text-gray-600">
-              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
-              - Mantenimiento de sitios web.
-              - Soporte en el análisis y desarrollo del backend.
-            </p>
-          </div>
-
-          <div class="mb-6">
-            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
-            <p class="text-gray-600">
-              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
-              - Mantenimiento de sitios web.
-              - Soporte en el análisis y desarrollo del backend.
-            </p>
-          </div>
-
-          <div class="mb-6">
-            <h3 class="font-bold">DESARROLLADOR DE APLICACIONES WEB (03/02/2020 – 15/05/2023)</h3>
-            <p class="text-gray-600">
-              - Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.
-              - Mantenimiento de sitios web.
-              - Soporte en el análisis y desarrollo del backend.
-            </p>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>09/2017</div>
+              <div>02/2020</div>
+            </div>
+            <div class="w-3/4">
+              <h3 class="font-bold">Desenvolupador d'aplicacions web</h3>
+              <h5 class="text-xs">GESTION DE INMUEBLES PIMMO, S.L - Mataró</h5>
+              <ul class="list-disc text-gray-600 text-sm mt-3">
+                <li>Mantenimiento y desarrollo de software interno relacionado con la gestión inmobiliaria</li>
+                <li>Mantenimiento de ordenadores-</li>
+                <li>Mantenimiento de los diferentes sitios web de la empresa</li>
+                <li>Referente tecnológico de la empresa</li>
+              </ul>
+            </div>  
           </div>
           
-
-          <h2 class="text-xl font-semibold mb-4">Educación</h2>
-          <div class="mb-6">
-            <h3 class="font-bold">TÉCNICO SUPERIOR EN DESARROLLO DE APLICACIONES WEB - IOC (01/09/2024 – 01/06/2025 )</h3>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>03/2013</div>
+              <div>08/2017</div>
+            </div>
+            <div class="w-3/4">
+              <h3 class="font-bold">Desenvolupador d'aplicacions web</h3>
+              <h5 class="text-xs">GESTION DE INMUEBLES PIMMO, S.L - Mataró</h5>
+              <ul class="list-disc text-gray-600 text-sm mt-3">
+                <li>Mantenimiento y desarrollo de software interno relacionado con la gestión inmobiliaria</li>
+                <li>Mantenimiento de ordenadores.</li>
+                <li>Mantenimiento de los diferentes sitios web de la empresa</li>
+                <li>Referente tecnológico de la empresa</li>
+              </ul>
+            </div>  
           </div>
-          <div class="mb-6">
-            <h3 class="font-bold">TÈCNIC EN INFORMÀTICA DE GESTIÓ - Gesem (01/09/2004 – 01/06/2007)</h3>
+
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>01/2008</div>
+              <div>03/2010</div>
+            </div>
+            <div class="w-3/4">
+              <h3 class="font-bold">Desenvolupador web junior</h3>
+              <h5 class="text-xs">SALA ASSESORS INFORMÀTICS - Mataró</h5>
+              <ul class="list-disc text-gray-600 text-sm mt-3">
+                <li>Desarrollo de proyectos diferentes proyectos, como el desarollo de páginas corporativas, del sector de educación con
+                  software propio.</li>
+                <li>Desarollo de varios ecomerce con EBD, software para desarollo de aplicaciones web a medida.</li>
+                <li>Formación, mantenimiento y desarrollo de varias funcionalidades para software de gestión SAGE.</li>
+                <li>Migración de VB6 a .net de un software para TPV destinado a la venta en tienda.</li>
+              </ul>
+            </div>  
           </div>
 
+          <h2 class="text-xl font-semibold mb-4 border-b-4">Educación</h2>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>09/2024</div>
+              <div>06/2025</div>
+            </div>
+            <div class="w-3/4">
+              Técnic superior en desenvolupament d'aplicacions web - IOC
+            </div>
+          </div>
+          <div class="mb-6 flex">
+            <div class="w-1/4 text-sm">
+              <div>09/2004</div>
+              <div>06/2007</div>
+            </div>
+            <div class="w-3/4">
+              Técnic superior en informàtica de gestió - Gesemm
+            </div>
+          </div>
+          
           <h2 class="text-xl font-semibold mb-4">Software</h2>
           <ul class="list-disc list-inside">
             <li>AutoCAD</li>
