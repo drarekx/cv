@@ -92,18 +92,6 @@ crecer tanto a nivel profesional como personal
             </div>  
           </div>
           
-          <div class="mb-6 flex">
-            <div class="w-full px-3">
-              <h3 class="font-bold">Desenvolupador d'aplicacions web | 03/2013 - 08/2017</h3>
-              <h5 class="text-xs">GESTION DE INMUEBLES PIMMO, S.L - Mataró</h5>
-              <ul class="list-none text-gray-600 text-sm mt-3">
-                <li>Mantenimiento y desarrollo de software interno relacionado con la gestión inmobiliaria</li>
-                <li>Mantenimiento de ordenadores.</li>
-                <li>Mantenimiento de los diferentes sitios web de la empresa</li>
-                <li>Referente tecnológico de la empresa</li>
-              </ul>
-            </div>  
-          </div>
 
           <div class="mb-6 flex">
             <div class="w-full px-2">
