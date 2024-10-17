@@ -21,12 +21,12 @@ crecer tanto a nivel profesional como personal
         <div class="w-full md:w-1/3 text-center md:text-left pt-3">
           <img src="https://media.licdn.com/dms/image/v2/D4D03AQGqT-t39MPcGA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1695049957282?e=1733356800&v=beta&t=vJ0P33zO51tNL4Up2is14Z9dI_eRWYThRSXXtCJEsTU" alt="Foto de perfil" class="w-32 h-32 mx-auto md:mx-0 rounded-full mb-4" />
 
-          <div class="mt-4">
+          <div class="mt-4 leading-7">
             <p class="font-semibold">Dades de contacte</p>
             <p>Direcció: C/Olot 25, Tortellà, Girona, Espanya</p>
             <p>Telèfon: +34 616 27 10 11</p>
             <p>Email: fortea.gerard@mail.com</p>
-            <p class="flex">
+            <p class="flex items-center justify-center md:items-start md:justify-start">
               <a href="https://www.linkedin.com/in/gerard-fortea-a3863741/" target="_blank"> 
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 48 48">
                   <path fill="#0288D1" d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5V37z"></path><path fill="#FFF" d="M12 19H17V36H12zM14.485 17h-.028C12.965 17 12 15.888 12 14.499 12 13.08 12.995 12 14.514 12c1.521 0 2.458 1.08 2.486 2.499C17 15.887 16.035 17 14.485 17zM36 36h-5v-9.099c0-2.198-1.225-3.698-3.192-3.698-1.501 0-2.313 1.012-2.707 1.99C24.957 25.543 25 26.511 25 27v9h-5V19h5v2.616C25.721 20.5 26.85 19 29.738 19c3.578 0 6.261 2.25 6.261 7.274L36 36 36 36z"></path>
@@ -41,20 +41,10 @@ crecer tanto a nivel profesional como personal
             </p>
           </div>
 
-          <div class="mt-8">
-            <h3 class="font-semibold">Habilidades</h3>
-            <ul class="mt-2 space-y-2">
-              <li>Liderazgo</li>
-              <li>Comunicación</li>
-              <li>Trabajo bajo presión</li>
-              <li>Gestión de equipo</li>
-              <li>Gestión de proyectos</li>
-            </ul>
-          </div>
         </div>
         <div class="w-full md:w-2/3 md:pl-8 mt-8 md:mt-0">
           
-          <h2 class="text-xl font-semibold mb-4 mt-4 border-b-4">Experiencia</h2>
+          <h2 class="text-xl font-semibold mb-4 mt-4 border-b-4">Experiència</h2>
           <div class="mb-6 flex">
             <div class="w-full px-2">
               <h3 class="font-bold">Desenvolupador senior Front-end | 02/2020 - 05/2023</h3>
