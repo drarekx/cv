@@ -49,7 +49,7 @@ crecer tanto a nivel profesional como personal
             <div class="w-full px-2">
               <h3 class="font-bold">Desenvolupador senior Front-end | 02/2020 - 05/2023</h3>
               <h5 class="text-xs">Editorial Oceano - Barcelona  </h5>
-              <ul class="list-none text-gray-600 text-sm mt-3">
+              <ul class="list-none text-gray-600 text-sm mt-3 leading-5">
                 <li>Análisis, desarrollo y mantenimiento de aplicaciones web destinadas a la gestión de alumnos.</li>
                 <li>Mantenimiento de sitios web.</li>
                 <li>Soporte en el análisis y desarrollo del backend.</li>
@@ -62,7 +62,7 @@ crecer tanto a nivel profesional como personal
             <div class="w-full px-2">
               <h3 class="font-bold">Programador web senior FullStack | 09/2017 - 02/2020</h3>
               <h5 class="text-xs">LABSYSTEMS ARQUITECTURA I GESTIO,S.L.  - Barcelona</h5>
-              <ul class="list-none text-gray-600 text-sm mt-3">
+              <ul class="list-none text-gray-600 text-sm mt-3 leading-5">
                 <li>Gestión, anàlisis y desenvolipament de diferents negocis online</li>
                 <li>Desenvolupament de software destinat al sector vacacional.</li>
               </ul>
@@ -73,7 +73,7 @@ crecer tanto a nivel profesional como personal
             <div class="w-full px-2">
               <h3 class="font-bold">Desenvolupador d'aplicacions web | 09/2017 - 02/2020</h3>
               <h5 class="text-xs">GESTION DE INMUEBLES PIMMO, S.L - Mataró</h5>
-              <ul class="list-none text-gray-600 text-sm mt-3">
+              <ul class="list-none text-gray-600 text-sm mt-3 leading-5">
                 <li>Mantenimiento y desarrollo de software interno relacionado con la gestión inmobiliaria</li>
                 <li>Mantenimiento de ordenadores-</li>
                 <li>Mantenimiento de los diferentes sitios web de la empresa</li>
@@ -87,7 +87,7 @@ crecer tanto a nivel profesional como personal
             <div class="w-full px-2">
               <h3 class="font-bold">Desenvolupador web junior | 01/2008 - 03/2010</h3>
               <h5 class="text-xs">SALA ASSESORS INFORMÀTICS - Mataró</h5>
-              <ul class="list-none text-gray-600 text-sm mt-3">
+              <ul class="list-none text-gray-600 text-sm mt-3 leading-5">
                 <li>Desarrollo de proyectos diferentes proyectos, como el desarollo de páginas corporativas, del sector de educación con
                   software propio.</li>
                 <li>Desarollo de varios ecomerce con EBD, software para desarollo de aplicaciones web a medida.</li>
