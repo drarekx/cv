@@ -1,9 +1,0 @@
-/* ./src/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-
-:root{
-    font-family: "Montserrat", sans-serif;
-}
