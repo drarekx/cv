@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const pageTitle = 'Assessorament tecnològic per a pimes — Gerard Fortea, consultor web freelance';
-const pageDescription = 'Serveis d\'assessorament tecnològic i desenvolupament d\'aplicacions web a mida per a pimes. Més de 15 anys d\'experiència com a programador web fullstack freelance a Catalunya.';
+const pageTitle = 'Programador web a la Garrotxa — Gerard Fortea, consultor tecnològic per a pimes';
+const pageDescription = 'Programador web freelance a la Garrotxa (Olot, Maià de Montcal). Assessorament tecnològic i desenvolupament d\'aplicacions web a mida per a pimes. Més de 15 anys d\'experiència.';
 
 const services = [
   {
@@ -33,14 +33,13 @@ const jsonLd = {
     {
       "@type": "Person",
       "name": "Gerard Fortea Castellsague",
-      "jobTitle": "Desenvolupador web Fullstack — Consultor tecnològic freelance",
-      "url": "https://gerard-fortea.dev",
+      "jobTitle": "Programador web freelance · Consultor tecnològic",
       "email": "fortea.gerard@mail.com",
       "telephone": "+34616271011",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Maià de Montcal",
-        "addressRegion": "Girona",
+        "addressRegion": "la Garrotxa, Girona",
         "addressCountry": "ES"
       },
       "sameAs": [
@@ -49,23 +48,42 @@ const jsonLd = {
       ]
     },
     {
-      "@type": "Service",
-      "name": "Assessorament tecnològic i desenvolupament web per a pimes",
+      "@type": "ProfessionalService",
+      "name": "Gerard Fortea — Programador web i consultor tecnològic a la Garrotxa",
       "description": pageDescription,
-      "provider": {
-        "@type": "Person",
-        "name": "Gerard Fortea Castellsague"
+      "email": "fortea.gerard@mail.com",
+      "telephone": "+34616271011",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Maià de Montcal",
+        "addressRegion": "la Garrotxa",
+        "addressCountry": "ES"
       },
-      "areaServed": {
-        "@type": "Place",
-        "name": "Catalunya"
-      },
-      "serviceType": [
-        "Desenvolupament d'aplicacions web a mida",
+      "areaServed": [
+        { "@type": "AdministrativeArea", "name": "la Garrotxa" },
+        { "@type": "City", "name": "Olot" },
+        { "@type": "AdministrativeArea", "name": "el Ripollès" },
+        { "@type": "AdministrativeArea", "name": "la Selva" },
+        { "@type": "AdministrativeArea", "name": "Girona" },
+        { "@type": "AdministrativeArea", "name": "Catalunya" }
+      ],
+      "knowsAbout": [
+        "Programació web",
+        "Desenvolupament d'aplicacions web",
+        "PHP", "JavaScript", "TypeScript", "Vue.js", "MySQL",
         "Assessorament tecnològic",
-        "Manteniment i evolució de projectes web",
-        "Digitalització de processos"
-      ]
+        "Digitalització de pimes"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Serveis de programació i consultoria web",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Desenvolupament d'aplicacions web a mida" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Assessorament tecnològic per a pimes" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Manteniment i evolució de projectes web" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Digitalització de processos empresarials" } }
+        ]
+      }
     }
   ]
 };
@@ -130,14 +148,20 @@ const jsonLd = {
         <!-- Intro -->
         <section class="mb-10" aria-labelledby="serveis-titol">
           <h2 id="serveis-titol" class="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-5 pb-2 border-b border-slate-200 dark:border-slate-700">
-            Consultor tecnològic freelance · Pimes a Catalunya
+            Programador web freelance a la Garrotxa · Consultor tecnològic per a pimes
           </h2>
-          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-2xl">
+          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-2xl mb-4">
             Soc <strong class="text-slate-800 dark:text-slate-200 font-semibold">Gerard Fortea</strong>,
-            programador web freelance amb més de 15 anys d'experiència. Ofereixo serveis
-            d'<strong class="text-slate-800 dark:text-slate-200 font-semibold">assessorament tecnològic i desenvolupament d'aplicacions web a mida</strong>
-            per a petites i mitjanes empreses (pimes) a Catalunya que volen digitalitzar processos,
-            millorar la seva presència digital o necessiten un referent tecnològic extern de confiança.
+            <strong class="text-slate-800 dark:text-slate-200 font-semibold">programador web freelance a la Garrotxa</strong>
+            (Maià de Montcal) amb més de 15 anys d'experiència en programació i desenvolupament web.
+            Ofereixo serveis d'<strong class="text-slate-800 dark:text-slate-200 font-semibold">assessorament tecnològic i
+            desenvolupament d'aplicacions web a mida</strong> per a pimes de la Garrotxa, Olot i comarques veïnes.
+          </p>
+          <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-2xl">
+            Tant si necessiteu un <strong class="text-slate-700 dark:text-slate-300 font-medium">programador web a Olot</strong>
+            o a qualsevol municipi de la Garrotxa, com si cerqueu un consultor tecnològic extern de confiança per a
+            la vostra empresa, puc ajudar-vos a digitalitzar processos, crear o millorar la vostra
+            presència digital i prendre les millors decisions tecnològiques.
           </p>
         </section>
 
