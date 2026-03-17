@@ -3,19 +3,32 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
+  description?: string;
+  canonical?: string;
 }
-const { title = 'Gerard Fortea — Fullstack Developer' } = Astro.props;
+const {
+  title = 'Gerard Fortea — Desenvolupador web Fullstack',
+  description = 'CV de Gerard Fortea Castellsague, desenvolupador web Fullstack amb més de 15 anys d\'experiència en programació i desenvolupament d\'aplicacions web.',
+  canonical,
+} = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="ca">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="CV de Gerard Fortea Castellsague, Desarrollador web Fullstack amb més de 15 anys d'experiència." />
+    <meta name="description" content={description} />
+    <meta name="author" content="Gerard Fortea Castellsague" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="ca_ES" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <slot name="head" />
     <script is:inline>
       const stored = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
