@@ -1,0 +1,787 @@
+---
+import {
+  contact,
+  education,
+  experience,
+  localePath,
+  locales,
+  projects,
+  skills,
+  ui,
+  type Locale,
+} from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+
+const views = [
+  { id: 'home', label: t.nav.home },
+  { id: 'cv', label: t.nav.cv },
+  { id: 'projects', label: t.nav.projects },
+] as const;
+---
+<main class="room">
+  <div class="monitor">
+    <div class="case">
+      <div class="recess">
+        <div class="screen" data-screen data-view="home">
+          <div class="display" data-display>
+            <nav class="menu" aria-label={t.navLabel}>
+              {views.map((v) => (
+                <a class="tab" href={`#${v.id}`} data-tab={v.id} aria-current={v.id === 'home' ? 'page' : undefined}>
+                  [{v.label}]
+                </a>
+              ))}
+              <span class="spacer"></span>
+              <div class="langs" role="group" aria-label={t.langLabel}>
+                {locales.map((l) => (
+                  <a
+                    class="lang"
+                    href={localePath[l]}
+                    hreflang={l}
+                    lang={l}
+                    data-lang-link
+                    aria-current={l === lang ? 'true' : undefined}
+                  >
+                    {l.toUpperCase()}
+                  </a>
+                ))}
+              </div>
+            </nav>
+
+            <div class="content" data-content>
+              <!-- HOME -->
+              <section class="view home" data-view-panel="home">
+                <div>
+                  <h1 class="name">Gerard Fortea<br />Castellsague</h1>
+                  <p class="muted">{t.role} · {contact.location}</p>
+                </div>
+                <p>{t.summary}</p>
+                <div class="actions">
+                  <a class="btn" href="#cv">&gt; {t.nav.cv}</a>
+                  <a class="btn" href="#projects">&gt; {t.nav.projects}</a>
+                </div>
+                <ul class="contact">
+                  <li><a class="lnk" href={`mailto:${contact.email}`}>{contact.email}</a></li>
+                  <li><a class="lnk" href={contact.linkedin} rel="noopener">linkedin</a></li>
+                  <li><a class="lnk" href={contact.github} rel="noopener">github</a></li>
+                </ul>
+                <span class="cursor" aria-hidden="true"></span>
+              </section>
+
+              <!-- CV -->
+              <section class="view cv" data-view-panel="cv" hidden>
+                <div class="block">
+                  <h2 class="heading">{t.experience}</h2>
+                  {experience.map((job) => (
+                    <div class="entry">
+                      <div class="period">{job.from} – {job.to ?? t.present}</div>
+                      <div class="body">
+                        <h3>{job.role[lang]}</h3>
+                        <p class="muted small">{job.company} · {job.location}</p>
+                        <ul class="dash">
+                          {job.tasks[lang].map((task) => <li>{task}</li>)}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div class="block">
+                  <h2 class="heading">{t.education}</h2>
+                  {education.map((ed) => (
+                    <div class="entry">
+                      <div class="period">{ed.period}</div>
+                      <div class="body">
+                        <h3>{ed.title[lang]}</h3>
+                        <p class="muted small">{ed.center}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div class="pair">
+                  <div>
+                    <h2 class="heading">{t.tech}</h2>
+                    <p>{skills.join(', ')}</p>
+                  </div>
+                  <div>
+                    <h2 class="heading">{t.languages}</h2>
+                    <ul class="plain">
+                      {t.languageList.map((l) => <li>{l}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              </section>
+
+              <!-- PROJECTS -->
+              <section class="view projects" data-view-panel="projects" hidden>
+                {projects.map((p) => (
+                  <article class="project">
+                    <div class="project-head">
+                      <h2 class="project-name">{p.name}</h2>
+                      <span class="muted small">{p.stack}</span>
+                    </div>
+                    <p>{p.description[lang]}</p>
+                    <ul class="dash">
+                      {p.features[lang].map((f) => <li>{f}</li>)}
+                    </ul>
+                    {p.install && (
+                      <div class="cmd">
+                        <code>$ {p.install}</code>
+                        <button type="button" data-copy={p.install} data-label={t.copy} data-done={t.copied}>
+                          {t.copy}
+                        </button>
+                      </div>
+                    )}
+                    <div class="actions links">
+                      <a class="lnk" href={p.repo} rel="noopener">&gt; {t.repo}</a>
+                      {p.download && <a class="lnk" href={p.download} rel="noopener">&gt; {t.download}</a>}
+                    </div>
+                  </article>
+                ))}
+                <a class="lnk muted" href={`${contact.github}?tab=repositories`} rel="noopener">{t.allRepos}</a>
+              </section>
+            </div>
+          </div>
+
+          <div class="fx scanlines" aria-hidden="true"></div>
+          <div class="fx roll-wrap" aria-hidden="true"><div class="roll"></div></div>
+          <div class="fx vignette" aria-hidden="true"></div>
+          <div class="fx glare" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="vents" aria-hidden="true">
+          {Array.from({ length: 8 }).map(() => <span></span>)}
+        </div>
+        <span class="spacer"></span>
+        <div class="knobs" aria-hidden="true">
+          <span class="knob"></span>
+          <span class="knob turned"></span>
+        </div>
+        <span class="led" data-led aria-hidden="true"></span>
+        <button type="button" class="power" data-power aria-label={t.power} aria-pressed="true"></button>
+      </div>
+    </div>
+
+    <div class="stand" aria-hidden="true">
+      <div class="neck"></div>
+      <div class="base"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const screen = document.querySelector<HTMLElement>('[data-screen]')!;
+  const display = document.querySelector<HTMLElement>('[data-display]')!;
+  const content = document.querySelector<HTMLElement>('[data-content]')!;
+  const panels = document.querySelectorAll<HTMLElement>('[data-view-panel]');
+  const tabs = document.querySelectorAll<HTMLAnchorElement>('[data-tab]');
+  const langLinks = document.querySelectorAll<HTMLAnchorElement>('[data-lang-link]');
+  const VIEWS = ['home', 'cv', 'projects'];
+
+  function show(view: string, animate: boolean) {
+    if (!VIEWS.includes(view)) view = 'home';
+    screen.dataset.view = view;
+    panels.forEach((p) => (p.hidden = p.dataset.viewPanel !== view));
+    tabs.forEach((tab) => {
+      if (tab.dataset.tab === view) tab.setAttribute('aria-current', 'page');
+      else tab.removeAttribute('aria-current');
+    });
+    const hash = view === 'home' ? '' : `#${view}`;
+    langLinks.forEach((a) => {
+      a.href = a.pathname + hash;
+    });
+    content.scrollTop = 0;
+    if (animate) {
+      const panel = content.querySelector<HTMLElement>(`[data-view-panel="${view}"]`);
+      panel?.classList.remove('flick');
+      void panel?.offsetWidth;
+      panel?.classList.add('flick');
+    }
+  }
+
+  const fromHash = () => location.hash.slice(1);
+  show(fromHash(), false);
+  window.addEventListener('hashchange', () => show(fromHash(), true));
+
+  // Power
+  const power = document.querySelector<HTMLButtonElement>('[data-power]')!;
+  const led = document.querySelector<HTMLElement>('[data-led]')!;
+  power.addEventListener('click', () => {
+    const on = screen.classList.toggle('off') === false;
+    power.setAttribute('aria-pressed', String(on));
+    led.classList.toggle('off', !on);
+    display.hidden = !on;
+    if (on) {
+      display.classList.remove('poweron');
+      void display.offsetWidth;
+      display.classList.add('poweron');
+    }
+  });
+
+  // Copy command
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    let timer: number | undefined;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy!);
+      } catch {
+        return;
+      }
+      btn.textContent = btn.dataset.done!;
+      clearTimeout(timer);
+      timer = window.setTimeout(() => (btn.textContent = btn.dataset.label!), 1600);
+    });
+  });
+</script>
+
+<style>
+  .room {
+    --ink: #eae6da;
+    --ink-dim: #a8a397;
+    --ink-faint: #6e6a61;
+    --bg: #1c1b19;
+    --plastic: #e9e4d6;
+    --plastic-light: #f7f4eb;
+    --plastic-shade: #cbc5b3;
+    --plastic-mid: #d9d3c3;
+
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+  }
+
+  .monitor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Case */
+  .case {
+    padding: 30px 30px 18px;
+    background: var(--plastic);
+    border-radius: 24px;
+    box-shadow:
+      inset 0 3px 0 var(--plastic-light),
+      inset 0 -7px 0 var(--plastic-shade),
+      0 40px 80px rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .recess {
+    padding: 14px;
+    background: var(--plastic-shade);
+    border-radius: 34px;
+    box-shadow:
+      inset 0 5px 12px rgba(0, 0, 0, 0.28),
+      inset 0 -2px 0 #ded8c8;
+  }
+
+  /* Tube */
+  .screen {
+    position: relative;
+    width: min(880px, calc(100vw - 140px), calc((100dvh - 250px) * 4 / 3));
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 30px / 26px;
+    color: var(--ink);
+    background: radial-gradient(ellipse at 50% 45%, #2b2a26 0%, #1e1d1a 62%, #121110 100%);
+    box-shadow:
+      inset 0 0 70px rgba(0, 0, 0, 0.85),
+      inset 0 0 14px rgba(0, 0, 0, 0.9);
+  }
+  .screen.off {
+    background: #141311;
+  }
+  .display {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    text-shadow: 0 0 3px rgba(234, 230, 218, 0.35);
+  }
+  .display[hidden] {
+    display: none;
+  }
+
+  .fx {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .scanlines {
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+    animation: hum 0.12s steps(2) infinite;
+  }
+  .roll-wrap {
+    overflow: hidden;
+  }
+  .roll {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 18%;
+    background: linear-gradient(transparent, rgba(234, 230, 218, 0.035), transparent);
+    animation: roll 7s linear infinite;
+  }
+  .vignette {
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  }
+  .glare {
+    background: radial-gradient(ellipse 60% 40% at 22% 12%, rgba(255, 255, 255, 0.07), transparent 70%);
+  }
+  .screen.off .scanlines,
+  .screen.off .roll-wrap {
+    display: none;
+  }
+
+  /* Menu */
+  .menu {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+    padding: 22px 34px 14px;
+    border-bottom: 1px dashed var(--ink-faint);
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    line-height: 1;
+  }
+  .tab,
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 10px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .lang {
+    min-width: 40px;
+    padding: 0 6px;
+    font-size: 20px;
+    color: var(--ink-dim);
+  }
+  .tab[aria-current],
+  .lang[aria-current] {
+    background: var(--ink);
+    color: var(--bg);
+    text-shadow: none;
+  }
+  .tab:hover,
+  .lang:hover,
+  .lnk:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .spacer {
+    flex: 1 1 auto;
+  }
+  .langs {
+    display: flex;
+    gap: 2px;
+  }
+
+  /* Content */
+  .content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 28px 34px 36px;
+    font-size: 16px;
+    line-height: 1.65;
+    scrollbar-width: thin;
+    scrollbar-color: #8c887e transparent;
+  }
+  .view[hidden] {
+    display: none;
+  }
+  p {
+    margin: 0;
+  }
+  .muted {
+    color: var(--ink-dim);
+  }
+  .small {
+    font-size: 14px;
+  }
+  a {
+    color: var(--ink);
+  }
+  .lnk {
+    text-decoration: none;
+  }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .home {
+    min-height: 100%;
+    max-width: 620px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+  }
+  .name {
+    margin: 0;
+    font-family: 'VT323', monospace;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 0.95;
+  }
+  .home .muted {
+    margin-top: 10px;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border: 2px solid var(--ink);
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: var(--ink);
+    color: var(--bg);
+    text-shadow: none;
+  }
+  .contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    font-size: 14px;
+  }
+  .contact a {
+    color: var(--ink-dim);
+  }
+  .cursor {
+    display: block;
+    width: 12px;
+    height: 22px;
+    background: var(--ink);
+    animation: blink 1s steps(1) infinite;
+  }
+
+  .cv,
+  .projects {
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+  }
+  .cv {
+    gap: 40px;
+  }
+  .projects {
+    gap: 28px;
+  }
+  .heading {
+    margin: 0 0 6px;
+    font-family: 'VT323', monospace;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .entry {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 28px;
+    padding: 20px 0;
+    border-bottom: 1px dashed var(--ink-faint);
+  }
+  .period {
+    flex: 0 0 150px;
+    padding-top: 2px;
+    font-size: 14px;
+    color: var(--ink-dim);
+  }
+  .body {
+    flex: 1 1 320px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .dash {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .dash li {
+    display: flex;
+    gap: 10px;
+  }
+  .dash li::before {
+    content: '–';
+    color: #8c887e;
+  }
+  .pair {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 48px;
+  }
+  .pair > div {
+    flex: 1 1 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .plain {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 28px;
+    border-bottom: 1px dashed var(--ink-faint);
+  }
+  .project-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px 16px;
+  }
+  .project-name {
+    margin: 0;
+    font-family: 'VT323', monospace;
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 1;
+  }
+  .cmd {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--ink-faint);
+    background: rgba(0, 0, 0, 0.25);
+  }
+  .cmd code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 11px 14px;
+    font: inherit;
+    font-size: 13px;
+  }
+  .cmd button {
+    flex: 0 0 auto;
+    min-width: 96px;
+    min-height: 44px;
+    border: 0;
+    border-left: 1px solid var(--ink-faint);
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    text-shadow: inherit;
+    cursor: pointer;
+  }
+  .cmd button:hover {
+    background: var(--ink);
+    color: var(--bg);
+    text-shadow: none;
+  }
+  .links {
+    gap: 6px 24px;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 10px;
+  }
+  .vents {
+    display: flex;
+    gap: 5px;
+  }
+  .vents span {
+    width: 4px;
+    height: 22px;
+    border-radius: 2px;
+    background: var(--plastic-shade);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .knobs {
+    display: flex;
+    gap: 12px;
+  }
+  .knob {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--plastic-mid);
+    box-shadow:
+      inset 0 -2px 0 #bdb6a3,
+      0 1px 0 var(--plastic-light);
+  }
+  .knob::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 3px;
+    width: 2px;
+    height: 7px;
+    background: #8c887e;
+    transform-origin: 1px 8px;
+  }
+  .knob.turned::after {
+    transform: rotate(50deg);
+  }
+  .led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e8a33c;
+    box-shadow: 0 0 6px #e8a33c;
+  }
+  .led.off {
+    background: #8c887e;
+    box-shadow: none;
+  }
+  .power {
+    width: 48px;
+    height: 28px;
+    border: 0;
+    border-radius: 5px;
+    background: var(--plastic-mid);
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  }
+  .power[aria-pressed='false'] {
+    box-shadow:
+      inset 0 -3px 0 #bdb6a3,
+      0 1px 0 var(--plastic-light);
+  }
+
+  /* Stand */
+  .stand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .neck {
+    width: 160px;
+    height: 26px;
+    background: linear-gradient(#b8b19f, #d6d0c0);
+    clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+  }
+  .base {
+    width: 340px;
+    height: 16px;
+    border-radius: 8px 8px 4px 4px;
+    background: var(--plastic);
+    box-shadow: inset 0 -4px 0 var(--plastic-shade);
+  }
+
+  /* Animations */
+  .flick {
+    animation: flick 0.25s linear both;
+  }
+  .poweron {
+    animation: poweron 0.5s ease-out both;
+  }
+  @keyframes flick {
+    0% { opacity: 0; }
+    20% { opacity: 0.8; }
+    30% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  @keyframes hum {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.96; }
+  }
+  @keyframes roll {
+    from { top: -20%; }
+    to { top: 100%; }
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  @keyframes poweron {
+    0% { transform: scale(1, 0.004); filter: brightness(4); }
+    45% { transform: scale(1, 0.004); }
+    100% { transform: scale(1, 1); filter: brightness(1); }
+  }
+
+  @media (max-width: 640px) {
+    .case {
+      padding: 12px 12px 10px;
+    }
+    .recess {
+      padding: 6px;
+    }
+    .screen {
+      width: calc(100vw - 60px);
+      height: calc(100dvh - 150px);
+      aspect-ratio: auto;
+      border-radius: 22px / 18px;
+    }
+    .menu {
+      padding: 14px 16px 10px;
+      font-size: 22px;
+    }
+    .content {
+      padding: 20px 16px 28px;
+    }
+    .stand,
+    .knobs {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+    }
+  }
+</style>
