@@ -7,6 +7,9 @@
   --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --font-sora: 'Sora', 'Inter', system-ui, sans-serif;
+  --font-slab: 'Roboto Slab', Georgia, serif;
+  --font-roboto: 'Roboto', system-ui, sans-serif;
+  --font-hand: 'Caveat', 'Comic Sans MS', cursive;
 
   --color-acid: #c8f169;
   --color-ink: #0e0f12;

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import CasinoAgenda from '../components/casino/CasinoAgenda.vue';
+import { project } from '../data/projects';
+
+const p = project('casino-tortella');
+
+const rules = [
+  { title: 'El programa mana', text: 'La portada s\'obre amb el proper acte sobre un bloc turquesa ple i, just a sota, la cartellera. La identitat de l\'entitat va després.' },
+  { title: 'Fila, no targeta', text: 'Un llistat d\'actes és una llista amb filets i la data en gran. Les targetes només per als actes relacionats.' },
+  { title: 'Cantonades vives', text: 'Botons, distintius, targetes i camps són rectangles. Només els botons d\'icona rodons es queden rodons.' },
+  { title: 'Contrast calculat', text: 'Tot el text arriba a AA. Sobre fotografia, un vel opac calculat contra la zona més clara de la imatge, no a ull.' },
+  { title: 'Mòbil primer, de debò', text: 'La majoria hi entra amb el telèfon, des d\'un enllaç compartit al poble. Sense prefix és el mòbil; l\'escriptori hi afegeix coses.' },
+  { title: 'Lleuger i privat', text: 'Tipografies autoallotjades, res de Google Fonts. Les fotos es serveixen en WebP: un 32% menys de pes que el JPEG d\'abans.' },
+];
+
+const stack = ['October CMS 4.4', 'Laravel 12', 'PHP 8.5', 'MariaDB', 'Tailwind 4', 'Alpine 3'];
+---
+<BaseLayout
+  title="Casino de Tortellà — nova web de l'entitat · Gerard Fortea"
+  description="Nova web de la Societat Cultural i Recreativa Casino de Tortellà, entitat de la Garrotxa fundada el 1869: agenda d'actes, espais i formularis per associar-s'hi. October CMS sobre Laravel."
+  fonts="Roboto:wght@400;500;700&family=Roboto+Slab:wght@400;500"
+  bodyClass="bg-white font-roboto text-[#1c1c1c] antialiased"
+>
+  <header class="bg-[#1c1c1c] text-white">
+    <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-3 text-sm">
+      <a href="/" class="flex min-h-11 items-center hover:text-[#55d8d2]">← Gerard Fortea</a>
+      <div class="flex items-center gap-2.5 font-slab text-lg">
+        <svg aria-hidden="true" viewBox="0 0 24 22" class="h-5 w-5"><path d="M12 0 24 22H0Z" fill="#55d8d2"></path></svg>
+        Casino de Tortellà
+      </div>
+      <a href={p.url} class="flex min-h-11 items-center underline-offset-4 hover:text-[#55d8d2] hover:underline">Visita la web</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="bg-[#55d8d2]">
+      <div class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-14 gap-y-10 px-6 pt-16 pb-16">
+        <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-5">
+          <p class="text-sm font-medium">Societat Cultural i Recreativa · Tortellà, la Garrotxa · des de 1869</p>
+          <h1 class="font-slab text-[clamp(38px,6vw,76px)] leading-[1.02] font-normal tracking-[-0.01em]">
+            Una cartellera per a un casino de poble de 1869.
+          </h1>
+          <p class="max-w-[620px] text-lg">
+            La nova web del Casino de Tortellà: agenda d'actes, els espais de l'edifici, les activitats de cada setmana i els
+            formularis de contacte i per fer-se'n soci. Pensada perquè qui hi entra sàpiga de seguida què passa al Casino.
+          </p>
+          <div class="mt-2 flex flex-wrap gap-3">
+            <a href={p.url} class="flex min-h-[52px] items-center bg-[#1c1c1c] px-6 font-medium text-white hover:bg-[#2c3542]">Visita la nova web</a>
+            <a href="#cartellera" class="flex min-h-[52px] items-center border-2 border-[#1c1c1c] px-6 font-medium hover:bg-[#1c1c1c] hover:text-white">Prova la cartellera</a>
+          </div>
+        </div>
+        <a href="https://combatglosa.casinotortella.cat/" class="flex flex-[0_1_340px] flex-col gap-2 bg-[#1c1c1c] p-6 text-white no-underline hover:bg-[#2c3542]">
+          <span class="text-xs font-medium tracking-wider text-[#55d8d2] uppercase">Proper acte destacat</span>
+          <span class="font-slab text-[56px] leading-none">21 <span class="text-2xl">nov</span></span>
+          <span class="font-slab text-2xl leading-tight">5è Combat de Glosa de Tortellà</span>
+          <span class="text-sm text-[#c3c8cf]">La sala gran · 16:30</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="cartellera" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pt-20 pb-16">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+        <h2 class="font-slab text-[clamp(30px,4vw,48px)] leading-[1.05] font-normal">La cartellera, tal com és</h2>
+        <p class="max-w-[480px] text-[#3d4756]">Els actes reals del web, de novembre de 2026. Filtra per categoria o per espai, com a la pàgina d'agenda.</p>
+      </div>
+      <CasinoAgenda client:visible />
+    </section>
+
+    <section class="bg-[#1c1c1c] text-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 py-20">
+        <div class="flex flex-col gap-3">
+          <h2 class="font-slab text-[clamp(30px,4vw,48px)] leading-[1.05] font-normal">Les regles del disseny</h2>
+          <p class="max-w-[640px] text-[#c3c8cf]">
+            La identitat surt del logotip i del web anterior: el turquesa del triangle, el carbó, Roboto Slab per als títols.
+            No s'inventen colors. El que va canviar és com es fan servir.
+          </p>
+        </div>
+        <div class="grid gap-px bg-white/40 md:grid-cols-2 lg:grid-cols-3">
+          {rules.map((r, i) => (
+            <article class="flex flex-col gap-2 bg-[#1c1c1c] p-6">
+              <span class="font-slab text-sm text-[#55d8d2]">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="font-slab text-xl">{r.title}</h3>
+              <p class="text-[15px] text-[#c3c8cf]">{r.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1200px] flex-wrap gap-x-16 gap-y-10 px-6 pt-20 pb-20">
+      <div class="flex min-w-0 flex-[2_1_440px] flex-col gap-4">
+        <h2 class="font-slab text-[clamp(30px,4vw,48px)] leading-[1.05] font-normal">Com està fet</h2>
+        <p class="max-w-[640px] text-[17px] text-[#3d4756]">
+          Tot el codi propi viu en un plugin, <code class="bg-[#eceef1] px-1.5 font-mono text-[15px]">Casino.Web</code>: models, backend,
+          components i migracions. El tema només té plantilles. Al backend hi ha agents d'IA per ajudar a qui hi escriu, i un
+          plugin de còpies per migrar de servidor sense patir.
+        </p>
+        <p class="max-w-[640px] text-[17px] text-[#3d4756]">
+          El projecte és en català de cap a peus: textos, backend, documentació i commits. Si algun dia es tradueix, les claus de
+          traducció també seran en català.
+        </p>
+      </div>
+      <div class="flex flex-[1_1_300px] flex-col gap-3">
+        <h3 class="font-slab text-xl">Tecnologia</h3>
+        <ul class="flex flex-wrap gap-2 text-sm">
+          {stack.map((s) => <li class="border border-[#8b94a1] px-3.5 py-2">{s}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-[1200px] px-6 pb-24">
+      <div class="flex flex-wrap items-center justify-between gap-6 bg-[#55d8d2] p-[clamp(28px,4vw,52px)]">
+        <h2 class="font-slab text-[clamp(28px,3.6vw,44px)] leading-[1.05] font-normal">Mira què passa al Casino.</h2>
+        <a href={p.url} class="flex min-h-[52px] items-center bg-[#1c1c1c] px-6 font-medium text-white hover:bg-[#2c3542]">casino.mrdrarek.es →</a>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="casino-tortella" class="border-[#c3c8cf] text-[#157f7c]" />
+</BaseLayout>

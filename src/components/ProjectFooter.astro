@@ -1,8 +1,8 @@
 ---
-import { projects, type Project } from '../data/projects';
+import { projects, type ProjectSlug } from '../data/projects';
 
 interface Props {
-  current: Project['slug'];
+  current: ProjectSlug;
   /** Classes for the top border and the link colour of each page's palette. */
   class?: string;
   lowercase?: boolean;

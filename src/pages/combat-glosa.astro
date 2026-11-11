@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import GlosaHero from '../components/glosa/GlosaHero.vue';
+import DinarDemo from '../components/glosa/DinarDemo.vue';
+import { project } from '../data/projects';
+
+const p = project('combat-glosa');
+
+const programa = [
+  { hora: '12h', titol: 'Debat', text: 'Els combats de glosa a Catalunya. Jurat i regles del joc.' },
+  { hora: '14h', titol: 'Dinar popular', text: 'Arròs de muntanya, 15€.' },
+  { hora: '16:30h', titol: 'V Combat de Glosa', text: 'I després… glosada popular?' },
+];
+
+const forms = [
+  { name: 'Reserves del dinar', where: 'a la portada', asks: 'nom, correu, adults i infants', mail: 'sí' },
+  { name: 'Inscripció de glosadors', where: 'pàgina pròpia, /inscripcio', asks: 'nou preguntes, les del formulari de Google d\'abans', mail: 'sí' },
+  { name: 'Butlletí', where: 'pàgina de compte enrere', asks: 'només el correu', mail: 'no' },
+];
+
+const details = [
+  { title: 'Un sol procés', text: 'Nuxt 4 amb SSR, backend a Nitro i SQLite amb Drizzle. Un sol desplegament, i una còpia de seguretat és copiar una carpeta.' },
+  { title: 'Afegir al calendari', text: 'Un fitxer .ics generat al servidor amb la data i el lloc de l\'edició, a un clic des del compte enrere.' },
+  { title: 'Formularis que no s\'omplen de brossa', text: 'Limitador per IP: 8 enviaments cada 10 minuts per formulari. Apuntar-se dos cops al butlletí no revela si el correu ja hi era.' },
+  { title: 'El correu, des del panell', text: 'Confirmacions per correu configurables a /admin, amb la contrasenya desada xifrada (AES-256-GCM) i un botó per enviar una prova.' },
+  { title: 'Vídeos sense rastreig', text: 'Els vídeos de les edicions anteriors no es carreguen fins que prems play: abans, YouTube no sap que hi has entrat.' },
+  { title: 'Accessibilitat i velocitat, mesurades', text: 'Scripts propis per passar l\'auditoria d\'accessibilitat i PageSpeed abans de cada publicació.' },
+];
+---
+<BaseLayout
+  title="Combat de Glosa i Corrandes de Tortellà — web de l'acte · Gerard Fortea"
+  description="Web del Combat de Glosa i Corrandes de Tortellà: programa, dinar popular amb reserves, inscripció de glosadors i panell de gestió perquè l'organització ho canviï tot sense tocar codi."
+  fonts="Inter:wght@400;500;700&family=Caveat:wght@700"
+  bodyClass="bg-[#fdf6ec] font-sans text-[#111111] antialiased"
+>
+  <main>
+    <GlosaHero client:load />
+
+    <section class="mx-auto flex max-w-[1100px] flex-wrap gap-x-14 gap-y-12 px-6 pt-20 pb-16">
+      <div class="flex min-w-0 flex-[1_1_440px] flex-col gap-6">
+        <h2 class="font-hand text-[clamp(44px,6vw,72px)] leading-[0.95] font-bold text-[#e5006d]">Glosa i corrandes</h2>
+        <p class="text-lg">
+          La glosa —o corrandes— és cant improvisat amb rima. Els participants s'enfronten en vers i es responen sobre la
+          marxa, davant del públic i sense guió. La web ha de fer el mateix que l'acte: anar per feina i deixar lloc a la festa.
+        </p>
+        <ol class="flex flex-col bg-[#111111] text-white">
+          {programa.map((x) => (
+            <li class="flex gap-5 border-b border-white/20 px-5 py-4 last:border-b-0">
+              <span class="w-16 shrink-0 text-lg font-bold text-[#8fd94a]">{x.hora}</span>
+              <span><strong class="block text-lg">{x.titol}</strong><span class="text-[#d9d4cb]">{x.text}</span></span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div class="flex-[1_1_340px]">
+        <DinarDemo client:visible />
+      </div>
+    </section>
+
+    <section class="bg-[#e9e5dd]">
+      <div class="mx-auto flex max-w-[1100px] flex-col gap-6 px-6 py-20">
+        <h2 class="font-hand text-[clamp(44px,6vw,72px)] leading-[0.95] font-bold text-[#8b1a1a]">Tres formularis, un panell</h2>
+        <p class="max-w-[720px] text-lg">
+          Tots tres es desen a la base de dades, es gestionen des del panell amb estats i exportació a CSV, i cadascun s'obre i es
+          tanca per separat. El butlletí fa al revés que els altres: recull correus mentre la web encara no és pública.
+        </p>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[640px] border-collapse border-[3px] border-[#111111] bg-[#fdf6ec] text-left">
+            <thead class="bg-[#111111] text-white">
+              <tr><th class="p-3">Formulari</th><th class="p-3">On surt</th><th class="p-3">Què demana</th><th class="p-3">Correu de confirmació</th></tr>
+            </thead>
+            <tbody>
+              {forms.map((f) => (
+                <tr class="border-t-2 border-[#111111]">
+                  <th scope="row" class="p-3">{f.name}</th><td class="p-3">{f.where}</td><td class="p-3">{f.asks}</td><td class="p-3 font-bold">{f.mail}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1100px] flex-col gap-8 px-6 pt-20 pb-16">
+      <h2 class="font-hand text-[clamp(44px,6vw,72px)] leading-[0.95] font-bold text-[#e5006d]">Com està fet</h2>
+      <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {details.map((d) => (
+          <article class="flex flex-col gap-2 border-[3px] border-[#111111] bg-white p-5">
+            <h3 class="text-lg font-bold">{d.title}</h3>
+            <p class="text-[15px]">{d.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-[1100px] px-6 pb-24">
+      <div class="flex flex-wrap items-center justify-between gap-6 border-[3px] border-[#111111] bg-[#f4a3b9] p-[clamp(28px,4vw,52px)] shadow-[8px_8px_0_#111111]">
+        <h2 class="font-hand text-[clamp(40px,5vw,64px)] leading-[0.95] font-bold">Glosadores del món, uniu-vos!</h2>
+        <a href={p.url} class="flex min-h-[52px] items-center bg-[#111111] px-6 font-bold text-white hover:bg-[#e5006d]">Visita la web →</a>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="combat-glosa" class="border-[#111111] text-[#8b1a1a]" />
+</BaseLayout>

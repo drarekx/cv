@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import ContactFooter from '../components/site/ContactFooter.astro';
 import { project } from '../data/projects';
 
 const experience = [
@@ -83,21 +85,11 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
 ---
 <BaseLayout
   title="Gerard Fortea — Desenvolupador web Fullstack a Olot · CV i apps per al Mac"
-  description="Gerard Fortea Castellsague, programador web Fullstack a la Garrotxa (Olot) amb més de 15 anys d'experiència en PHP, JavaScript, TypeScript, Vue.js i MySQL. CV i apps natives de macOS: Wallpy, Atajoly i Terminaly."
-  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@600&family=Space+Grotesk:wght@500;600;700"
+  description="Gerard Fortea Castellsague, programador web Fullstack a la Garrotxa (Olot) amb més de 15 anys d'experiència en PHP, JavaScript, TypeScript, Vue.js i MySQL. CV, apps natives de macOS (Wallpy, Atajoly i Terminaly) i webs per a entitats com el Casino de Tortellà."
+  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@600&family=Space+Grotesk:wght@500;600;700&family=Roboto+Slab:wght@400&family=Roboto:wght@400&family=Caveat:wght@700"
   bodyClass="bg-ink font-sans text-paper antialiased"
 >
-  <header class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-3 px-6 py-5">
-    <a href="#inici" class="flex min-h-11 items-center gap-2.5 font-display text-lg font-bold hover:text-acid">
-      <span aria-hidden="true" class="h-3 w-3 rounded-full bg-acid"></span>Gerard Fortea
-    </a>
-    <nav class="flex flex-wrap gap-x-7 gap-y-1 text-sm font-medium">
-      <a href="#projectes" class="flex min-h-11 items-center hover:text-acid">Projectes</a>
-      <a href="#experiencia" class="flex min-h-11 items-center hover:text-acid">Experiència</a>
-      <a href="/serveis" class="flex min-h-11 items-center hover:text-acid">Serveis</a>
-      <a href="#contacte" class="flex min-h-11 items-center hover:text-acid">Contacte</a>
-    </nav>
-  </header>
+  <SiteHeader current="home" />
 
   <main>
     <section id="inici" class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-10 px-6 pt-[72px] pb-[72px]">
@@ -108,7 +100,7 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
         </h1>
         <p class="max-w-[620px] text-lg text-[#b4b6bd]">
           Sóc en Gerard Fortea. Fa més de 15 anys que programo per al web amb PHP, JavaScript, TypeScript i Vue.
-          Aquí hi trobaràs el meu currículum i tres apps natives de macOS que he fet i publicat a GitHub.
+          Aquí hi trobaràs el meu currículum, tres apps natives de macOS i dues webs que he fet per a Tortellà.
         </p>
         <div class="mt-2 flex flex-wrap gap-3">
           <a href="#projectes" class="flex min-h-[52px] items-center rounded-full bg-acid px-[26px] text-[15px] font-semibold text-ink hover:bg-white">Veure els projectes</a>
@@ -198,6 +190,59 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
       </div>
     </section>
 
+    <section id="webs" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[88px]">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">I dues webs per a Tortellà</h2>
+        <p class="max-w-[460px] text-[#b4b6bd]">Per a la gent del poble i de la vall: l'entitat cultural de 1869 i el seu combat de glosa.</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+
+        <a href="/casino-tortella" class={cardClass}>
+          <div aria-hidden="true" class="flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]">
+            <div class="flex h-9 items-center gap-2 bg-[#1c1c1c] px-4 font-slab text-sm text-white">
+              <svg viewBox="0 0 24 22" class="h-3.5 w-3.5"><path d="M12 0 24 22H0Z" fill="#55d8d2"></path></svg>Casino de Tortellà
+            </div>
+            <div class="flex items-end justify-between gap-4 bg-[#55d8d2] px-5 py-4">
+              <div class="font-slab text-xl leading-tight">5è Combat de Glosa<br />de Tortellà</div>
+              <div class="text-right font-slab text-4xl leading-none">21<span class="block text-xs uppercase">nov</span></div>
+            </div>
+            <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">15</span><span class="font-slab">Mostra de Cinema Espiritual</span></div>
+            <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">31</span><span class="font-slab">Festa de la Castanyada</span></div>
+          </div>
+          <div class="flex grow flex-col gap-2.5 p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-bold">Casino de Tortellà</h3>
+              <span class="font-mono text-xs text-[#9a9da6]">October CMS</span>
+            </div>
+            <p class="grow text-[15px] text-[#b4b6bd]">La nova web de l'entitat: agenda d'actes, espais, activitats setmanals i fer-se'n soci. Una cartellera on el programa mana.</p>
+            <span class={goClass}>Obrir Casino →</span>
+          </div>
+        </a>
+
+        <a href="/combat-glosa" class={cardClass}>
+          <div aria-hidden="true" class="flex h-[260px] items-center justify-center bg-[repeating-linear-gradient(90deg,#f4a3b9_0_46px,#8fd94a_46px_52px,#f4a3b9_52px_96px)] p-6">
+            <div class="flex flex-col items-center gap-2 border-[3px] border-[#111111] bg-[#fdf6ec] px-6 py-4 text-center text-[#111111] shadow-[6px_6px_0_#111111]">
+              <span class="font-hand text-[34px] leading-none font-bold text-[#e5006d]">Combat de Glosa</span>
+              <span class="text-xs font-bold">21 de novembre · 16:30h</span>
+              <span class="flex gap-1.5 text-white">
+                <span class="bg-[#111111] px-2 py-1 text-xs font-bold"><span class="text-[#ff2e88]" data-glosa-days>--</span> dies</span>
+                <span class="bg-[#111111] px-2 py-1 text-xs font-bold">Casino de Tortellà</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex grow flex-col gap-2.5 p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-bold">Combat de Glosa</h3>
+              <span class="font-mono text-xs text-[#9a9da6]">Nuxt 4</span>
+            </div>
+            <p class="grow text-[15px] text-[#b4b6bd]">La web del combat de glosa i corrandes: programa, reserves del dinar, inscripció de glosadors i un panell per canviar-ho tot.</p>
+            <span class={goClass}>Obrir Combat de Glosa →</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
     <section id="experiencia" class="rounded-t-[32px] bg-paper text-[#16171a]">
       <div class="mx-auto flex max-w-[1200px] flex-col gap-7 px-6 pt-20 pb-8">
         <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
@@ -244,23 +289,10 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
     </section>
   </main>
 
-  <footer id="contacte" class="bg-acid text-ink">
-    <div class="mx-auto flex max-w-[1200px] flex-wrap items-end justify-between gap-x-16 gap-y-7 px-6 py-16">
-      <div class="flex min-w-0 flex-[999_1_420px] flex-col gap-2.5">
-        <h2 class="font-display text-[clamp(36px,5vw,64px)] leading-none font-bold tracking-[-0.03em]">Parlem?</h2>
-        <p class="max-w-[560px] text-lg">
-          Tens un projecte web a la Garrotxa o on sigui? Escriu-me i en parlem.
-          <a href="/serveis" class="font-semibold underline">Mira què puc fer per la teva empresa.</a>
-        </p>
-      </div>
-      <div class="flex flex-col gap-0.5 font-mono text-sm font-bold">
-        <a href="mailto:fortea.gerard@mail.com" class="flex min-h-11 items-center underline-offset-4 hover:underline">fortea.gerard@mail.com</a>
-        <a href="tel:+34616271011" class="flex min-h-11 items-center underline-offset-4 hover:underline">+34 616 27 10 11</a>
-        <a href="https://github.com/drarekx" target="_blank" rel="noopener noreferrer" class="flex min-h-11 items-center underline-offset-4 hover:underline">github.com/drarekx</a>
-        <a href="https://www.linkedin.com/in/gerard-fortea-a3863741/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 items-center underline-offset-4 hover:underline">linkedin · gerard-fortea</a>
-      </div>
-    </div>
-  </footer>
+  <ContactFooter>
+    Tens un projecte web a la Garrotxa o on sigui? Escriu-me i en parlem.
+    <a href="/serveis" class="font-semibold underline">Mira què puc fer per la teva empresa.</a>
+  </ContactFooter>
 
   <script>
     const pad = (n: number) => String(n).padStart(2, '0');
@@ -270,6 +302,12 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
     };
     tick();
     setInterval(tick, 15000);
+
+    const glosaDays = document.querySelector('[data-glosa-days]');
+    if (glosaDays) {
+      const ms = new Date('2026-11-21T16:30:00+01:00').getTime() - Date.now();
+      glosaDays.textContent = String(Math.max(0, Math.ceil(ms / 86_400_000)));
+    }
 
     const keys: [string, string][] = [['S', 'Safari'], ['T', 'Terminal'], ['M', 'Mail'], ['N', 'Notes'], ['C', 'Calendari']];
     const letter = document.querySelector('[data-key-letter]');
