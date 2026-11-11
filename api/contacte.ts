@@ -134,7 +134,7 @@ export async function handleContact(request: Request, send: SendMail = gmailSend
   const parsed = parseContact(form);
   if (!parsed.ok) return reply(422, false, parsed.error);
 
-  const thanks = 'Gràcies. T\'he rebut el missatge i et respondré tan aviat com pugui.';
+  const thanks = 'He rebut el teu missatge. En breu em poso en contacte amb tu!';
   if ('spam' in parsed) return reply(200, true, thanks);
 
   try {

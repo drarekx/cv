@@ -64,16 +64,58 @@ const label = 'flex flex-col gap-1.5 text-sm font-semibold';
       </div>
       <p data-contact-status role="status" aria-live="polite" class="min-h-6 text-base font-semibold empty:hidden"></p>
     </form>
+
+    <!-- Shown in place of the form once the message is sent. Same footprint, so the page doesn't jump. -->
+    <div
+      data-contact-done
+      hidden
+      class="flex min-w-0 flex-[1_1_440px] flex-col items-start justify-center gap-5 rounded-3xl border-2 border-ink bg-[#f4ffd6] p-8 sm:p-10"
+    >
+      <span aria-hidden="true" class="animate-pop flex h-16 w-16 items-center justify-center rounded-full bg-ink text-acid">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+          <path d="M5 12.5 10 17.5 19 7"></path>
+        </svg>
+      </span>
+      <div class="flex flex-col gap-2">
+        <h3 data-contact-done-title tabindex="-1" class="font-display text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-bold tracking-[-0.02em] outline-none">
+          He rebut el teu missatge!
+        </h3>
+        <p class="max-w-[440px] text-lg">En breu em poso en contacte amb tu.</p>
+      </div>
+      <button
+        type="button"
+        data-contact-again
+        class="flex min-h-11 cursor-pointer items-center rounded-full border-2 border-ink px-5 text-sm font-semibold hover:bg-ink hover:text-acid"
+      >Envia'n un altre</button>
+    </div>
   </div>
 </footer>
 
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
-  if (form) {
+  const done = document.querySelector<HTMLElement>('[data-contact-done]');
+  if (form && done) {
     const status = form.querySelector<HTMLElement>('[data-contact-status]')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const started = form.querySelector<HTMLInputElement>('input[name="t"]')!;
+    const doneTitle = done.querySelector<HTMLElement>('[data-contact-done-title]')!;
     started.value = String(Date.now());
+
+    const showDone = (name: string) => {
+      const first = name.trim().split(/\s+/)[0];
+      doneTitle.textContent = first ? `Gràcies, ${first}! He rebut el teu missatge.` : 'He rebut el teu missatge!';
+      done.style.minHeight = `${form.offsetHeight}px`;
+      form.hidden = true;
+      done.hidden = false;
+      doneTitle.focus({ preventScroll: true });
+    };
+
+    done.querySelector('[data-contact-again]')!.addEventListener('click', () => {
+      done.hidden = true;
+      form.hidden = false;
+      started.value = String(Date.now());
+      form.querySelector<HTMLInputElement>('input[name="nom"]')!.focus();
+    });
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -88,9 +130,9 @@ const label = 'flex flex-col gap-1.5 text-sm font-semibold';
         });
         const data = (await res.json().catch(() => null)) as { ok?: boolean; message?: string } | null;
         if (res.ok && data?.ok) {
+          const name = String(new FormData(form).get('nom') ?? '');
           form.reset();
-          started.value = String(Date.now());
-          status.textContent = data.message ?? 'Missatge enviat. Gràcies!';
+          showDone(name);
         } else {
           status.textContent = data?.message ?? 'No s\'ha pogut enviar. Escriu-me a fortea.gerard@mail.com.';
         }
