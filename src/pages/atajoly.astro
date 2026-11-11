@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import AtajolyDemo from '../components/atajoly/AtajolyDemo.vue';
+import { project } from '../data/projects';
+
+const p = project('atajoly');
+
+const shortcuts = [
+  ['⌘ dret + lletra', 'Obre l\'app que comença per aquella lletra, o la que li hagis assignat.'],
+  ['Una altra vegada', 'La seva acció: amagar-la, passar a la següent app amb la mateixa lletra, Exposé o següent finestra.'],
+  ['⌘ dret + ⇧ esquerre + lletra', 'Obre l\'app i amaga totes les altres.'],
+  ['⌘ dret + ⇧ dret + lletra', 'Sempre a la següent app amb aquella lletra.'],
+  ['⌘ dret + ⌥ + lletra', 'Assigna la lletra a l\'app activa. Una altra vegada l\'allibera.'],
+  ['⌘ dret + −', 'Amaga l\'app activa. Amb ⇧, totes les altres.'],
+];
+
+const features = [
+  { title: 'Lletres automàtiques', text: 'Cada app oberta té la lletra del seu nom. Si diverses la comparteixen, la més usada va primer.' },
+  { title: 'Assignacions a mà', text: 'Una tecla per a una app concreta, encara que no estigui oberta: s\'obre en prémer-la.' },
+  { title: 'Teclat visual', text: 'Amb la icona de cada tecla i adaptat a la teva distribució: QWERTY, AZERTY… Des d\'allà s\'assigna o es desactiva una tecla.' },
+  { title: 'Mapa de tecles i favorites', text: 'En mantenir ⌘ dret surt el mapa en pantalla, amb una fila d\'apps favorites a sobre, com un llançador.' },
+  { title: 'Triar entre diverses apps', text: 'Mantén la lletra i surt una llista com la de ⌘⇥: lletra o fletxes per moure\'t, 1–9 o ↩ per obrir.' },
+  { title: 'Sense permisos', text: 'Canviar d\'app no demana res. Només «passar a la següent finestra» demana Accessibilitat. També funciona amb ⌥ dret.' },
+];
+---
+<BaseLayout
+  title="Atajoly — canvia d'app amb el polze al Mac"
+  description="Atajoly: mantén ⌘ dret i prem la inicial d'una app per posar-la al davant. App de barra de menús per a macOS, sense permisos, amb teclat visual i mapa de tecles."
+  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;600;700"
+  bodyClass="bg-[#ecebe6] font-sans text-[#1c1b19] antialiased"
+>
+  <header class="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href="/" class="flex min-h-11 items-center hover:text-[#a8370f]">← Gerard Fortea</a>
+    <div class="flex items-center gap-2.5 font-display text-lg font-bold">
+      <span aria-hidden="true" class="box-border flex h-[30px] w-[30px] items-center justify-center rounded-lg border-b-[3px] border-[#c2441d] bg-[#ff6a3d] font-mono text-[15px]">⌘</span>Atajoly
+    </div>
+    <a href="#installa" class="flex min-h-11 items-center text-[#a8370f] hover:text-[#1c1b19]">Instal·la'l</a>
+  </header>
+
+  <main>
+    <section class="mx-auto flex max-w-[1120px] flex-col items-center gap-[18px] px-6 pt-12 pb-8 text-center">
+      <h1 class="font-display text-[clamp(42px,7vw,96px)] leading-[0.98] font-bold tracking-[-0.035em]">Canvia d'app<br />amb el polze.</h1>
+      <p class="max-w-[620px] text-[19px] text-[#46443d]">
+        Mantén <strong class="font-semibold text-[#1c1b19]">⌘ dret</strong> i prem la inicial d'una app: es posa davant. Si ja hi era,
+        s'amaga o passa a la següent amb la mateixa lletra.
+      </p>
+      <p class="font-mono text-[13px] text-[#a8370f]">Prova-ho amb el teclat de sota. ⌘ dret ja està premut.</p>
+    </section>
+
+    <section class="mx-auto max-w-[1120px] px-6 pb-[72px]">
+      <AtajolyDemo client:load />
+    </section>
+
+    <section class="bg-[#f7f6f2]">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-7 px-6 py-20">
+        <h2 class="font-display text-[clamp(30px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.03em]">Sis dreceres. Res més a aprendre.</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[600px] border-collapse">
+            <tbody>
+              {shortcuts.map(([keys, action], i) => (
+                <tr class={i === 0 ? 'border-t-2 border-[#1c1b19]' : 'border-t border-[#cfcdc4]'}>
+                  <th scope="row" class="py-4 pr-4 text-left font-mono text-sm whitespace-nowrap">{keys}</th>
+                  <td class="py-4">{action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1120px] grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-4 px-6 pt-20 pb-10">
+      {features.map((f) => (
+        <article class="flex flex-col gap-2 rounded-[20px] border-b-[5px] border-[#cfcdc4] bg-[#f7f6f2] p-6">
+          <h3 class="font-display text-xl font-semibold">{f.title}</h3>
+          <p class="text-[15px] text-[#46443d]">{f.text}</p>
+        </article>
+      ))}
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1120px] px-6 pt-10 pb-[88px]">
+      <div class="flex flex-col gap-5 rounded-[28px] border-b-8 border-[#c2441d] bg-[#ff6a3d] p-[clamp(28px,4vw,56px)]">
+        <h2 class="font-display text-[clamp(30px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.03em]">Enganxa això a Terminal.</h2>
+        <CopyCommand
+          client:visible
+          command={p.install}
+          codeClass="rounded-[14px] bg-[#1c1b19] text-[#f7f6f2]"
+          buttonClass="rounded-[14px] border-0 border-b-4 border-[#b9b6ab] bg-[#f7f6f2] text-[#1c1b19] hover:bg-white active:translate-y-0.5"
+        />
+        <p class="max-w-[760px]">
+          L'instal·lador baixa l'última versió, la copia a Aplicacions i l'obre. S'actualitza sola i comprova cada descàrrega
+          amb el seu SHA-256. Si fas servir rcmd, tanca'l: tots dos usen ⌘ dret.
+        </p>
+        <div class="flex flex-wrap gap-x-7 gap-y-2 font-mono text-[13px] font-bold">
+          <span>macOS 14 Sonoma o posterior</span><span>Apple Silicon o Intel</span><span>{p.version}</span><span>ca · es · en</span>
+          <a href={p.repo} class="underline">github.com/drarekx/atajoly</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="atajoly" class="border-[#cfcdc4] text-[#a8370f]" />
+</BaseLayout>
