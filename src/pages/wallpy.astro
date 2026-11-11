@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import WallpyHero from '../components/wallpy/WallpyHero.vue';
+import LoopEditor from '../components/wallpy/LoopEditor.vue';
+import ScheduleGrid from '../components/wallpy/ScheduleGrid.vue';
+import { project } from '../data/projects';
+
+const p = project('wallpy');
+
+const features = [
+  { title: 'Biblioteca', text: 'Arrossega-hi vídeos (MP4, MOV, M4V) o imatges (JPG, PNG, HEIC, WebP, TIFF). Els GIF es converteixen sols en vídeo en bucle.' },
+  { title: 'Descàrrega de YouTube', text: 'Tria la qualitat (1080p, 1440p, 4K), mira títol i durada abans de baixar i queda\'t només amb un tros dels vídeos llargs.' },
+  { title: 'Un vídeo per pantalla', text: 'Fons a totes les pantalles i a tots els Spaces, amb un vídeo diferent a cadascuna si vols.' },
+  { title: 'Hora i data sobre el fons', text: 'Posició, mida, lletra, color i format per pantalla. Es redibuixa un cop per minut i s\'atura amb les pantalles apagades.' },
+  { title: 'Estalvi d\'energia', text: 'Pausa quan les finestres tapen l\'escriptori, amb bateria o bateria baixa, i quan s\'apaguen les pantalles.' },
+  { title: 'Originals i idiomes', text: 'Desa els vídeos llargs per treure\'n més fons un altre dia. En català, castellà i anglès.' },
+];
+---
+<BaseLayout
+  title="Wallpy — fons de pantalla amb vídeo per a macOS"
+  description="Wallpy posa un vídeo en bucle com a fons de pantalla del Mac i es posa en pausa quan no el veus. Biblioteca, descàrrega de YouTube, editor de bucles i programació per moments del dia."
+  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;600;700"
+  bodyClass="bg-[#07090f] font-sans text-[#f3f1ec] antialiased"
+>
+  <main>
+    <WallpyHero client:load />
+
+    <section class="mx-auto flex max-w-[1280px] flex-col gap-9 px-6 pt-[88px] pb-10">
+      <h2 class="max-w-[760px] font-sora text-[clamp(30px,3.6vw,46px)] leading-[1.08] font-bold tracking-[-0.02em]">
+        Tot el que cal per tenir un fons viu, sense sortir de l'app.
+      </h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+        {features.map((f) => (
+          <article class="flex flex-col gap-2 rounded-[20px] border border-[#232838] bg-[#10131c] p-[26px]">
+            <h3 class="font-sora text-[19px] font-semibold">{f.title}</h3>
+            <p class="text-[15px] text-[#c5c9d6]">{f.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-14 gap-y-8 px-6 pt-14 pb-10">
+      <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-3.5">
+        <p class="font-mono text-[13px] text-[#ffb454]">Editor de bucles</p>
+        <h2 class="font-sora text-[clamp(28px,3.2vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">Talla el tram que vols i que no es noti el salt.</h2>
+        <p class="text-[#c5c9d6]">
+          Monitor gran, línia de temps amb miniatures i zoom, marques d'entrada i sortida, diversos trams per vídeo i
+          exportació en cua. Amb fosa del bucle i HEVC per hardware.
+        </p>
+        <p class="text-sm text-[#a9afc0]">Marca l'entrada i la sortida aquí al costat amb les mateixes tecles de l'app.</p>
+      </div>
+      <div class="min-w-0 flex-[999_1_520px]">
+        <LoopEditor client:visible />
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1280px] flex-col gap-5 px-6 pt-14 pb-10">
+      <p class="font-mono text-[13px] text-[#ffb454]">Programació per moments del dia</p>
+      <h2 class="max-w-[720px] font-sora text-[clamp(28px,3.2vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">
+        Una graella pantalles × moments. Tries què es veu a cada casella.
+      </h2>
+      <ScheduleGrid client:visible />
+      <p class="text-sm text-[#a9afc0]">La columna marcada segueix el moment que has triat a dalt. Les hores de cada moment són ajustables.</p>
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1280px] px-6 pt-14 pb-24">
+      <div class="flex flex-col gap-5 rounded-[28px] bg-[#ffb454] p-[clamp(28px,4vw,56px)] text-[#1c1206]">
+        <h2 class="font-sora text-[clamp(30px,3.8vw,48px)] leading-[1.05] font-bold tracking-[-0.02em]">Una línia a Terminal i ja el tens.</h2>
+        <CopyCommand
+          client:visible
+          command={p.install}
+          codeClass="rounded-[14px] bg-[#1c1206] text-[#ffe7c2]"
+          buttonClass="rounded-[14px] border-2 border-[#1c1206] bg-transparent text-[#1c1206] hover:bg-[#1c1206] hover:text-[#ffb454]"
+        />
+        <p class="max-w-[760px]">
+          L'instal·lador baixa l'última versió, la copia a Aplicacions i l'obre. Amb Homebrew també instal·la
+          <code class="font-mono text-sm">yt-dlp</code> i <code class="font-mono text-sm">ffmpeg</code>. S'actualitza sola i comprova cada
+          descàrrega amb el seu SHA-256.
+        </p>
+        <div class="flex flex-wrap gap-x-7 gap-y-2 font-mono text-[13px] font-bold">
+          <span>macOS 14 Sonoma o posterior</span><span>Apple Silicon o Intel</span><span>{p.version}</span>
+          <a href={p.repo} class="underline">github.com/drarekx/Wallpy</a>
+        </div>
+        <p class="text-[13px]">Baixa només vídeos teus, amb llicència lliure o amb permís de l'autor.</p>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="wallpy" class="border-[#232838] text-[#ffb454]" />
+</BaseLayout>
