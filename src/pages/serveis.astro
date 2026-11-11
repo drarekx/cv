@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import ContactFooter from '../components/site/ContactFooter.astro';
 
 const pageTitle = 'Programador web a la Garrotxa — Gerard Fortea, consultor tecnològic per a pimes';
 const pageDescription = 'Programador web freelance a la Garrotxa (Olot, Maià de Montcal). Assessorament tecnològic i desenvolupament d\'aplicacions web a mida per a pimes. Més de 15 anys d\'experiència.';
@@ -87,148 +89,95 @@ const jsonLd = {
     }
   ]
 };
+const areas = ['Olot', 'la Garrotxa', 'el Ripollès', 'la Selva', 'Girona', 'Catalunya'];
+const stack = ['PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'MySQL'];
 ---
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;600;700"
+  bodyClass="bg-ink font-sans text-paper antialiased"
+>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
-  <div class="min-h-screen py-8 px-4 md:py-14">
-    <div class="max-w-5xl mx-auto shadow-2xl">
 
-      <!-- ACCENT LINE -->
-      <div class="h-[3px] bg-blue-600"></div>
+  <SiteHeader current="serveis" />
 
-      <!-- HEADER -->
-      <header class="relative bg-slate-900 dark:bg-slate-950 text-white px-8 py-10 md:px-12">
-
-        <!-- Theme toggle -->
-        <button id="theme-toggle" aria-label="Canviar tema"
-          class="absolute top-5 right-5 p-2 text-slate-500 hover:text-slate-200 transition-colors">
-          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-            <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-5.4-5.4c0-1.81.89-3.42 2.26-4.4A9.14 9.14 0 0 0 12 3z"/>
-          </svg>
-          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 hidden">
-            <path d="M12 7a5 5 0 1 0 0 10A5 5 0 0 0 12 7zM2 13h2a1 1 0 0 0 0-2H2a1 1 0 0 0 0 2zm18 0h2a1 1 0 0 0 0-2h-2a1 1 0 0 0 0 2zM11 2v2a1 1 0 0 0 2 0V2a1 1 0 0 0-2 0zm0 18v2a1 1 0 0 0 2 0v-2a1 1 0 0 0-2 0zM5.99 4.58a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41L5.99 4.58zm12.37 12.37a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41l-1.06-1.06zm1.06-10.96a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06zM7.05 18.36a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06z"/>
-          </svg>
-        </button>
-
-        <div class="flex flex-col sm:flex-row items-start gap-7">
-          <img
-            src="https://media.licdn.com/dms/image/v2/D4D03AQGqT-t39MPcGA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1695049957282?e=1733356800&v=beta&t=vJ0P33zO51tNL4Up2is14Z9dI_eRWYThRSXXtCJEsTU"
-            alt="Gerard Fortea"
-            class="w-[88px] h-[88px] object-cover shrink-0 border border-slate-700"
-          />
-          <div>
-            <h1 class="text-3xl md:text-4xl font-bold tracking-tight leading-tight">Gerard Fortea Castellsague</h1>
-            <p class="mt-1.5 text-blue-400 font-medium text-base">Desenvolupador web Fullstack</p>
-            <p class="mt-3 text-slate-400 text-sm leading-relaxed max-w-2xl">
-              Programador amb més de 15 anys d'experiència en el desenvolupament web. Em caracteritzo per ser creatiu,
-              resolutiu i altament responsable. Mantinc un enfocament constant en l'adquisició de noves habilitats i
-              l'aprenentatge de les últimes tecnologies del sector.
-            </p>
-          </div>
+  <main>
+    <section class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-10 px-6 pt-[72px] pb-[72px]">
+      <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-[22px]">
+        <p class="font-mono text-[13px] text-acid">Programador web freelance · Consultor tecnològic per a pimes</p>
+        <h1 class="font-display text-[clamp(40px,6.4vw,88px)] leading-none font-bold tracking-[-0.03em]">
+          Programador web a la Garrotxa, <span class="text-acid">per a pimes.</span>
+        </h1>
+        <p class="max-w-[640px] text-lg text-[#b4b6bd]">
+          Soc <strong class="font-semibold text-paper">Gerard Fortea</strong>,
+          <strong class="font-semibold text-paper">programador web freelance a la Garrotxa</strong> (Maià de Montcal) amb més de
+          15 anys d'experiència en programació i desenvolupament web. Ofereixo serveis
+          d'<strong class="font-semibold text-paper">assessorament tecnològic i desenvolupament d'aplicacions web a mida</strong>
+          per a pimes de la Garrotxa, Olot i comarques veïnes.
+        </p>
+        <div class="mt-2 flex flex-wrap gap-3">
+          <a href="#contacte" class="flex min-h-[52px] items-center rounded-full bg-acid px-[26px] text-[15px] font-semibold text-ink hover:bg-white">Parlem del vostre projecte</a>
+          <a href="#serveis" class="flex min-h-[52px] items-center rounded-full border border-[#4a4e59] px-[26px] text-[15px] font-semibold hover:border-paper">Veure els serveis</a>
         </div>
-      </header>
+      </div>
+      <dl class="m-0 grid flex-[0_1_340px] grid-cols-[auto_1fr] gap-x-[18px] gap-y-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-[22px] font-mono text-[13px]">
+        <dt class="text-[#9a9da6]">on</dt><dd>Maià de Montcal</dd>
+        <dt class="text-[#9a9da6]">zona</dt><dd>Olot i la Garrotxa</dd>
+        <dt class="text-[#9a9da6]">per a</dt><dd>pimes i autònoms</dd>
+        <dt class="text-[#9a9da6]">anys</dt><dd>+15 programant web</dd>
+        <dt class="text-[#9a9da6]">idiomes</dt><dd>ca · es · en</dd>
+      </dl>
+    </section>
 
-      <!-- NAV TABS -->
-      <nav class="bg-slate-800 dark:bg-slate-900 border-b border-slate-700 dark:border-slate-800 px-6 flex gap-1">
-        <a href="/"
-          class="px-4 py-3 text-sm font-medium text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-colors">
-          CV
-        </a>
-        <a href="/serveis"
-          class="px-4 py-3 text-sm font-medium text-white border-b-2 border-blue-500 -mb-px transition-colors">
-          Serveis
-        </a>
-      </nav>
+    <section id="serveis" aria-labelledby="serveis-titol" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pt-6 pb-[88px]">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+        <h2 id="serveis-titol" class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Què puc fer per la vostra empresa</h2>
+        <p class="max-w-[460px] text-[#b4b6bd]">Quatre maneres de treballar junts, del primer consell a l'aplicació en marxa.</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        {services.map(({ title, description, icon }, i) => (
+          <article class="group flex flex-col gap-4 rounded-3xl border border-[#2a2d35] bg-[#17191e] p-7 transition duration-300 hover:-translate-y-1.5 hover:border-acid">
+            <div class="flex items-center justify-between">
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#24272e] text-acid transition-colors group-hover:bg-acid group-hover:text-ink">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" set:html={icon} />
+              </span>
+              <span class="font-mono text-xs text-[#9a9da6]">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3 class="font-display text-[24px] leading-tight font-bold">{title}</h3>
+            <p class="text-[15px] text-[#b4b6bd]">{description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
 
-      <!-- MAIN CONTENT -->
-      <main class="bg-white dark:bg-slate-900 px-8 py-10 md:px-10">
-
-        <!-- Intro -->
-        <section class="mb-10" aria-labelledby="serveis-titol">
-          <h2 id="serveis-titol" class="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-5 pb-2 border-b border-slate-200 dark:border-slate-700">
-            Programador web freelance a la Garrotxa · Consultor tecnològic per a pimes
-          </h2>
-          <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-2xl mb-4">
-            Soc <strong class="text-slate-800 dark:text-slate-200 font-semibold">Gerard Fortea</strong>,
-            <strong class="text-slate-800 dark:text-slate-200 font-semibold">programador web freelance a la Garrotxa</strong>
-            (Maià de Montcal) amb més de 15 anys d'experiència en programació i desenvolupament web.
-            Ofereixo serveis d'<strong class="text-slate-800 dark:text-slate-200 font-semibold">assessorament tecnològic i
-            desenvolupament d'aplicacions web a mida</strong> per a pimes de la Garrotxa, Olot i comarques veïnes.
+    <section class="rounded-t-[32px] bg-paper text-[#16171a]">
+      <div class="mx-auto flex max-w-[1200px] flex-wrap gap-x-16 gap-y-10 px-6 pt-20 pb-[88px]">
+        <div class="flex min-w-0 flex-[2_1_440px] flex-col gap-4">
+          <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Un programador a prop</h2>
+          <p class="max-w-[640px] text-[17px] text-[#3c3e45]">
+            Tant si necessiteu un <strong class="font-semibold text-[#16171a]">programador web a Olot</strong> o a qualsevol municipi de
+            la Garrotxa, com si cerqueu un consultor tecnològic extern de confiança per a la vostra empresa, puc ajudar-vos a
+            digitalitzar processos, crear o millorar la vostra presència digital i prendre les millors decisions tecnològiques.
           </p>
-          <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed max-w-2xl">
-            Tant si necessiteu un <strong class="text-slate-700 dark:text-slate-300 font-medium">programador web a Olot</strong>
-            o a qualsevol municipi de la Garrotxa, com si cerqueu un consultor tecnològic extern de confiança per a
-            la vostra empresa, puc ajudar-vos a digitalitzar processos, crear o millorar la vostra
-            presència digital i prendre les millors decisions tecnològiques.
-          </p>
-        </section>
-
-        <!-- Service cards grid -->
-        <section class="mb-10" aria-label="Serveis oferts">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {services.map(({ title, description, icon }) => (
-            <article class="group border border-slate-200 dark:border-slate-700 p-5 hover:border-blue-500 dark:hover:border-blue-500 transition-colors duration-200 cursor-pointer">
-              <div class="flex items-start gap-4">
-                <div class="shrink-0 w-9 h-9 flex items-center justify-center bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-600 dark:group-hover:text-white transition-colors duration-200">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" set:html={icon} />
-                </div>
-                <div>
-                  <h3 class="font-semibold text-slate-900 dark:text-slate-100 text-sm mb-1.5">{title}</h3>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{description}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-          </div>
-        </section>
-
-        <!-- CTA -->
-        <div class="bg-slate-900 dark:bg-slate-950 px-7 py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-          <div>
-            <p class="text-white font-semibold text-sm mb-0.5">Parlem del vostre projecte</p>
-            <p class="text-slate-400 text-xs">Sense compromís. Expliqueu-me el que necessiteu i us faré una proposta.</p>
-          </div>
-          <div class="flex flex-col sm:flex-row gap-3 shrink-0">
-            <a href="mailto:fortea.gerard@mail.com"
-              class="inline-flex items-center gap-2 text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 transition-colors duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
-              </svg>
-              Enviar correu
-            </a>
-            <a href="tel:+34616271011"
-              class="inline-flex items-center gap-2 text-sm border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white px-4 py-2 transition-colors duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-              </svg>
-              +34 616 27 10 11
-            </a>
-          </div>
         </div>
+        <div class="flex flex-[1_1_300px] flex-col gap-3">
+          <h3 class="font-display text-xl font-semibold">On treballo</h3>
+          <ul class="flex flex-wrap gap-2 font-mono text-sm">
+            {areas.map((a) => <li class="rounded-full border border-[#16171a] px-4 py-[9px]">{a}</li>)}
+          </ul>
+          <h3 class="mt-4 font-display text-xl font-semibold">Amb què treballo</h3>
+          <ul class="flex flex-wrap gap-2 font-mono text-sm">
+            {stack.map((s) => <li class="rounded-full border border-[#16171a] px-4 py-[9px]">{s}</li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
 
-      </main>
-    </div>
-  </div>
-
-  <script>
-    const toggle = document.getElementById('theme-toggle')!;
-    const moon = document.getElementById('icon-moon')!;
-    const sun = document.getElementById('icon-sun')!;
-
-    function syncIcons() {
-      const dark = document.documentElement.classList.contains('dark');
-      moon.classList.toggle('hidden', dark);
-      sun.classList.toggle('hidden', !dark);
-    }
-
-    syncIcons();
-
-    toggle.addEventListener('click', () => {
-      const dark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', dark ? 'dark' : 'light');
-      syncIcons();
-    });
-  </script>
+  <ContactFooter title="Parlem del vostre projecte">
+    Sense compromís. Expliqueu-me el que necessiteu i us faré una proposta.
+  </ContactFooter>
 </BaseLayout>

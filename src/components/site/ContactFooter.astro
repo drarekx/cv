@@ -1,0 +1,20 @@
+---
+interface Props {
+  title?: string;
+}
+const { title = 'Parlem?' } = Astro.props;
+---
+<footer id="contacte" class="bg-acid text-ink">
+  <div class="mx-auto flex max-w-[1200px] flex-wrap items-end justify-between gap-x-16 gap-y-7 px-6 py-16">
+    <div class="flex min-w-0 flex-[999_1_420px] flex-col gap-2.5">
+      <h2 class="font-display text-[clamp(36px,5vw,64px)] leading-none font-bold tracking-[-0.03em]">{title}</h2>
+      <div class="max-w-[560px] text-lg"><slot /></div>
+    </div>
+    <div class="flex flex-col gap-0.5 font-mono text-sm font-bold">
+      <a href="mailto:fortea.gerard@mail.com" class="flex min-h-11 items-center underline-offset-4 hover:underline">fortea.gerard@mail.com</a>
+      <a href="tel:+34616271011" class="flex min-h-11 items-center underline-offset-4 hover:underline">+34 616 27 10 11</a>
+      <a href="https://github.com/drarekx" target="_blank" rel="noopener noreferrer" class="flex min-h-11 items-center underline-offset-4 hover:underline">github.com/drarekx</a>
+      <a href="https://www.linkedin.com/in/gerard-fortea-a3863741/" target="_blank" rel="noopener noreferrer" class="flex min-h-11 items-center underline-offset-4 hover:underline">linkedin · gerard-fortea</a>
+    </div>
+  </div>
+</footer>
