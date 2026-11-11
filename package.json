@@ -11,10 +11,12 @@
     "@astrojs/vue": "^4.5.0",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^4.16.0",
+    "nodemailer": "^10.5.0",
     "tailwindcss": "^4.2.1",
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "typescript": "^5.6.0"
   }
 }
