@@ -50,7 +50,16 @@
   to { transform: translateX(110vw); }
 }
 
+/* Anchor jumps land below the sticky header (compact bar ≈ 57px). */
+html {
+  scroll-padding-top: 72px;
+  scroll-behavior: smooth;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   *, ::before, ::after {
     animation: none !important;
     transition: none !important;
