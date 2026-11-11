@@ -76,6 +76,70 @@ const languages = [
   { lang: 'Anglès', level: 'B1' },
 ];
 
+const site = 'https://www.gerardfortea.com';
+const personId = `${site}/#gerard`;
+
+const ways = [
+  { title: 'Eficient', text: 'Solucions que es poden mantenir, sense complicar el que és simple. Del requeriment a l\'aplicació en marxa, sense voltes.' },
+  { title: 'Creatiu', text: 'Busco la manera més clara de resoldre cada problema, i vull que el resultat també es vegi bé. Per gust, faig apps per al Mac.' },
+  { title: 'Sociable i comunicatiu', text: 'Parlo amb qui farà servir l\'aplicació, no només amb qui l\'encarrega, i explico les decisions tècniques sense embolics.' },
+  { title: 'Treballador', text: 'Més de 15 anys programant i continuo estudiant: el 2025 vaig acabar el cicle superior de Desenvolupament d\'Aplicacions Web.' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Gerard Fortea Castellsague',
+      alternateName: 'Gerard Fortea',
+      url: `${site}/`,
+      jobTitle: 'Programador web fullstack',
+      description: 'Programador a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida amb les últimes tecnologies.',
+      email: 'mailto:fortea.gerard@mail.com',
+      telephone: '+34616271011',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Maià de Montcal',
+        addressRegion: 'la Garrotxa, Girona',
+        addressCountry: 'ES',
+      },
+      homeLocation: { '@type': 'Place', name: 'Olot, la Garrotxa' },
+      worksFor: { '@type': 'Organization', name: 'Labsystems Arquitectura i Gestió' },
+      alumniOf: [
+        { '@type': 'EducationalOrganization', name: 'Institut Obert de Catalunya (IOC)' },
+        { '@type': 'EducationalOrganization', name: 'Gesem' },
+      ],
+      knowsAbout: [
+        'Aplicacions de gestió a mida',
+        'Desenvolupament web fullstack',
+        'Intel·ligència artificial',
+        'Vue.js', 'TypeScript', 'JavaScript', 'PHP', 'Laravel', 'MySQL', 'Swift',
+      ],
+      knowsLanguage: ['ca', 'es', 'en'],
+      sameAs: ['https://www.linkedin.com/in/gerard-fortea-a3863741/', 'https://github.com/drarekx'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site}/#web`,
+      url: `${site}/`,
+      name: 'Gerard Fortea',
+      inLanguage: 'ca',
+      publisher: { '@id': personId },
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${site}/#perfil`,
+      url: `${site}/`,
+      name: 'Gerard Fortea — Programador a la Garrotxa',
+      inLanguage: 'ca',
+      isPartOf: { '@id': `${site}/#web` },
+      mainEntity: { '@id': personId },
+    },
+  ],
+};
+
 const wallpy = project('wallpy');
 const atajoly = project('atajoly');
 const terminaly = project('terminaly');
@@ -84,23 +148,28 @@ const cardClass = 'group flex flex-col overflow-hidden rounded-3xl border border
 const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full border border-[#4a4e59] px-[18px] text-sm font-semibold transition-colors group-hover:border-acid group-hover:bg-acid group-hover:text-ink';
 ---
 <BaseLayout
-  title="Gerard Fortea — Desenvolupador web Fullstack a Olot · CV i apps per al Mac"
-  description="Gerard Fortea Castellsague, programador web Fullstack a la Garrotxa (Olot) amb més de 15 anys d'experiència en PHP, JavaScript, TypeScript, Vue.js i MySQL. CV, apps natives de macOS (Wallpy, Atajoly i Terminaly) i webs per a entitats com el Casino de Tortellà."
+  title="Gerard Fortea — Programador a la Garrotxa · Aplicacions de gestió a mida"
+  description="Gerard Fortea, programador a la Garrotxa (Olot). Desenvolupo aplicacions de gestió a mida amb les últimes tecnologies. Eficient, creatiu, comunicatiu i treballador."
   fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@600&family=Space+Grotesk:wght@500;600;700&family=Roboto+Slab:wght@400&family=Roboto:wght@400&family=Caveat:wght@700"
   bodyClass="bg-ink font-sans text-paper antialiased"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
   <SiteHeader current="home" />
 
   <main>
     <section id="inici" class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-10 px-6 pt-[72px] pb-[72px]">
       <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-[22px]">
-        <p class="font-mono text-[13px] text-acid">Desenvolupador web fullstack · Olot, la Garrotxa</p>
-        <h1 class="font-display text-[clamp(40px,6.4vw,88px)] leading-none font-bold tracking-[-0.03em]">
-          Webs a mida per feina. Apps per al Mac <span class="text-acid">per gust.</span>
+        <h1 class="flex flex-col gap-4 font-display text-[clamp(40px,6.4vw,88px)] leading-none font-bold tracking-[-0.03em]">
+          <span class="font-mono text-[15px] leading-normal font-normal tracking-normal text-acid">Gerard Fortea · programador a la Garrotxa</span>
+          <span>Aplicacions de gestió <span class="text-acid">a mida.</span></span>
         </h1>
-        <p class="max-w-[620px] text-lg text-[#b4b6bd]">
-          Sóc en Gerard Fortea. Fa més de 15 anys que programo per al web amb PHP, JavaScript, TypeScript i Vue.
-          Aquí hi trobaràs el meu currículum, tres apps natives de macOS i dues webs que he fet per a Tortellà.
+        <p class="max-w-[640px] text-lg text-[#b4b6bd]">
+          Sóc en <strong class="font-semibold text-paper">Gerard Fortea</strong>, programador web a Olot i la Garrotxa amb més de 15 anys
+          d'experiència. Desenvolupo <strong class="font-semibold text-paper">aplicacions de gestió a mida</strong> per a empreses,
+          escoles i entitats, amb les últimes tecnologies: Vue, TypeScript, PHP i Laravel.
         </p>
         <div class="mt-2 flex flex-wrap gap-3">
           <a href="#projectes" class="flex min-h-[52px] items-center rounded-full bg-acid px-[26px] text-[15px] font-semibold text-ink hover:bg-white">Veure els projectes</a>
@@ -109,6 +178,7 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
       </div>
       <dl class="m-0 grid flex-[0_1_340px] grid-cols-[auto_1fr] gap-x-[18px] gap-y-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-[22px] font-mono text-[13px]">
         <dt class="text-[#9a9da6]">rol</dt><dd>senior fullstack</dd>
+        <dt class="text-[#9a9da6]">fort</dt><dd>aplicacions de gestió</dd>
         <dt class="text-[#9a9da6]">ara</dt><dd>Labsystems, des de 2025</dd>
         <dt class="text-[#9a9da6]">web</dt><dd>PHP · TS · Vue · MySQL</dd>
         <dt class="text-[#9a9da6]">mac</dt><dd>Swift · AppKit · SwiftUI</dd>
@@ -116,10 +186,40 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
       </dl>
     </section>
 
+    <section id="gestio" aria-labelledby="gestio-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-6 pb-[88px]">
+      <div class="flex flex-wrap gap-x-16 gap-y-8">
+        <div class="flex min-w-0 flex-[1_1_480px] flex-col gap-4">
+          <h2 id="gestio-titol" class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">
+            Aplicacions de gestió que es fan servir cada dia
+          </h2>
+          <p class="max-w-[600px] text-lg text-[#b4b6bd]">
+            Fa anys que faig el programari amb què treballa la gent: panells interns, gestió de clients, reserves i processos
+            que abans es feien a mà. Pensat per a qui l'utilitzarà, fàcil de mantenir i fet amb tecnologies actuals.
+          </p>
+        </div>
+        <ul class="flex flex-[1_1_380px] flex-col gap-4 text-[15px] text-[#b4b6bd]">
+          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Gestió a mida.</strong> Gestió d'alumnes a Editorial Océano, gestió immobiliària a Pimmo i programari per al sector turístic i vacacional a Labsystems.</span></li>
+          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Panells per a gent no tècnica.</strong> L'organització del <a href="/combat-glosa" class="text-acid underline underline-offset-4">Combat de Glosa</a> canvia continguts, colors i formularis sense tocar codi.</span></li>
+          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Al dia.</strong> Quan estalvia feina, hi afegeixo intel·ligència artificial, com els assistents del backend del <a href="/casino-tortella" class="text-acid underline underline-offset-4">Casino de Tortellà</a>.</span></li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-5">
+        <h3 class="font-display text-2xl font-bold">Com treballo</h3>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {ways.map((w) => (
+            <article class="flex flex-col gap-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-6">
+              <h4 class="font-display text-xl font-bold text-acid">{w.title}</h4>
+              <p class="text-[15px] text-[#b4b6bd]">{w.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section id="projectes" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pt-6 pb-[88px]">
       <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Tres apps per al Mac</h2>
-        <p class="max-w-[460px] text-[#b4b6bd]">Natives, escrites en Swift. S'instal·len amb una línia a Terminal i s'actualitzen soles.</p>
+        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Tres apps per al Mac, <span class="text-acid">per gust</span></h2>
+        <p class="max-w-[460px] text-[#b4b6bd]">Natives, escrites en Swift i publicades a GitHub. S'instal·len amb una línia a Terminal i s'actualitzen soles.</p>
       </div>
       <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
 

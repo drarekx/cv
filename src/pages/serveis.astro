@@ -34,6 +34,7 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Person",
+      "@id": "https://www.gerardfortea.com/#gerard",
       "name": "Gerard Fortea Castellsague",
       "jobTitle": "Programador web freelance · Consultor tecnològic",
       "email": "fortea.gerard@mail.com",
@@ -51,6 +52,9 @@ const jsonLd = {
     },
     {
       "@type": "ProfessionalService",
+      "@id": "https://www.gerardfortea.com/serveis#servei",
+      "url": "https://www.gerardfortea.com/serveis",
+      "founder": { "@id": "https://www.gerardfortea.com/#gerard" },
       "name": "Gerard Fortea — Programador web i consultor tecnològic a la Garrotxa",
       "description": pageDescription,
       "email": "fortea.gerard@mail.com",
