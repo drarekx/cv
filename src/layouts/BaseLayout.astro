@@ -5,11 +5,16 @@ interface Props {
   title?: string;
   description?: string;
   canonical?: string;
+  /** Google Fonts css2 query (the part after `family=`), when the page needs more than Inter. */
+  fonts?: string;
+  bodyClass?: string;
 }
 const {
   title = 'Gerard Fortea — Desenvolupador web Fullstack',
   description = 'CV de Gerard Fortea Castellsague, desenvolupador web Fullstack amb més de 15 anys d\'experiència en programació i desenvolupament d\'aplicacions web.',
   canonical,
+  fonts = 'Inter:wght@300;400;500;600;700',
+  bodyClass = 'bg-slate-100 dark:bg-slate-950 font-sans antialiased transition-colors duration-200',
 } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -26,7 +31,7 @@ const {
     <meta property="og:locale" content="ca_ES" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href={`https://fonts.googleapis.com/css2?family=${fonts}&display=swap`} rel="stylesheet" />
     <title>{title}</title>
     <slot name="head" />
     <script is:inline>
@@ -37,7 +42,7 @@ const {
       }
     </script>
   </head>
-  <body class="bg-slate-100 dark:bg-slate-950 font-sans antialiased transition-colors duration-200">
+  <body class={bodyClass}>
     <slot />
   </body>
 </html>

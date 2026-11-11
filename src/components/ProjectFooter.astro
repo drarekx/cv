@@ -1,0 +1,23 @@
+---
+import { projects, type Project } from '../data/projects';
+
+interface Props {
+  current: Project['slug'];
+  /** Classes for the top border and the link colour of each page's palette. */
+  class?: string;
+  lowercase?: boolean;
+}
+const { current, class: className = '', lowercase = false } = Astro.props;
+const others = projects.filter((p) => p.slug !== current);
+const label = (s: string) => (lowercase ? s.toLowerCase() : s);
+---
+<footer class={`border-t ${className}`}>
+  <nav aria-label="Altres projectes" class="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-x-7 gap-y-1 px-6 py-5 text-sm">
+    <a href="/#projectes" class="flex min-h-11 items-center hover:underline">← {label('Tots els projectes')}</a>
+    <div class="flex flex-wrap gap-x-7 gap-y-1">
+      {others.map((p) => (
+        <a href={`/${p.slug}`} class="flex min-h-11 items-center hover:underline">{label(p.name)} →</a>
+      ))}
+    </div>
+  </nav>
+</footer>
