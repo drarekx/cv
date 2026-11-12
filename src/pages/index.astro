@@ -165,6 +165,7 @@ const jsonLd = {
 
 /** Open-source side projects, shown as a compact list under the websites. Add new ones here. */
 const openSource = [
+  { href: '/ledly', name: 'Ledly', version: project('ledly').version, swatch: '#38a8ff', text: 'Ambilight per al Mac i Windows: una tira de LEDs que segueix els colors de la pantalla.' },
   { href: '/wallpy', name: 'Wallpy', version: project('wallpy').version, swatch: '#f2a65a', text: 'Fons de pantalla amb vídeo per al Mac, que es posa en pausa quan no el veus.' },
   { href: '/atajoly', name: 'Atajoly', version: project('atajoly').version, swatch: '#ff6a3d', text: "Canvia d'app amb el polze: ⌘ dret i la inicial de l'app." },
   { href: '/terminaly', name: 'Terminaly', version: project('terminaly').version, swatch: '#6fdd8b', text: 'Tots els teus agents de terminal en una sola finestra.' },
@@ -391,8 +392,8 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
 
     <section id="apps" aria-labelledby="apps-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-24">
       <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
-        <h2 id="apps-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">Apps per al Mac, per gust</h2>
-        <p class="text-[15px] text-graphite">Natives, en Swift i publicades a GitHub.</p>
+        <h2 id="apps-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">Apps per al Mac i Windows, per gust</h2>
+        <p class="text-[15px] text-graphite">Natives i publicades a GitHub.</p>
       </div>
       <ul class="flex flex-col border-t border-ink">
         {openSource.map((a) => (
