@@ -16,12 +16,14 @@ const links = [
 ];
 ---
 <!--
+  The compact bar is 20px shorter (py-4 → py-1.5); mb-5 gives those 20px back to the flow, so the page
+  does not jump up when the header shrinks and anchor targets land exactly under it.
   Sticky header. At the top of the page it is the full logo; once the page scrolls,
   `data-scrolled` turns it into a compact bar with a hairline underneath.
 -->
 <header
   data-site-header
-  class="group sticky top-0 z-50 border-b border-line bg-paper transition-[background-color,border-color] duration-300 data-[scrolled]:border-ink data-[scrolled]:bg-paper/95 data-[scrolled]:backdrop-blur-md"
+  class="group sticky top-0 z-50 border-b border-line bg-paper transition-[background-color,border-color,margin] duration-300 data-[scrolled]:mb-5 data-[scrolled]:border-ink data-[scrolled]:bg-paper/95 data-[scrolled]:backdrop-blur-md"
 >
   <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-1 px-6 py-4 transition-[padding] duration-300 sm:group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:py-1.5">
     <a href="/" class="flex min-h-11 items-center gap-3 text-ink" aria-label="Gerard Fortea, inici">
@@ -46,8 +48,20 @@ const links = [
 <script>
   const header = document.querySelector<HTMLElement>('[data-site-header]');
   if (header) {
+    const root = document.documentElement;
     const update = () => header.toggleAttribute('data-scrolled', window.scrollY > 24);
+    // Anchor targets must land just under the header as it looks once the page has scrolled: the compact
+    // bar. Measure it whenever it is compact and settled (its padding transition takes 300ms).
+    const measure = () => {
+      if (header.hasAttribute('data-scrolled')) root.style.setProperty('--header-h', `${header.offsetHeight}px`);
+    };
     update();
+    measure();
     window.addEventListener('scroll', update, { passive: true });
+    header.addEventListener('transitionend', measure);
+    window.addEventListener('resize', () => {
+      root.style.removeProperty('--header-h');
+      measure();
+    });
   }
 </script>

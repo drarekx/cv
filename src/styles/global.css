@@ -72,10 +72,18 @@
   color: var(--color-ink);
 }
 
-/* Anchor jumps land below the sticky header (compact bar ≈ 57px). */
+/*
+ * Anchor jumps land right below the compact sticky header: two rows on phones (≈105px), one from sm up
+ * (57px). SiteHeader's script replaces this with the measured height.
+ */
 html {
-  scroll-padding-top: 72px;
+  scroll-padding-top: var(--header-h, 105px);
   scroll-behavior: smooth;
+}
+@media (min-width: 40rem) {
+  html {
+    scroll-padding-top: var(--header-h, 57px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
