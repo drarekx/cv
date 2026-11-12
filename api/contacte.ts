@@ -32,11 +32,22 @@ const MIN_FILL_MS = 3_000;
 const EMAIL_RE = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]{2,}$/;
 
 const ALLOWED_ORIGINS = new Set(['https://www.gerardfortea.com', 'https://gerardfortea.com']);
-const isAllowedOrigin = (origin: string) =>
-  ALLOWED_ORIGINS.has(origin) || /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin) || /^http:\/\/localhost:\d+$/.test(origin);
+/** Only this project's own preview deployments, not any *.vercel.app site. */
+const PREVIEW_ORIGIN = /^https:\/\/cv-[a-z0-9-]+-mrdarek\.vercel\.app$/;
 
-/** One line, no control characters: these values end up in mail headers (subject, reply-to name). */
-const oneLine = (v: string) => v.replace(/[\u0000-\u001f\u007f]+/g, ' ').trim();
+export function isAllowedOrigin(origin: string, env: NodeJS.ProcessEnv = process.env) {
+  if (ALLOWED_ORIGINS.has(origin) || PREVIEW_ORIGIN.test(origin)) return true;
+  if (env.VERCEL_URL && origin === `https://${env.VERCEL_URL}`) return true;
+  if (env.VERCEL_BRANCH_URL && origin === `https://${env.VERCEL_BRANCH_URL}`) return true;
+  return env.VERCEL_ENV !== 'production' && /^http:\/\/localhost:\d+$/.test(origin);
+}
+
+/**
+ * One line, no control or bidirectional-override characters: these values end up in mail headers
+ * (subject, reply-to name), and bidi overrides can disguise text.
+ */
+const oneLine = (v: string) =>
+  v.replace(/[\u0000-\u001f\u007f\u200e\u200f\u202a-\u202e\u2066-\u2069]+/g, ' ').replace(/\s+/g, ' ').trim();
 
 export function parseContact(form: FormData, now = Date.now()): Parsed {
   const get = (k: string) => {
@@ -76,13 +87,17 @@ const gmailSender: SendMail = async ({ nom, email, telefon, missatge }) => {
     port: 465,
     secure: true,
     auth: { user, pass },
+    // Fail fast instead of keeping the function alive for minutes if Gmail is slow.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
   });
 
   await transport.sendMail({
     from: { name: 'Web gerardfortea.com', address: user },
     to: process.env.CONTACT_TO || user,
     replyTo: { name: nom, address: email },
-    subject: `Contacte web: ${nom}`,
+    subject: `[gerardfortea.com] Contacte de ${nom.slice(0, 60)}`,
     text: [
       `Nom: ${nom}`,
       `Correu: ${email}`,
@@ -108,25 +123,59 @@ function htmlPage(status: number, title: string, text: string) {
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0e0f12;color:#f2f1ed;font:18px/1.5 system-ui,sans-serif;padding:24px}
 main{max-width:520px}h1{font-size:40px;line-height:1.05;margin:0 0 12px}a{color:#c8f169}</style></head>
 <body><main><h1>${escapeHtml(title)}</h1><p>${escapeHtml(text)}</p><p><a href="/">← Torna al web</a></p></main></body></html>`;
-  return new Response(body, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  return new Response(body, { status, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
+}
+
+/** The request body, or null if it is bigger than `max` bytes. */
+async function readLimited(request: Request, max: number): Promise<ArrayBuffer | null> {
+  if (!request.body) return new ArrayBuffer(0);
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  const out = new Uint8Array(size);
+  let offset = 0;
+  for (const c of chunks) {
+    out.set(c, offset);
+    offset += c.byteLength;
+  }
+  return out.buffer;
 }
 
 export async function handleContact(request: Request, send: SendMail = gmailSender): Promise<Response> {
   const wantsJson = (request.headers.get('accept') ?? '').includes('application/json');
   const reply = (status: number, ok: boolean, message: string) =>
     wantsJson
-      ? Response.json({ ok, message }, { status })
+      ? Response.json({ ok, message }, { status, headers: { 'Cache-Control': 'no-store' } })
       : htmlPage(status, ok ? 'Missatge enviat' : 'No s\'ha pogut enviar', message);
 
+  // Browsers always send Origin on a form POST (with or without JavaScript); scripts usually don't.
   const origin = request.headers.get('origin');
-  if (origin && !isAllowedOrigin(origin)) return reply(403, false, 'Origen no permès.');
+  if (!origin || !isAllowedOrigin(origin)) return reply(403, false, 'Origen no permès.');
+
+  const type = request.headers.get('content-type') ?? '';
+  if (!/^(application\/x-www-form-urlencoded|multipart\/form-data)\b/i.test(type)) {
+    return reply(415, false, 'No he entès el formulari.');
+  }
   if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) {
     return reply(413, false, 'El missatge és massa llarg.');
   }
 
   let form: FormData;
   try {
-    form = await request.formData();
+    // Read with a hard cap: a chunked request has no Content-Length to check.
+    const body = await readLimited(request, MAX_BODY_BYTES);
+    if (!body) return reply(413, false, 'El missatge és massa llarg.');
+    form = await new Request(request.url, { method: 'POST', headers: { 'content-type': type }, body }).formData();
   } catch {
     return reply(400, false, 'No he entès el formulari.');
   }
