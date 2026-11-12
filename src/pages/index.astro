@@ -288,6 +288,33 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
       </div>
     </section>
 
+    <!-- Featured project: the newest and biggest personal one. -->
+    <section id="canconers" aria-labelledby="canconers-titol" class="mx-auto max-w-[1200px] px-6 pt-24">
+      <div class="grid items-center gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div class="flex flex-col gap-5">
+          <p class="text-[15px] text-graphite">L'últim projecte personal</p>
+          <h2 id="canconers-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Cançoners</h2>
+          <p class="max-w-[520px] text-lg leading-relaxed text-graphite">
+            Una app per al Mac per dissenyar cançoners amb lletra, acords i diagrames, i imprimir-los com un llibret A5 a punt
+            per plegar i cosir. Editor de pàgines, biblioteca de cançons amb versions, transport d'acords i PDF per a impremta.
+          </p>
+          <p class="flex flex-wrap gap-x-5 font-mono text-xs text-graphite"><span>Python, Flask, Vue 3, Pinia, Tiptap</span><span>{project('canconers').version}</span></p>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a href="/canconers" class="flex min-h-[52px] items-center bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">Veure Cançoners</a>
+            <a href={project('canconers').repo} class="flex min-h-11 items-center text-[15px] font-medium underline decoration-line decoration-2 underline-offset-[6px] hover:decoration-fageda">Codi a GitHub</a>
+          </div>
+        </div>
+        <a href="/canconers" class="block border border-ink bg-white p-2" tabindex="-1" aria-hidden="true">
+          <img
+            src="/img/canconers-editor-1600.webp"
+            srcset="/img/canconers-editor-960.webp 960w, /img/canconers-editor-1600.webp 1600w"
+            sizes="(min-width: 1200px) 660px, (min-width: 1024px) 56vw, 100vw"
+            width="1600" height="1000" alt="" loading="lazy" decoding="async" class="block h-auto w-full"
+          />
+        </a>
+      </div>
+    </section>
+
     <section id="webs" aria-labelledby="webs-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-20">
       <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
         <h2 id="webs-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Webs per a entitats i companyies</h2>
