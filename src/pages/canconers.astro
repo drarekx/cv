@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/jetbrains-mono';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+
+const p = project('canconers');
+
+/**
+ * The hero page: the first verse and the chorus of «Els segadors» (traditional), as the app lays them out.
+ * Each line is a list of [chord, text] chunks: the chord sits above the start of its text.
+ */
+const verse: [string, string][][] = [
+  [['Em', 'Catalunya '], ['B7', 'triom'], ['Em', 'fant']],
+  [['Em', 'tornarà a '], ['G', 'ser rica i '], ['D', 'ple'], ['Em', 'na!']],
+  [['Em', 'Endar'], ['G', 'rera aquesta '], ['B7', 'gent']],
+  [['', 'tan ufa'], ['Am', 'na i '], ['B7', 'tan su'], ['Em', 'perba!']],
+];
+const chorus: [string, string][][] = [
+  [['Em', 'Bon cop de falç!']],
+  [['G', 'Bon cop de '], ['Am', 'falç,']],
+  [['B7', 'defen'], ['D', 'sors de la '], ['Em', 'terra!']],
+  [['Am', 'Bon cop de '], ['Em', 'falç!']],
+];
+const verse2: [string, string][][] = [
+  [['Em', 'Ara és '], ['B7', 'hora, se'], ['Em', 'gadors!']],
+  [['Em', 'Ara és '], ['G', 'hora d\'estar a'], ['D', 'ler'], ['Em', 'ta!']],
+  [['Em', 'Per quan '], ['G', 'vingui un altre '], ['B7', 'juny']],
+  [['', 'esmo'], ['Am', 'lem ben '], ['B7', 'bé les ei'], ['Em', 'nes!']],
+];
+
+const features = [
+  { title: 'Lletra amb acords', text: 'Escriu [G] abans de la síl·laba i l\'acord hi queda ancorat. El text copiat de webs de tabs es converteix sol.' },
+  { title: 'Diagrames d\'acords', text: 'De guitarra i d\'ukulele, d\'un acord o de tots els de la cançó, arrossegats on vulguis de la pàgina.' },
+  { title: 'Transport', text: 'Puja o baixa el to d\'una cançó dins d\'un cançoner: els acords i els diagrames canvien sols.' },
+  { title: 'Disseny lliure', text: 'Text, imatges, formes i codis QR cap a un vídeo de la cançó, amb pàgines mestres i estils.' },
+  { title: 'Biblioteca de cançons', text: 'Amb versions i autors, compartida entre cançoners. Hi ha nadales i cançons populars per començar.' },
+  { title: 'A punt per a impremta', text: 'PDF A4 ja imposat, llibret A5, vista en 3D i PDF en CMYK per portar a la impremta.' },
+];
+
+/** Saddle-stitch imposition for a 12-page booklet: sheet i carries N−2i | 1+2i on the front, 2+2i | N−1−2i on the back. */
+const N = 12;
+const sheets = Array.from({ length: N / 4 }, (_, i) => ({
+  front: [N - 2 * i, 1 + 2 * i],
+  back: [2 + 2 * i, N - 1 - 2 * i],
+}));
+
+const shot = (name: string) => ({
+  src: `/img/canconers-${name}-1600.webp`,
+  srcset: `/img/canconers-${name}-960.webp 960w, /img/canconers-${name}-1600.webp 1600w`,
+});
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  operatingSystem: 'macOS',
+  applicationCategory: 'DesignApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: 'ca',
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+---
+<BaseLayout
+  title="Cançoners — dissenya cançoners amb lletra i acords · Gerard Fortea"
+  description="Cançoners: app per al Mac per dissenyar cançoners amb lletra, acords i diagrames, i imprimir-los com un llibret A5 a punt per plegar i cosir. En català."
+  bodyClass="bg-[#e9e8e4] font-sans text-[#1d1d1b] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href="/" class="flex min-h-11 items-center hover:text-[#b3141b]">← Gerard Fortea</a>
+    <div class="flex items-center gap-2.5 font-book text-xl font-semibold">
+      <svg aria-hidden="true" viewBox="0 0 32 32" class="h-8 w-8"><rect width="32" height="32" rx="7" fill="#1d1d1b"></rect><path d="M7 10.5c3-1 6-1 9 .8 3-1.8 6-1.8 9-.8v12c-3-1-6-1-9 .8-3-1.8-6-1.8-9-.8Z M16 11.3v12" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+      Cançoners
+    </div>
+    <a href="#installa" class="flex min-h-11 items-center text-[#b3141b] hover:text-[#1d1d1b]">Instal·la-la</a>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto grid max-w-[1160px] items-center gap-x-16 gap-y-12 px-6 pt-10 pb-20 lg:grid-cols-[minmax(0,1fr)_440px]">
+      <div class="flex flex-col gap-6">
+        <h1 class="font-book text-[clamp(42px,5.6vw,76px)] leading-[0.98] font-semibold tracking-[-0.025em]">
+          El teu cançoner, a punt per plegar i cosir
+        </h1>
+        <p class="max-w-[560px] text-[19px] leading-relaxed text-[#4a4945]">
+          Escrius les cançons amb els acords, col·loques cada element a la pàgina amb el ratolí i l'app et dona el PDF per
+          imprimir en A4 a doble cara. El plegues, el cuses pel mig i tens un llibret A5.
+        </p>
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href="#installa" class="flex min-h-[52px] items-center rounded-full bg-[#1d1d1b] px-7 text-[15px] font-medium text-white hover:bg-[#b3141b]">Instal·la-la al Mac</a>
+          <a href={p.repo} class="flex min-h-11 items-center text-[15px] font-medium underline decoration-[#b3141b] decoration-2 underline-offset-[6px]">Codi a GitHub</a>
+        </div>
+        <p class="text-sm text-[#6b6a65]">Gratuïta i en català. Les dades es queden al teu ordinador.</p>
+      </div>
+
+      <!-- An A5 page as the app prints it. The transpose control is live: chords move by semitones. -->
+      <figure class="flex flex-col items-center gap-4">
+        <div data-song class="relative aspect-[148/210] w-full max-w-[440px] bg-white px-[9%] pt-[9%] pb-[6%] font-book text-[#1d1d1b] shadow-[0_1px_2px_rgba(29,29,27,.12),0_18px_40px_-18px_rgba(29,29,27,.35)]">
+          <p class="text-[26px] leading-tight font-semibold">Els segadors</p>
+          <p class="mt-1 text-[13px] text-[#4a4945] italic">Popular · lletra d'Emili Guanyavents</p>
+          <p class="mt-2 font-sans text-[12px] font-semibold text-[#c41a1f]" data-chord-list></p>
+          {[verse, chorus, verse2].map((block, b) => (
+            <div class="mt-4 flex flex-col gap-1 text-[clamp(12px,3.4vw,15px)] leading-none">
+              {b === 1 && <p class="font-sans text-[10px] tracking-[0.06em] text-[#6b6a65]">Tornada</p>}
+              {block.map((line) => (
+                <p class="flex flex-wrap">
+                  {line.map(([chord, text]) => (
+                    <span class="inline-flex flex-col whitespace-pre">
+                      <span class="h-[14px] font-sans text-[10.5px] font-semibold text-[#c41a1f]" data-chord={chord}>{chord}</span>
+                      <span>{text}</span>
+                    </span>
+                  ))}
+                </p>
+              ))}
+            </div>
+          ))}
+          <span class="absolute bottom-[4%] left-[9%] font-sans text-[11px] text-[#6b6a65]">4</span>
+        </div>
+        <figcaption class="flex items-center gap-3 text-sm">
+          <span class="font-medium">Transport</span>
+          <span class="flex items-center rounded-full border border-[#c9c7c0] bg-white">
+            <button type="button" data-step="-1" class="flex h-11 w-11 items-center justify-center rounded-l-full text-lg hover:bg-[#f1f0ec]" aria-label="Baixa un semitò">−</button>
+            <output data-offset aria-live="polite" class="w-10 text-center font-mono text-sm">0</output>
+            <button type="button" data-step="1" class="flex h-11 w-11 items-center justify-center rounded-r-full text-lg hover:bg-[#f1f0ec]" aria-label="Puja un semitò">+</button>
+          </span>
+          <span class="text-[#6b6a65]">Canvia el to</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="bg-[#1d1d1b] text-white">
+      <div class="mx-auto flex max-w-[1160px] flex-col gap-8 px-6 py-20">
+        <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
+          <h2 class="font-book text-[clamp(30px,4vw,52px)] leading-[1.02] font-semibold tracking-[-0.02em]">Ho veus tal com sortirà</h2>
+          <p class="max-w-[440px] leading-relaxed text-[#c9c7c0]">El mateix codi dibuixa la pàgina a l'editor i al PDF, i el PDF el genera el mateix motor que el navegador.</p>
+        </div>
+        <img {...shot('editor')} sizes="(min-width: 1160px) 1112px, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+          alt="L'editor de Cançoners: la llista de cançons, una pàgina amb «Els segadors», els acords i els diagrames, i el panell de la cançó amb el transport."
+          class="h-auto w-full rounded-lg" />
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1160px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-3">
+      {features.map((f) => (
+        <div class="flex flex-col gap-2 border-t-2 border-[#1d1d1b] pt-4">
+          <h3 class="font-book text-[22px] font-semibold">{f.title}</h3>
+          <p class="text-[15px] leading-relaxed text-[#4a4945]">{f.text}</p>
+        </div>
+      ))}
+    </section>
+
+    <section class="bg-white">
+      <div class="mx-auto grid max-w-[1160px] items-start gap-x-16 gap-y-12 px-6 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div class="flex flex-col gap-5">
+          <h2 class="font-book text-[clamp(30px,4vw,52px)] leading-[1.02] font-semibold tracking-[-0.02em]">Imprimir sense fer números</h2>
+          <p class="text-[17px] leading-relaxed text-[#4a4945]">
+            Cada full A4 porta dues pàgines A5 per cara, en l'ordre que toca per plegar-lo. Cada cançó comença a l'esquerra i
+            el llibret s'omple fins a un múltiple de quatre pàgines.
+          </p>
+          <p class="text-[17px] leading-relaxed text-[#4a4945]">Així queden els tres fulls d'un llibret de 12 pàgines:</p>
+          <ol class="flex flex-col gap-3">
+            {sheets.map((s, i) => (
+              <li class="grid grid-cols-[64px_1fr_1fr] items-center gap-3 text-sm">
+                <span class="text-[#6b6a65]">Full {i + 1}</span>
+                {[['Davant', s.front], ['Darrere', s.back]].map(([side, pages]) => (
+                  <span class="flex flex-col gap-1">
+                    <span class="flex h-12 border border-[#1d1d1b] font-mono text-[15px]">
+                      <span class="flex flex-1 items-center justify-center">{(pages as number[])[0]}</span>
+                      <span class="flex flex-1 items-center justify-center border-l border-dashed border-[#c41a1f]">{(pages as number[])[1]}</span>
+                    </span>
+                    <span class="text-xs text-[#6b6a65]">{side as string}</span>
+                  </span>
+                ))}
+              </li>
+            ))}
+          </ol>
+          <p class="text-sm text-[#6b6a65]">També fa PDF per a impressores sense doble cara, per a anelles i en CMYK per a impremta.</p>
+        </div>
+        <img {...shot('llibret-3d')} sizes="(min-width: 1160px) 640px, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+          alt="La pàgina Imprimir amb el llibret muntat en 3D, obert per «Els segadors»."
+          class="h-auto w-full rounded-lg border border-[#d9d7d0]" />
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1160px] items-center gap-x-16 gap-y-10 px-6 py-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+      <img {...shot('biblioteca')} sizes="(min-width: 1160px) 640px, 100vw" width="1600" height="1000" loading="lazy" decoding="async"
+        alt="La biblioteca de cançons amb la vista prèvia d'una cançó."
+        class="h-auto w-full rounded-lg border border-[#d9d7d0]" />
+      <div class="flex flex-col gap-5">
+        <h2 class="font-book text-[clamp(30px,4vw,52px)] leading-[1.02] font-semibold tracking-[-0.02em]">Totes les cançons, en una biblioteca</h2>
+        <p class="text-[17px] leading-relaxed text-[#4a4945]">
+          Cada cançó té el seu historial de versions i els seus autors, i la pots fer servir en tants cançoners com vulguis. Abans
+          de cada actualització, l'app en fa una còpia de seguretat.
+        </p>
+      </div>
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1160px] px-6 pb-[88px]">
+      <div class="flex flex-col gap-5 rounded-2xl bg-[#b3141b] p-[clamp(28px,4vw,56px)] text-white">
+        <h2 class="font-book text-[clamp(30px,4vw,52px)] leading-[1.02] font-semibold tracking-[-0.02em]">Enganxa això al Terminal</h2>
+        <CopyCommand
+          client:visible
+          command={p.install}
+          codeClass="rounded-xl bg-[#1d1d1b] text-white"
+          buttonClass="rounded-xl bg-white text-[#1d1d1b] hover:bg-[#f1f0ec]"
+        />
+        <p class="max-w-[760px] leading-relaxed">
+          Instal·la l'última versió a Aplicacions i l'obre. L'app avisa quan n'hi ha una de nova i, abans d'actualitzar-se, fa una
+          còpia de les teves dades.
+        </p>
+        <div class="flex flex-wrap gap-x-7 gap-y-2 text-sm font-medium">
+          <span>Apple Silicon (M1 o posterior)</span><span>macOS 12 o posterior</span><span class="font-mono">{p.version}</span><span>En català</span>
+          <a href={p.repo} class="underline underline-offset-4">github.com/drarekx/songery</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="canconers" class="border-[#c9c7c0] text-[#b3141b]" />
+</BaseLayout>
+
+<script>
+  const NOTES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+  const ALIASES: Record<string, string> = { Db: 'C#', 'D#': 'Eb', Gb: 'F#', 'G#': 'Ab', 'A#': 'Bb' };
+
+  /** Moves a chord's root by `steps` semitones and keeps its quality (m, 7, maj7…). */
+  function transpose(chord: string, steps: number) {
+    const m = chord.match(/^([A-G][#b]?)(.*)$/);
+    if (!m) return chord;
+    const root = ALIASES[m[1]] ?? m[1];
+    const i = NOTES.indexOf(root);
+    return i < 0 ? chord : NOTES[(i + steps + 120) % 12] + m[2];
+  }
+
+  const song = document.querySelector<HTMLElement>('[data-song]');
+  const output = document.querySelector<HTMLOutputElement>('[data-offset]');
+  if (song && output) {
+    const cells = [...song.querySelectorAll<HTMLElement>('[data-chord]')];
+    const list = song.querySelector<HTMLElement>('[data-chord-list]')!;
+    let offset = 0;
+    const render = () => {
+      const used: string[] = [];
+      for (const c of cells) {
+        const chord = c.dataset.chord ? transpose(c.dataset.chord, offset) : '';
+        c.textContent = chord;
+        if (chord && !used.includes(chord)) used.push(chord);
+      }
+      list.textContent = used.join(' · ');
+      output.textContent = offset > 0 ? `+${offset}` : String(offset);
+    };
+    document.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        offset = Math.max(-11, Math.min(11, offset + Number(b.dataset.step)));
+        render();
+      }),
+    );
+    render();
+  }
+</script>

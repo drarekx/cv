@@ -1,4 +1,4 @@
-export type ProjectSlug = 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
+export type ProjectSlug = 'canconers' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
 
 export interface Project {
   slug: ProjectSlug;
@@ -14,6 +14,14 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    slug: 'canconers',
+    name: 'Cançoners',
+    kind: 'mac',
+    version: 'v1.5.10',
+    repo: 'https://github.com/drarekx/songery',
+    install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/songery/main/install.sh | bash',
+  },
   {
     slug: 'wallpy',
     name: 'Wallpy',
