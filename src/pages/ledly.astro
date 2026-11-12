@@ -1,0 +1,302 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/sora';
+import '@fontsource-variable/jetbrains-mono';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+
+const p = project('ledly');
+const windows = {
+  repo: 'https://github.com/drarekx/ledly-windows',
+  install: 'irm https://raw.githubusercontent.com/drarekx/ledly-windows/main/install.ps1 | iex',
+  version: 'v1.0.0',
+};
+
+const features = [
+  { title: 'Pantalla', text: 'De tota la pantalla o només de la finestra d\'una app. Ignora les franges negres de les pel·lícules i suavitza els canvis perquè no parpellegi.' },
+  { title: 'Efectes', text: 'Tots els d\'HyperHDR i més: foc, aurora, meteor, serp, Nadal, rellotge… amb velocitat i color.' },
+  { title: 'Música', text: 'Pols, ones, vúmetre i un equalitzador amb 100 combinacions, amb l\'àudio de l\'ordinador i sense instal·lar res.' },
+  { title: 'Arduino Nano', text: 'Detecta el port, instal·la i actualitza el firmware i es reconnecta sola. Fins a 400 LEDs, 300 a uns 46 fps.' },
+  { title: 'Límit de consum', text: 'Abaixa la brillantor si la tira demanaria més del que dona la font d\'alimentació.' },
+  { title: 'API i WLED', text: 'API HTTP i WebSocket, temps real per DDP i compatible amb WLED: Home Assistant la troba sola a la xarxa.' },
+];
+
+const steps = [
+  ['Munta la tira', 'Darrere del monitor, amb les dades (DIN) a un pin del Nano, el D6 per exemple, i una font de 5 V pròpia.'],
+  ['Connecta el Nano per USB', 'Ledly el detecta sol.'],
+  ['Instal·la el firmware', 'Des de l\'app, en uns segons. Abans desa una còpia del que tenia el Nano.'],
+  ['Digues com és la tira', 'L\'assistent encén un LED que portes a cada cantonada i calcula la resta.'],
+  ['Posa el límit de la font', 'Per no forçar-la amb la brillantor al màxim.'],
+];
+
+/** Structured data: one app for macOS and Windows, by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  operatingSystem: 'macOS, Windows',
+  applicationCategory: 'UtilitiesApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+---
+<BaseLayout
+  title="Ledly — ambilight per al Mac i Windows amb Arduino · Gerard Fortea"
+  description="Ledly: una tira de LEDs darrere del monitor que segueix els colors de la pantalla, fa efectes i balla amb la música. Per al Mac i Windows, amb un Arduino Nano i una tira WS2812B."
+  bodyClass="bg-[#0d0e12] font-sans text-[#ecebe6] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href="/" class="flex min-h-11 items-center hover:text-white">← Gerard Fortea</a>
+    <div class="flex items-center gap-2.5 font-sora text-lg font-semibold">
+      <span aria-hidden="true" class="flex gap-[3px]">
+        {['#ff4d4d', '#ffb02e', '#4dd67a', '#38a8ff', '#b46bff'].map((c) => <span class="h-2 w-2 rounded-full" style={`background:${c};box-shadow:0 0 8px ${c}`}></span>)}
+      </span>
+      Ledly
+    </div>
+    <a href="#installa" class="flex min-h-11 items-center text-[#ffb02e] hover:text-white">Instal·la-la</a>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="relative z-10 mx-auto flex max-w-[1160px] flex-col items-center gap-6 px-6 pt-10 text-center">
+      <h1 class="max-w-[16ch] font-sora text-[clamp(40px,6.4vw,84px)] leading-[1] font-semibold tracking-[-0.035em]">La pantalla s'escampa per la paret</h1>
+      <p class="max-w-[640px] text-[19px] leading-relaxed text-[#b9b8b1]">
+        Ledly és un ambilight per al Mac i Windows: una tira de LEDs darrere del monitor que agafa els colors de la vora de la
+        pantalla, fa efectes i balla amb la música. Funciona amb un Arduino Nano i una tira WS2812B.
+      </p>
+    </section>
+
+    <!--
+      Live demo: the screen is a canvas with a moving scene. In «Pantalla» mode each LED reads the average colour of its zone
+      at the edge of that canvas, as Ledly does with the real screen; the glow canvas behind paints each LED on the wall.
+    -->
+    <section class="mx-auto flex max-w-[1160px] flex-col items-center gap-8 px-6 pt-16 pb-24">
+      <div class="relative w-full max-w-[760px]" data-ambi>
+        <canvas data-glow aria-hidden="true" class="pointer-events-none absolute top-[-22%] left-[-14%] h-[144%] w-[128%]"></canvas>
+        <div class="relative rounded-[14px] border border-[#2a2c33] bg-black p-[1.6%] shadow-[0_30px_60px_-30px_rgba(0,0,0,.9)]">
+          <canvas data-screen width="160" height="90" role="img" aria-label="Pantalla d'exemple amb colors que es mouen" class="block aspect-video w-full rounded-[6px]"></canvas>
+        </div>
+        <div aria-hidden="true" class="mx-auto h-[9%] w-[16%] bg-gradient-to-b from-[#1b1c21] to-[#121318]"></div>
+        <div aria-hidden="true" class="mx-auto h-[6px] w-[30%] rounded-t-md bg-[#1b1c21]"></div>
+      </div>
+      <div role="group" aria-label="Mode" class="relative z-10 flex flex-wrap justify-center gap-2">
+        {[['screen', 'Pantalla'], ['effect', 'Efecte arc de Sant Martí'], ['music', 'Música'], ['color', 'Color fix']].map(([mode, label], i) => (
+          <button type="button" data-mode={mode} aria-pressed={i === 0 ? 'true' : 'false'}
+            class="min-h-11 rounded-full border border-[#34363e] px-5 text-sm font-medium hover:border-[#ecebe6] aria-pressed:border-[#ecebe6] aria-pressed:bg-[#ecebe6] aria-pressed:text-[#0d0e12]">{label}</button>
+        ))}
+      </div>
+    </section>
+
+    <section class="border-y border-[#24262c] bg-[#121318]">
+      <div class="mx-auto grid max-w-[1160px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-3">
+        {features.map((f) => (
+          <div class="flex flex-col gap-2">
+            <h2 class="font-sora text-xl font-semibold">{f.title}</h2>
+            <p class="text-[15px] leading-relaxed text-[#b9b8b1]">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1160px] gap-x-16 gap-y-10 px-6 py-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div class="flex flex-col gap-5">
+        <h2 class="font-sora text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">Del calaix a la paret en cinc passos</h2>
+        <p class="text-[17px] leading-relaxed text-[#b9b8b1]">
+          Només cal un Arduino Nano (qualsevol clon amb CH340, FTDI o CP210x), una tira WS2812B i una font de 5 V. No cal l'Arduino
+          IDE: el firmware va dins de l'app.
+        </p>
+      </div>
+      <ol class="flex flex-col">
+        {steps.map(([title, text], i) => (
+          <li class="grid grid-cols-[44px_1fr] gap-x-4 border-t border-[#24262c] py-4">
+            <span class="font-mono text-sm text-[#ffb02e]">{i + 1}</span>
+            <span class="flex flex-col gap-1"><strong class="font-medium">{title}</strong><span class="text-[15px] text-[#b9b8b1]">{text}</span></span>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="mx-auto flex max-w-[1160px] flex-col gap-6 px-6 pb-20">
+      <h2 class="font-sora text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">Controla-la des d'on vulguis</h2>
+      <p class="max-w-[680px] text-[17px] leading-relaxed text-[#b9b8b1]">
+        Té una API amb documentació a la mateixa app, un plugin per a l'Stream Deck i parla com un WLED, així que Home Assistant
+        la reconeix. Per exemple, un avís vermell de tres segons:
+      </p>
+      <pre class="overflow-x-auto rounded-xl border border-[#24262c] bg-[#121318] p-5 font-mono text-[13px] leading-relaxed text-[#ecebe6]"><code>curl -X POST localhost:8765/api/state \
+  -d '&#123;"effect":"strobe","color":"#FF0000","duration":3&#125;'</code></pre>
+    </section>
+
+    <section id="installa" class="mx-auto grid max-w-[1160px] gap-6 px-6 pb-[88px] lg:grid-cols-2">
+      {[
+        { os: 'Mac', where: 'Enganxa això al Terminal', cmd: p.install!, req: ['macOS 14 o posterior', 'Apple Silicon o Intel', p.version!], repo: p.repo!, color: '#ffb02e' },
+        { os: 'Windows', where: 'Enganxa això a PowerShell', cmd: windows.install, req: ['Windows 10 (2004) o 11', 'x64 o ARM64', windows.version], repo: windows.repo, color: '#38a8ff' },
+      ].map((o) => (
+        <div class="flex min-w-0 flex-col gap-5 rounded-2xl border border-[#2a2c33] bg-[#121318] p-[clamp(24px,3vw,40px)]" style={`box-shadow: 0 -2px 0 ${o.color} inset`}>
+          <h2 class="font-sora text-[clamp(26px,3vw,36px)] leading-[1.05] font-semibold tracking-[-0.02em]">Ledly per a {o.os}</h2>
+          <p class="text-[15px] text-[#b9b8b1]">{o.where}:</p>
+          <CopyCommand
+            client:visible
+            command={o.cmd}
+            codeClass="rounded-xl bg-black text-[#ecebe6]"
+            buttonClass="rounded-xl bg-[#ecebe6] text-[#0d0e12] hover:bg-white"
+          />
+          <p class="text-[15px] leading-relaxed text-[#b9b8b1]">Baixa l'última versió i l'obre. S'actualitza sola i comprova cada descàrrega amb el seu SHA-256.</p>
+          <div class="mt-auto flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            {o.req.map((r) => <span>{r}</span>)}
+            <a href={o.repo} class="underline underline-offset-4">{o.repo.replace('https://', '')}</a>
+          </div>
+        </div>
+      ))}
+    </section>
+  </main>
+
+  <ProjectFooter current="ledly" class="border-[#24262c] text-[#ffb02e]" />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-ambi]');
+  const screen = root?.querySelector<HTMLCanvasElement>('[data-screen]');
+  const glow = root?.querySelector<HTMLCanvasElement>('[data-glow]');
+  if (root && screen && glow) {
+    const sctx = screen.getContext('2d', { willReadFrequently: true })!;
+    const gctx = glow.getContext('2d')!;
+    const W = screen.width;
+    const H = screen.height;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // LEDs clockwise from the bottom-left corner: 9 up the left, 16 along the top, 9 down the right, 16 along the bottom.
+    type Led = { x: number; y: number }; // position on the screen, 0..1
+    const leds: Led[] = [];
+    const side = 9, top = 16;
+    for (let i = 0; i < side; i++) leds.push({ x: 0, y: 1 - (i + 0.5) / side });
+    for (let i = 0; i < top; i++) leds.push({ x: (i + 0.5) / top, y: 0 });
+    for (let i = 0; i < side; i++) leds.push({ x: 1, y: (i + 0.5) / side });
+    for (let i = 0; i < top; i++) leds.push({ x: 1 - (i + 0.5) / top, y: 1 });
+
+    let mode = 'screen';
+    let fixed = [255, 140, 40];
+    const current = leds.map(() => [0, 0, 0]);
+
+    /** The sample screen: a slow sky with three coloured lights drifting across it. */
+    function drawScene(t: number) {
+      const bg = sctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, `hsl(${(t * 8) % 360} 60% 22%)`);
+      bg.addColorStop(1, `hsl(${(t * 8 + 60) % 360} 55% 10%)`);
+      sctx.fillStyle = bg;
+      sctx.fillRect(0, 0, W, H);
+      const blobs = [
+        [0.5 + 0.42 * Math.sin(t * 0.5), 0.4 + 0.35 * Math.cos(t * 0.37), 40, '255 90 60'],
+        [0.5 + 0.45 * Math.cos(t * 0.31), 0.55 + 0.4 * Math.sin(t * 0.43), 46, '60 160 255'],
+        [0.5 + 0.4 * Math.sin(t * 0.23 + 2), 0.5 + 0.38 * Math.sin(t * 0.29 + 1), 38, '255 210 60'],
+      ] as const;
+      for (const [bx, by, r, rgb] of blobs) {
+        const g = sctx.createRadialGradient(bx * W, by * H, 0, bx * W, by * H, r);
+        g.addColorStop(0, `rgb(${rgb} / 1)`);
+        g.addColorStop(1, `rgb(${rgb} / 0)`);
+        sctx.fillStyle = g;
+        sctx.fillRect(0, 0, W, H);
+      }
+    }
+
+    /** Average colour of the zone at the edge of the screen behind each LED. */
+    function sampleScreen() {
+      const data = sctx.getImageData(0, 0, W, H).data;
+      const zw = 10, zh = 10;
+      return leds.map(({ x, y }) => {
+        const x0 = Math.min(W - zw, Math.max(0, Math.round(x * W - zw / 2)));
+        const y0 = Math.min(H - zh, Math.max(0, Math.round(y * H - zh / 2)));
+        let r = 0, g = 0, b = 0;
+        for (let yy = y0; yy < y0 + zh; yy++)
+          for (let xx = x0; xx < x0 + zw; xx++) {
+            const i = (yy * W + xx) * 4;
+            r += data[i]; g += data[i + 1]; b += data[i + 2];
+          }
+        const n = zw * zh;
+        return [r / n, g / n, b / n];
+      });
+    }
+
+    const hsl = (h: number, s: number, l: number) => {
+      const a = s * Math.min(l, 1 - l);
+      const f = (n: number) => { const k = (n + h / 30) % 12; return 255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))); };
+      return [f(0), f(8), f(4)];
+    };
+
+    function targets(t: number) {
+      if (mode === 'screen') return sampleScreen();
+      if (mode === 'effect') return leds.map((_, i) => hsl((i / leds.length) * 360 + t * 60, 1, 0.5));
+      if (mode === 'music') {
+        // A stereo VU meter: each side fills up from the bottom to its channel's level, which jumps with a fake beat.
+        const left = 0.25 + 0.8 * Math.abs(Math.sin(t * 2.3) * Math.sin(t * 5.1 + 1));
+        const right = 0.25 + 0.8 * Math.abs(Math.sin(t * 2.1 + 0.7) * Math.sin(t * 4.7));
+        return leds.map(({ x, y }) => {
+          const height = 1 - y;
+          return height <= (x < 0.5 ? left : right) ? hsl(120 - height * 120, 1, 0.5) : [8, 8, 10];
+        });
+      }
+      return leds.map(() => fixed);
+    }
+
+    function drawGlow() {
+      const w = (glow.width = glow.clientWidth);
+      const h = (glow.height = glow.clientHeight);
+      gctx.clearRect(0, 0, w, h);
+      gctx.globalCompositeOperation = 'lighter';
+      // Where the screen sits inside the glow canvas.
+      const gr = glow.getBoundingClientRect(), sr = screen.getBoundingClientRect();
+      const mx = sr.left - gr.left, my = sr.top - gr.top, mw = sr.width, mh = sr.height;
+      const r = Math.max(w, h) * 0.13;
+      leds.forEach(({ x, y }, i) => {
+        const [cr, cg, cb] = current[i];
+        const px = mx + x * mw, py = my + y * mh;
+        const g = gctx.createRadialGradient(px, py, 0, px, py, r);
+        g.addColorStop(0, `rgb(${cr | 0} ${cg | 0} ${cb | 0} / .55)`);
+        g.addColorStop(1, `rgb(${cr | 0} ${cg | 0} ${cb | 0} / 0)`);
+        gctx.fillStyle = g;
+        gctx.fillRect(px - r, py - r, r * 2, r * 2);
+      });
+    }
+
+    let last = 0;
+    function frame(now: number) {
+      const t = now / 1000;
+      if (now - last > 33) {
+        last = now;
+        drawScene(t);
+        const next = targets(t);
+        // Exponential smoothing, as Ledly does to avoid flicker.
+        current.forEach((c, i) => { for (let k = 0; k < 3; k++) c[k] += (next[i][k] - c[k]) * 0.35; });
+        drawGlow();
+      }
+      if (!reduce) requestAnimationFrame(frame);
+    }
+
+    const still = () => {
+      // Reduced motion: one settled frame per change, no animation.
+      drawScene(4);
+      const next = targets(4);
+      current.forEach((c, i) => next[i].forEach((v, k) => (c[k] = v)));
+      drawGlow();
+    };
+
+    const colors = [[255, 140, 40], [255, 60, 150], [80, 200, 255], [120, 255, 120]];
+    document.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (b.dataset.mode === 'color' && mode === 'color') fixed = colors[(colors.indexOf(fixed) + 1) % colors.length];
+        mode = b.dataset.mode!;
+        document.querySelectorAll('[data-mode]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+        if (reduce) still();
+      }),
+    );
+    window.addEventListener('resize', drawGlow);
+    if (reduce) still();
+    else requestAnimationFrame(frame);
+  }
+</script>

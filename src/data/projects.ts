@@ -1,4 +1,4 @@
-export type ProjectSlug = 'canconers' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
+export type ProjectSlug = 'canconers' | 'ledly' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
 
 export interface Project {
   slug: ProjectSlug;
@@ -21,6 +21,14 @@ export const projects: Project[] = [
     version: 'v1.5.10',
     repo: 'https://github.com/drarekx/songery',
     install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/songery/main/install.sh | bash',
+  },
+  {
+    slug: 'ledly',
+    name: 'Ledly',
+    kind: 'mac',
+    version: 'v1.0.0',
+    repo: 'https://github.com/drarekx/ledly',
+    install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/ledly/main/install.sh | bash',
   },
   {
     slug: 'wallpy',
