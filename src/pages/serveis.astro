@@ -1,10 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import ContactFooter from '../components/site/ContactFooter.astro';
+import BrandSymbol from '../components/site/BrandSymbol.astro';
 
-const pageTitle = 'Programador web a la Garrotxa — Gerard Fortea, consultor tecnològic per a pimes';
-const pageDescription = 'Programador web freelance a la Garrotxa (Olot, Maià de Montcal). Assessorament tecnològic i desenvolupament d\'aplicacions web a mida per a pimes. Més de 15 anys d\'experiència.';
+const pageTitle = 'Programador web sènior a Olot i la Garrotxa · Consultor per a pimes';
+const pageDescription = 'Programador web sènior a Olot i la Garrotxa. Assessorament tecnològic i aplicacions web a mida per a pimes, del primer consell a l\'aplicació en marxa.';
 
 const services = [
   {
@@ -36,7 +40,7 @@ const jsonLd = {
       "@type": "Person",
       "@id": "https://www.gerardfortea.com/#gerard",
       "name": "Gerard Fortea Castellsague",
-      "jobTitle": "Programador web freelance · Consultor tecnològic",
+      "jobTitle": "Programador web sènior freelance i consultor tecnològic",
       "email": "fortea.gerard@mail.com",
       "telephone": "+34616271011",
       "address": {
@@ -55,7 +59,7 @@ const jsonLd = {
       "@id": "https://www.gerardfortea.com/serveis#servei",
       "url": "https://www.gerardfortea.com/serveis",
       "founder": { "@id": "https://www.gerardfortea.com/#gerard" },
-      "name": "Gerard Fortea — Programador web i consultor tecnològic a la Garrotxa",
+      "name": "Gerard Fortea — Programador web sènior i consultor tecnològic a la Garrotxa",
       "description": pageDescription,
       "email": "fortea.gerard@mail.com",
       "telephone": "+34616271011",
@@ -99,8 +103,7 @@ const stack = ['PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'MySQL'];
 <BaseLayout
   title={pageTitle}
   description={pageDescription}
-  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;600;700"
-  bodyClass="bg-ink font-sans text-paper antialiased"
+  bodyClass="bg-paper font-display text-ink antialiased"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -108,80 +111,90 @@ const stack = ['PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'MySQL'];
 
   <SiteHeader current="serveis" />
 
-  <main>
-    <section class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-10 px-6 pt-[72px] pb-[72px]">
-      <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-[22px]">
-        <p class="font-mono text-[13px] text-acid">Programador web freelance · Consultor tecnològic per a pimes</p>
-        <h1 class="font-display text-[clamp(40px,6.4vw,88px)] leading-none font-bold tracking-[-0.03em]">
-          Programador web a la Garrotxa, <span class="text-acid">per a pimes.</span>
-        </h1>
-        <p class="max-w-[640px] text-lg text-[#b4b6bd]">
-          Soc <strong class="font-semibold text-paper">Gerard Fortea</strong>,
-          <strong class="font-semibold text-paper">programador web freelance a la Garrotxa</strong> (Maià de Montcal) amb més de
-          15 anys d'experiència en programació i desenvolupament web. Ofereixo serveis
-          d'<strong class="font-semibold text-paper">assessorament tecnològic i desenvolupament d'aplicacions web a mida</strong>
-          per a pimes de la Garrotxa, Olot i comarques veïnes.
-        </p>
-        <div class="mt-2 flex flex-wrap gap-3">
-          <a href="#contacte" class="flex min-h-[52px] items-center rounded-full bg-acid px-[26px] text-[15px] font-semibold text-ink hover:bg-white">Parlem del vostre projecte</a>
-          <a href="#serveis" class="flex min-h-[52px] items-center rounded-full border border-[#4a4e59] px-[26px] text-[15px] font-semibold hover:border-paper">Veure els serveis</a>
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="relative overflow-hidden border-b border-line">
+      <BrandSymbol class="pointer-events-none absolute -right-24 bottom-[-6%] h-auto w-[min(900px,90vw)] text-line max-md:hidden" stroke={0.8} />
+      <div class="relative mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-12 px-6 pt-20 pb-24">
+        <div class="flex min-w-0 flex-[1_1_600px] flex-col gap-7">
+          <p class="text-xl tracking-[-0.01em] text-graphite">Programador web sènior freelance i consultor tecnològic</p>
+          <h1 class="font-display text-[clamp(44px,6.8vw,96px)] leading-[0.94] font-medium tracking-[-0.04em]">
+            Programador web a la Garrotxa, per a pimes
+          </h1>
+          <p class="max-w-[640px] text-lg leading-relaxed text-graphite">
+            Soc <strong class="font-medium text-ink">Gerard Fortea</strong>,
+            <strong class="font-medium text-ink">programador web sènior freelance a la Garrotxa</strong> (Maià de Montcal) amb més de
+            15 anys d'experiència en programació i desenvolupament web. Ofereixo serveis
+            d'<strong class="font-medium text-ink">assessorament tecnològic i desenvolupament d'aplicacions web a mida</strong>
+            per a pimes de la Garrotxa, Olot i comarques veïnes.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="#contacte" class="flex min-h-[52px] items-center gap-3 bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">Parlem del vostre projecte</a>
+            <a href="#serveis" class="flex min-h-[52px] items-center border border-ink px-7 text-[15px] font-medium hover:bg-ink hover:text-paper">Veure els serveis</a>
+          </div>
         </div>
+        <dl class="m-0 flex-[0_1_330px] border-t border-ink text-[15px]">
+          {[
+            ['On', 'Maià de Montcal'],
+            ['Zona', 'Olot i la Garrotxa'],
+            ['Per a', 'Pimes i autònoms'],
+            ['Experiència', 'Més de 15 anys'],
+            ['Idiomes', 'Català, castellà, anglès'],
+          ].map(([k, v]) => (
+            <div class="grid grid-cols-[120px_1fr] border-b border-line py-2.5">
+              <dt class="text-graphite">{k}</dt><dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
-      <dl class="m-0 grid flex-[0_1_340px] grid-cols-[auto_1fr] gap-x-[18px] gap-y-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-[22px] font-mono text-[13px]">
-        <dt class="text-[#9a9da6]">on</dt><dd>Maià de Montcal</dd>
-        <dt class="text-[#9a9da6]">zona</dt><dd>Olot i la Garrotxa</dd>
-        <dt class="text-[#9a9da6]">per a</dt><dd>pimes i autònoms</dd>
-        <dt class="text-[#9a9da6]">anys</dt><dd>+15 programant web</dd>
-        <dt class="text-[#9a9da6]">idiomes</dt><dd>ca · es · en</dd>
-      </dl>
     </section>
 
-    <section id="serveis" aria-labelledby="serveis-titol" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pt-6 pb-[88px]">
-      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-        <h2 id="serveis-titol" class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Què puc fer per la vostra empresa</h2>
-        <p class="max-w-[460px] text-[#b4b6bd]">Quatre maneres de treballar junts, del primer consell a l'aplicació en marxa.</p>
+    <section id="serveis" aria-labelledby="serveis-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-20 pb-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+        <h2 id="serveis-titol" class="font-display text-[clamp(34px,4.4vw,60px)] leading-[1] font-medium tracking-[-0.03em]">Què puc fer per la vostra empresa</h2>
+        <p class="max-w-[440px] leading-relaxed text-graphite">Quatre maneres de treballar junts, del primer consell a l'aplicació en marxa.</p>
       </div>
-      <div class="grid gap-6 md:grid-cols-2">
-        {services.map(({ title, description, icon }, i) => (
-          <article class="group flex flex-col gap-4 rounded-3xl border border-[#2a2d35] bg-[#17191e] p-7 transition duration-300 hover:-translate-y-1.5 hover:border-acid">
-            <div class="flex items-center justify-between">
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-[#24272e] text-acid transition-colors group-hover:bg-acid group-hover:text-ink">
-                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6" set:html={icon} />
-              </span>
-              <span class="font-mono text-xs text-[#9a9da6]">{String(i + 1).padStart(2, '0')}</span>
-            </div>
-            <h3 class="font-display text-[24px] leading-tight font-bold">{title}</h3>
-            <p class="text-[15px] text-[#b4b6bd]">{description}</p>
+      <div class="grid gap-px border border-ink bg-ink md:grid-cols-2">
+        {services.map(({ title, description }) => (
+          <article class="flex flex-col gap-5 bg-paper p-8 transition-colors hover:bg-white">
+            <h3 class="font-display text-[26px] leading-tight font-medium tracking-[-0.02em]">{title}</h3>
+            <p class="text-[15px] leading-relaxed text-graphite">{description}</p>
           </article>
         ))}
       </div>
+      <p class="max-w-[760px] text-lg leading-relaxed text-graphite">
+        Alguns exemples recents: la web del <a href="/casino-tortella" class="text-ink underline decoration-fageda underline-offset-4">Casino de Tortellà</a>,
+        la del <a href="/combat-glosa" class="text-ink underline decoration-fageda underline-offset-4">Combat de Glosa</a> i la meva especialitat,
+        les <a href="/#gestio" class="text-ink underline decoration-fageda underline-offset-4">aplicacions de gestió a mida</a>.
+      </p>
     </section>
 
-    <section class="rounded-t-[32px] bg-paper text-[#16171a]">
-      <div class="mx-auto flex max-w-[1200px] flex-wrap gap-x-16 gap-y-10 px-6 pt-20 pb-[88px]">
-        <div class="flex min-w-0 flex-[2_1_440px] flex-col gap-4">
-          <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Un programador a prop</h2>
-          <p class="max-w-[640px] text-[17px] text-[#3c3e45]">
-            Tant si necessiteu un <strong class="font-semibold text-[#16171a]">programador web a Olot</strong> o a qualsevol municipi de
-            la Garrotxa, com si cerqueu un consultor tecnològic extern de confiança per a la vostra empresa, puc ajudar-vos a
-            digitalitzar processos, crear o millorar la vostra presència digital i prendre les millors decisions tecnològiques.
-          </p>
-        </div>
-        <div class="flex flex-[1_1_300px] flex-col gap-3">
-          <h3 class="font-display text-xl font-semibold">On treballo</h3>
-          <ul class="flex flex-wrap gap-2 font-mono text-sm">
-            {areas.map((a) => <li class="rounded-full border border-[#16171a] px-4 py-[9px]">{a}</li>)}
-          </ul>
-          <h3 class="mt-4 font-display text-xl font-semibold">Amb què treballo</h3>
-          <ul class="flex flex-wrap gap-2 font-mono text-sm">
-            {stack.map((s) => <li class="rounded-full border border-[#16171a] px-4 py-[9px]">{s}</li>)}
-          </ul>
+    <section class="border-t border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-20 pb-24">
+        <div class="grid gap-x-16 gap-y-10 md:grid-cols-[2fr_1fr]">
+          <div class="flex min-w-0 flex-col gap-5">
+            <h2 class="font-display text-[clamp(34px,4.4vw,60px)] leading-[1] font-medium tracking-[-0.03em]">Un programador a prop</h2>
+            <p class="max-w-[640px] text-[17px] leading-relaxed text-graphite">
+              Tant si necessiteu un <strong class="font-medium text-ink">programador web a Olot</strong> o a qualsevol municipi de
+              la Garrotxa, com si cerqueu un consultor tecnològic extern de confiança per a la vostra empresa, puc ajudar-vos a
+              digitalitzar processos, crear o millorar la vostra presència digital i prendre les millors decisions tecnològiques.
+            </p>
+          </div>
+          <div class="flex flex-col gap-4">
+            <h3 class="text-[15px] text-graphite">On treballo</h3>
+            <ul class="flex flex-wrap gap-2 text-[15px]">
+              {areas.map((a) => <li class="border border-ink px-3 py-1.5">{a}</li>)}
+            </ul>
+            <h3 class="mt-4 text-[15px] text-graphite">Amb què treballo</h3>
+            <ul class="flex flex-wrap gap-2 font-mono text-sm">
+              {stack.map((s) => <li class="border border-ink px-3 py-1.5">{s}</li>)}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <ContactFooter title="Parlem del vostre projecte">
+  <ContactFooter title="Parlem del vostre projecte" voice="vos">
     Sense compromís. Expliqueu-me el que necessiteu i us faré una proposta.
   </ContactFooter>
 </BaseLayout>

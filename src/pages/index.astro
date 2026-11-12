@@ -1,12 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto-slab/400.css';
+import '@fontsource/caveat/700.css';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import ContactFooter from '../components/site/ContactFooter.astro';
+import BrandSymbol from '../components/site/BrandSymbol.astro';
 import { project } from '../data/projects';
 
 const experience = [
   {
-    role: 'Desenvolupador senior Full Stack',
+    role: 'Soci tecnològic i desenvolupador sènior full stack',
     period: '01/2025 – actualitat',
     company: 'Labsystems Arquitectura i Gestió',
     location: 'Barcelona',
@@ -17,7 +24,7 @@ const experience = [
     ],
   },
   {
-    role: 'Desenvolupador senior Front-end',
+    role: 'Desenvolupador sènior front-end',
     period: '02/2020 – 05/2023',
     company: 'Editorial Oceano',
     location: 'Barcelona',
@@ -28,7 +35,7 @@ const experience = [
     ],
   },
   {
-    role: 'Programador web senior FullStack',
+    role: 'Programador web sènior full stack',
     period: '09/2017 – 02/2020',
     company: 'Labsystems Arquitectura i Gestió',
     location: 'Barcelona',
@@ -68,7 +75,11 @@ const education = [
   { period: '2004 – 2007', title: 'Tècnic superior en Informàtica de Gestió', center: 'Gesem' },
 ];
 
-const skills = ['PHP', 'JavaScript', 'TypeScript', 'Java', 'Vue.js', 'HTML', 'CSS / Tailwind', 'MySQL'];
+const skills = [
+  { group: 'Desenvolupament', items: ['PHP', 'JavaScript', 'TypeScript', 'Java', 'Vue.js', 'HTML', 'CSS / Tailwind', 'MySQL', 'Swift'] },
+  { group: 'Sistemes', items: ['Linux', 'macOS'] },
+  { group: 'Gestió', items: ['Gestió de projectes', 'Anàlisi de projectes'] },
+];
 
 const languages = [
   { lang: 'Català', level: 'natiu' },
@@ -81,21 +92,21 @@ const personId = `${site}/#gerard`;
 
 /** Kinds of professional work, with a 24px stroke icon each (inner SVG markup). */
 const projectKinds = [
-  { title: 'Webs educatives', text: 'Llocs web i eines per al sector de l\'educació.', icon: '<path d="M2.5 9 12 4l9.5 5-9.5 5z"/><path d="M6.5 11.2V16c0 1.4 2.5 3 5.5 3s5.5-1.6 5.5-3v-4.8"/>' },
-  { title: 'Plataformes de gestió de la informació', text: 'Panells interns per ordenar dades, usuaris i processos.', icon: '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>' },
-  { title: 'Ecommerce', text: 'Botigues en línia: catàleg, comandes i pagaments.', icon: '<path d="M3 4h2.2l2.3 11h10.3L20 7.5H6.3"/><circle cx="9" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/>' },
-  { title: 'Webs de turisme', text: 'Webs per a allotjaments i destinacions.', icon: '<path d="M2.5 19.5 9 10l4 6 3-4 5.5 7.5z"/><circle cx="17" cy="6" r="2.2"/>' },
-  { title: 'Motors de reserves', text: 'Disponibilitat, tarifes i reserves en línia.', icon: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m9 14.5 2 2 4-4"/>' },
-  { title: 'Immobiliàries', text: 'Webs i eines per publicar i gestionar immobles.', icon: '<path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.2V20h12V9.2"/><path d="M10 20v-5h4v5"/>' },
-  { title: 'Software de gestió de propietats', text: 'Propietats, propietaris, lloguers i manteniment.', icon: '<circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2 2M14.5 8.5l2 2"/>' },
-  { title: 'I més', text: 'Webs corporatives, programari de gestió, TPV…', icon: '<path d="M12 5v14M5 12h14"/>' },
+  { title: 'Webs educatives', text: 'Llocs web i eines per al sector de l\'educació.' },
+  { title: 'Plataformes de gestió de la informació', text: 'Panells interns per ordenar dades, usuaris i processos.' },
+  { title: 'Ecommerce', text: 'Botigues en línia: catàleg, comandes i pagaments.' },
+  { title: 'Webs de turisme', text: 'Webs per a allotjaments i destinacions.' },
+  { title: 'Motors de reserves', text: 'Disponibilitat, tarifes i reserves en línia.' },
+  { title: 'Immobiliàries', text: 'Webs i eines per publicar i gestionar immobles.' },
+  { title: 'Software de gestió de propietats', text: 'Propietats, propietaris, lloguers i manteniment.' },
+  { title: 'I més', text: 'Webs corporatives, programari de gestió, TPV…' },
 ];
 
 const ways = [
-  { title: 'Eficient', text: 'Solucions que es poden mantenir, sense complicar el que és simple. Del requeriment a l\'aplicació en marxa, sense voltes.' },
-  { title: 'Creatiu', text: 'Busco la manera més clara de resoldre cada problema, i vull que el resultat també es vegi bé. Per gust, faig apps per al Mac.' },
+  { title: 'Eficient', text: 'Solucions que es poden mantenir, sense complicar el que és simple. Del requeriment a l\'aplicació en marxa.' },
+  { title: 'Creatiu', text: 'Busco la manera més clara de resoldre cada problema, i vull que el resultat també es vegi bé.' },
   { title: 'Sociable i comunicatiu', text: 'Parlo amb qui farà servir l\'aplicació, no només amb qui l\'encarrega, i explico les decisions tècniques sense embolics.' },
-  { title: 'Treballador', text: 'Més de 15 anys programant i continuo estudiant: el 2025 vaig acabar el cicle superior de Desenvolupament d\'Aplicacions Web.' },
+  { title: 'Treballador', text: 'Més de 15 anys programant i en constant aprenentatge: sempre aprenent noves tecnologies.' },
 ];
 
 const jsonLd = {
@@ -107,9 +118,9 @@ const jsonLd = {
       name: 'Gerard Fortea Castellsague',
       alternateName: 'Gerard Fortea',
       url: `${site}/`,
-      jobTitle: 'Programador web fullstack',
-      description: 'Programador a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida amb les últimes tecnologies.',
-      email: 'mailto:fortea.gerard@mail.com',
+      jobTitle: 'Programador sènior fullstack',
+      description: 'Programador sènior a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida amb les últimes tecnologies.',
+      email: 'fortea.gerard@mail.com',
       telephone: '+34616271011',
       address: {
         '@type': 'PostalAddress',
@@ -118,7 +129,6 @@ const jsonLd = {
         addressCountry: 'ES',
       },
       homeLocation: { '@type': 'Place', name: 'Olot, la Garrotxa' },
-      worksFor: { '@type': 'Organization', name: 'Labsystems Arquitectura i Gestió' },
       alumniOf: [
         { '@type': 'EducationalOrganization', name: 'Institut Obert de Catalunya (IOC)' },
         { '@type': 'EducationalOrganization', name: 'Gesem' },
@@ -127,7 +137,8 @@ const jsonLd = {
         'Aplicacions de gestió a mida',
         'Desenvolupament web fullstack',
         'Intel·ligència artificial',
-        'Vue.js', 'TypeScript', 'JavaScript', 'PHP', 'Laravel', 'MySQL', 'Swift',
+        'Vue.js', 'TypeScript', 'JavaScript', 'PHP', 'Laravel', 'MySQL', 'CSS', 'Swift',
+        'Linux', 'macOS', 'Gestió de projectes', 'Anàlisi de projectes',
       ],
       knowsLanguage: ['ca', 'es', 'en'],
       sameAs: ['https://www.linkedin.com/in/gerard-fortea-a3863741/', 'https://github.com/drarekx'],
@@ -144,7 +155,7 @@ const jsonLd = {
       '@type': 'ProfilePage',
       '@id': `${site}/#perfil`,
       url: `${site}/`,
-      name: 'Gerard Fortea — Programador a la Garrotxa',
+      name: 'Gerard Fortea — Programador sènior a la Garrotxa',
       inLanguage: 'ca',
       isPartOf: { '@id': `${site}/#web` },
       mainEntity: { '@id': personId },
@@ -152,18 +163,21 @@ const jsonLd = {
   ],
 };
 
-const wallpy = project('wallpy');
-const atajoly = project('atajoly');
-const terminaly = project('terminaly');
+/** Open-source side projects, shown as a compact list under the websites. Add new ones here. */
+const openSource = [
+  { href: '/wallpy', name: 'Wallpy', version: project('wallpy').version, swatch: '#f2a65a', text: 'Fons de pantalla amb vídeo per al Mac, que es posa en pausa quan no el veus.' },
+  { href: '/atajoly', name: 'Atajoly', version: project('atajoly').version, swatch: '#ff6a3d', text: "Canvia d'app amb el polze: ⌘ dret i la inicial de l'app." },
+  { href: '/terminaly', name: 'Terminaly', version: project('terminaly').version, swatch: '#6fdd8b', text: 'Tots els teus agents de terminal en una sola finestra.' },
+];
 
-const cardClass = 'group flex flex-col overflow-hidden rounded-3xl border border-[#2a2d35] bg-[#17191e] text-paper no-underline transition duration-300 hover:-translate-y-2 hover:border-acid';
-const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full border border-[#4a4e59] px-[18px] text-sm font-semibold transition-colors group-hover:border-acid group-hover:bg-acid group-hover:text-ink';
+
+const cardClass = 'group flex flex-col border border-ink bg-white text-ink no-underline';
+const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-line decoration-2 underline-offset-[6px] group-hover:decoration-fageda';
 ---
 <BaseLayout
-  title="Gerard Fortea — Programador a la Garrotxa · Aplicacions de gestió a mida"
-  description="Gerard Fortea, programador a la Garrotxa (Olot). Desenvolupo aplicacions de gestió a mida amb les últimes tecnologies. Eficient, creatiu, comunicatiu i treballador."
-  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@600&family=Space+Grotesk:wght@500;600;700&family=Roboto+Slab:wght@400&family=Roboto:wght@400&family=Caveat:wght@700"
-  bodyClass="bg-ink font-sans text-paper antialiased"
+  title="Gerard Fortea · Programador sènior a Olot · Aplicacions de gestió"
+  description="Gerard Fortea, programador sènior a la Garrotxa (Olot) amb més de 15 anys d'experiència. Aplicacions de gestió a mida amb Vue, TypeScript, PHP i Laravel."
+  bodyClass="bg-paper font-display text-ink antialiased"
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -171,172 +185,115 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
 
   <SiteHeader current="home" />
 
-  <main>
-    <section id="inici" class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-10 px-6 pt-[72px] pb-[72px]">
-      <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-[22px]">
-        <h1 class="flex flex-col gap-4 font-display text-[clamp(40px,6.4vw,88px)] leading-none font-bold tracking-[-0.03em]">
-          <span class="font-mono text-[15px] leading-normal font-normal tracking-normal text-acid">Gerard Fortea · programador a la Garrotxa</span>
-          <span>Aplicacions de gestió <span class="text-acid">a mida.</span></span>
-        </h1>
-        <p class="max-w-[640px] text-lg text-[#b4b6bd]">
-          Sóc en <strong class="font-semibold text-paper">Gerard Fortea</strong>, programador web a Olot i la Garrotxa amb més de 15 anys
-          d'experiència. Desenvolupo <strong class="font-semibold text-paper">aplicacions de gestió a mida</strong> per a empreses,
-          escoles i entitats, amb les últimes tecnologies: Vue, TypeScript, PHP i Laravel.
-        </p>
-        <div class="mt-2 flex flex-wrap gap-3">
-          <a href="#projectes" class="flex min-h-[52px] items-center rounded-full bg-acid px-[26px] text-[15px] font-semibold text-ink hover:bg-white">Veure els projectes</a>
-          <a href="#experiencia" class="flex min-h-[52px] items-center rounded-full border border-[#4a4e59] px-[26px] text-[15px] font-semibold hover:border-paper">Llegir el CV</a>
+  <main id="main" tabindex="-1" class="outline-none">
+    <section id="inici" class="mx-auto max-w-[1200px] px-6 pt-16 pb-10">
+      <div class="flex flex-wrap items-end gap-x-16 gap-y-10">
+        <div class="flex min-w-0 flex-[1_1_600px] flex-col gap-7">
+          <h1 class="flex flex-col gap-5 font-display font-medium">
+            <span class="text-xl tracking-[-0.01em] text-graphite">Gerard Fortea, programador sènior a la Garrotxa</span>
+            <span class="text-[clamp(46px,7.2vw,104px)] leading-[0.92] tracking-[-0.045em]">Aplicacions de gestió a mida</span>
+          </h1>
+          <p class="max-w-[600px] text-lg leading-relaxed text-graphite">
+            Soc en <strong class="font-medium text-ink">Gerard Fortea</strong>, programador sènior a Olot i la Garrotxa amb més de 15 anys
+            d'experiència. Desenvolupo <strong class="font-medium text-ink">aplicacions de gestió a mida</strong> per a empreses,
+            escoles i entitats, amb Vue, TypeScript, PHP i Laravel.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <a href="#contacte" class="flex min-h-[52px] items-center bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">Explica'm el teu projecte</a>
+            <a href="#experiencia" class="flex min-h-[52px] items-center border border-ink px-7 text-[15px] font-medium hover:bg-ink hover:text-paper">Llegir el CV</a>
+          </div>
         </div>
+        <dl class="m-0 flex-[0_1_330px] border-t border-ink text-[15px]">
+          {[
+            ['Rol', 'Programador sènior fullstack'],
+            ['Especialitat', 'Aplicacions de gestió'],
+            ['Projectes', 'Més de 50'],
+            ['Base', 'Olot, la Garrotxa'],
+            ['Idiomes', 'Català, castellà, anglès'],
+          ].map(([k, v]) => (
+            <div class="grid grid-cols-[120px_1fr] border-b border-line py-2.5">
+              <dt class="text-graphite">{k}</dt><dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
-      <dl class="m-0 grid flex-[0_1_340px] grid-cols-[auto_1fr] gap-x-[18px] gap-y-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-[22px] font-mono text-[13px]">
-        <dt class="text-[#9a9da6]">rol</dt><dd>senior fullstack</dd>
-        <dt class="text-[#9a9da6]">fort</dt><dd>aplicacions de gestió</dd>
-        <dt class="text-[#9a9da6]">projectes</dt><dd>+50 professionals</dd>
-        <dt class="text-[#9a9da6]">ara</dt><dd>Labsystems, des de 2025</dd>
-        <dt class="text-[#9a9da6]">web</dt><dd>PHP · TS · Vue · MySQL</dd>
-        <dt class="text-[#9a9da6]">mac</dt><dd>Swift · AppKit · SwiftUI</dd>
-        <dt class="text-[#9a9da6]">idiomes</dt><dd>ca · es · en</dd>
-      </dl>
+
+      <!-- The brand relief: three volcanic ridges of la Garrotxa that become circuit traces and end in
+           pads. Each pad is a way into the page; hovering a link lights its trace. -->
+      <nav aria-label="Què faig" class="relief relative mt-14">
+        <svg class="block h-auto w-full" viewBox="0 0 1200 320" fill="none" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+          <path class="trace t1" pathLength="1" d="M0 300 L 90 250 L 170 160 L 205 118 L 222 134 L 240 116 L 300 186 L 340 200 H 700 L 780 120 H 1150"></path>
+          <path class="trace t2" pathLength="1" d="M300 300 L 380 252 L 420 222 L 432 214 L 444 222 L 470 236 L 520 262 H 800 L 872 190 H 1150"></path>
+          <path class="trace t3" pathLength="1" d="M0 300 H 900 L 940 260 H 1150"></path>
+          <rect class="pad t1" x="1150" y="112" width="16" height="16"></rect>
+          <rect class="pad t2" x="1150" y="182" width="16" height="16"></rect>
+          <rect class="pad t3" x="1150" y="252" width="16" height="16"></rect>
+        </svg>
+        <ul class="flex flex-col border-t border-line text-lg font-medium md:contents">
+          <li class="md:absolute md:top-[37.5%] md:right-[6%] md:-translate-y-full"><a class="r1 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-fageda" href="#gestio">Aplicacions de gestió</a></li>
+          <li class="md:absolute md:top-[59.4%] md:right-[6%] md:-translate-y-full"><a class="r2 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-violeta" href="#webs">Webs per a entitats</a></li>
+          <li class="md:absolute md:top-[81.2%] md:right-[6%] md:-translate-y-full"><a class="r3 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-lava" href="#apps">Apps per al Mac</a></li>
+        </ul>
+      </nav>
     </section>
 
-    <section id="gestio" aria-labelledby="gestio-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-6 pb-[88px]">
-      <div class="flex flex-wrap gap-x-16 gap-y-8">
-        <div class="flex min-w-0 flex-[1_1_480px] flex-col gap-4">
-          <h2 id="gestio-titol" class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">
+    <section id="gestio" aria-labelledby="gestio-titol" class="mx-auto flex max-w-[1200px] flex-col gap-14 px-6 pt-24 pb-24">
+      <div class="flex flex-wrap gap-x-16 gap-y-10">
+        <div class="flex min-w-0 flex-[1_1_480px] flex-col gap-5">
+          <h2 id="gestio-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">
             Aplicacions de gestió que es fan servir cada dia
           </h2>
-          <p class="max-w-[600px] text-lg text-[#b4b6bd]">
+          <p class="max-w-[600px] text-lg leading-relaxed text-graphite">
             Fa anys que faig el programari amb què treballa la gent: panells interns, gestió de clients, reserves i processos
             que abans es feien a mà. Pensat per a qui l'utilitzarà, fàcil de mantenir i fet amb tecnologies actuals.
           </p>
         </div>
-        <ul class="flex flex-[1_1_380px] flex-col gap-4 text-[15px] text-[#b4b6bd]">
-          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Gestió a mida.</strong> Gestió d'alumnes a Editorial Océano, gestió immobiliària a Pimmo i programari per al sector turístic i vacacional a Labsystems.</span></li>
-          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Panells per a gent no tècnica.</strong> L'organització del <a href="/combat-glosa" class="text-acid underline underline-offset-4">Combat de Glosa</a> canvia continguts, colors i formularis sense tocar codi.</span></li>
-          <li class="flex gap-3"><span aria-hidden="true" class="mt-2 h-2 w-2 shrink-0 rounded-full bg-acid"></span><span><strong class="font-semibold text-paper">Al dia.</strong> Quan estalvia feina, hi afegeixo intel·ligència artificial, com els assistents del backend del <a href="/casino-tortella" class="text-acid underline underline-offset-4">Casino de Tortellà</a>.</span></li>
+        <ul class="flex flex-[1_1_380px] flex-col gap-6 pt-2 text-[16px] leading-relaxed text-graphite">
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-fageda"></span><span><strong class="font-medium text-ink">Gestió a mida.</strong> Gestió d'alumnes a Editorial Océano, gestió immobiliària a Pimmo i programari per al sector turístic i vacacional a Labsystems.</span></li>
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-violeta"></span><span><strong class="font-medium text-ink">Panells per a gent no tècnica.</strong> L'organització del <a href="/combat-glosa" class="text-ink underline decoration-violeta decoration-2 underline-offset-4">Combat de Glosa</a> canvia continguts, colors i formularis sense tocar codi.</span></li>
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-lava"></span><span><strong class="font-medium text-ink">Al dia.</strong> Quan estalvia feina, hi afegeixo intel·ligència artificial, com els assistents del backend del <a href="/casino-tortella" class="text-ink underline decoration-lava decoration-2 underline-offset-4">Casino de Tortellà</a>.</span></li>
         </ul>
       </div>
-      <div class="flex flex-col gap-5">
-        <h3 class="font-display text-2xl font-bold">Com treballo</h3>
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="flex flex-col gap-8">
+        <h3 class="font-display text-2xl font-medium tracking-[-0.02em]">Com treballo</h3>
+        <dl class="grid gap-x-12 gap-y-8 sm:grid-cols-2">
           {ways.map((w) => (
-            <article class="flex flex-col gap-2 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-6">
-              <h4 class="font-display text-xl font-bold text-acid">{w.title}</h4>
-              <p class="text-[15px] text-[#b4b6bd]">{w.text}</p>
-            </article>
+            <div class="flex flex-col gap-2">
+              <dt class="font-display text-xl font-medium">{w.title}</dt>
+              <dd class="max-w-[46ch] text-[16px] leading-relaxed text-graphite">{w.text}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
       </div>
     </section>
 
-    <section id="projectes" aria-labelledby="projectes-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-6 pb-[88px]">
-      <div class="flex flex-wrap items-end gap-x-14 gap-y-6">
-        <p aria-hidden="true" class="font-display text-[clamp(96px,16vw,200px)] leading-[0.8] font-bold tracking-[-0.05em] text-acid">
-          <span data-count-to="50">50</span>+
-        </p>
-        <div class="flex min-w-0 flex-[1_1_420px] flex-col gap-3 pb-2">
-          <h2 id="projectes-titol" class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">
+    <section id="projectes" aria-labelledby="projectes-titol" class="border-y border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-12 px-6 pt-24 pb-24">
+        <div class="flex flex-col gap-5">
+          <h2 id="projectes-titol" class="max-w-[16ch] font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">
             Més de 50 projectes professionals
           </h2>
-          <p class="max-w-[620px] text-lg text-[#b4b6bd]">
-            En més de 15 anys, a Labsystems, Editorial Océano, Pimmo i Sala Assessors, he desenvolupat projectes de tota mena:
-            des de webs educatives fins a motors de reserves i programari de gestió de propietats.
+          <p class="max-w-[620px] text-lg leading-relaxed text-graphite">
+            En més de 15 anys, a Labsystems, Editorial Océano, Pimmo i Sala Assessors, he desenvolupat projectes de tota mena.
           </p>
         </div>
-      </div>
-      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {projectKinds.map((k) => (
-          <li class="flex flex-col gap-3 rounded-[20px] border border-[#2a2d35] bg-[#17191e] p-6 transition-colors hover:border-acid">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7 text-acid" set:html={k.icon} />
-            <h3 class="font-display text-lg leading-tight font-bold">{k.title}</h3>
-            <p class="text-sm text-[#b4b6bd]">{k.text}</p>
-          </li>
-        ))}
-      </ul>
-      <p class="text-sm text-[#9a9da6]">A sota, una mostra: les apps que he fet pel meu compte i algunes webs recents.</p>
-    </section>
-
-    <section id="apps" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pt-6 pb-[88px]">
-      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Tres apps per al Mac, <span class="text-acid">per gust</span></h2>
-        <p class="max-w-[460px] text-[#b4b6bd]">Natives, escrites en Swift i publicades a GitHub. S'instal·len amb una línia a Terminal i s'actualitzen soles.</p>
-      </div>
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-6">
-
-        <a href="/wallpy" class={cardClass}>
-          <div aria-hidden="true" class="relative h-[260px] overflow-hidden bg-[#f2a65a]">
-            <div class="absolute top-[30%] left-[62%] h-[84px] w-[84px] rounded-full bg-[#ffe2a6]"></div>
-            <div class="absolute top-12 left-0 h-[22px] w-[120px] rounded-full bg-[#f7c592] [animation:drift_26s_linear_infinite]"></div>
-            <div class="absolute top-[92px] left-0 h-4 w-20 rounded-full bg-[#f7c592] [animation:drift_38s_linear_infinite_-12s]"></div>
-            <svg viewBox="0 0 400 120" preserveAspectRatio="none" class="absolute bottom-0 left-0 h-[130px] w-full">
-              <path d="M0 70 Q80 10 170 60 T400 40 V120 H0Z" fill="#a8502f"></path>
-              <path d="M0 95 Q110 50 220 90 T400 78 V120 H0Z" fill="#6e2f25"></path>
-            </svg>
-            <div class="absolute inset-x-0 top-0 flex h-6 items-center justify-between bg-[#2a1208] px-3 font-sora text-[11px] text-[#ffe2a6]">
-              <span>Wallpy</span><span data-clock>--:--</span>
-            </div>
-            <div class="absolute bottom-3.5 left-[18px] font-sora text-5xl leading-none font-semibold text-white" data-clock>--:--</div>
-          </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
-            <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Wallpy</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">{wallpy.version}</span>
-            </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">Fons de pantalla amb vídeo. Un bucle darrere les finestres que es posa en pausa quan no el veus.</p>
-            <span class={goClass}>Obrir Wallpy →</span>
-          </div>
-        </a>
-
-        <a href="/atajoly" class={cardClass}>
-          <div aria-hidden="true" class="flex h-[260px] flex-col items-center justify-center gap-[18px] bg-[#ecebe6]">
-            <div class="flex items-center gap-3 font-mono font-bold text-[#1c1b19]">
-              <div class="box-border flex h-[72px] w-[104px] flex-col items-end justify-between rounded-xl border-b-[5px] border-[#c2441d] bg-[#ff6a3d] px-2.5 py-2 text-xs">
-                <span class="text-xl">⌘</span><span>dret</span>
-              </div>
-              <span class="text-[22px]">+</span>
-              <div class="animate-press box-border flex h-[72px] w-[72px] items-center justify-center rounded-xl border border-b-[5px] border-[#cfcdc4] border-b-[#b9b6ab] bg-white text-3xl" data-key-letter>S</div>
-            </div>
-            <div class="font-display text-lg font-semibold text-[#1c1b19]">→ <span data-key-app>Safari</span> al davant</div>
-          </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
-            <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Atajoly</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">{atajoly.version}</span>
-            </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">Canvia d'app amb el polze. Mantén ⌘ dret, prem la inicial d'una app i es posa davant.</p>
-            <span class={goClass}>Obrir Atajoly →</span>
-          </div>
-        </a>
-
-        <a href="/terminaly" class={cardClass}>
-          <div aria-hidden="true" class="box-border flex h-[260px] flex-col gap-2.5 bg-[#050608] p-5 font-mono text-xs text-[#c9d1d9]">
-            <div class="text-[#8b949e]">$ tly ls</div>
-            <div class="flex gap-2.5"><span class="text-[#f2b84b]">●</span><span class="grow">claude · migració</span><span class="text-[#f2b84b]">treballant</span></div>
-            <div class="flex gap-2.5"><span class="text-[#6fdd8b]">●</span><span class="grow">codex · tests</span><span class="text-[#6fdd8b]">a punt</span></div>
-            <div class="flex gap-2.5"><span class="text-[#7ab7ff]">●</span><span class="grow">claude · rutes</span><span class="text-[#7ab7ff]">et necessita</span></div>
-            <div class="flex gap-2.5"><span class="text-[#6fdd8b]">●</span><span class="grow">zsh</span><span class="text-[#6fdd8b]">a punt</span></div>
-            <div class="mt-auto">$ <span class="animate-blink inline-block h-[15px] w-2 bg-[#6fdd8b] align-text-bottom"></span></div>
-          </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
-            <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Terminaly</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">{terminaly.version}</span>
-            </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">Tots els teus agents, un sol terminal. Sessions de Claude, Codex i shell que segueixen vives encara que tanquis l'app.</p>
-            <span class={goClass}>Obrir Terminaly →</span>
-          </div>
-        </a>
-
+        <ul class="grid gap-x-12 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+          {projectKinds.map((k) => (
+            <li class="flex flex-col gap-1.5 border-t border-ink pt-3">
+              <h3 class="font-display text-lg leading-tight font-medium">{k.title}</h3>
+              <p class="text-[15px] leading-relaxed text-graphite">{k.text}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
 
-    <section id="webs" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[88px]">
-      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">I algunes webs recents</h2>
-        <p class="max-w-[460px] text-[#b4b6bd]">Per a entitats i companyies: el Casino de Tortellà, el seu combat de glosa i una companyia de circ.</p>
+    <section id="webs" aria-labelledby="webs-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+        <h2 id="webs-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Webs per a entitats i companyies</h2>
+        <p class="max-w-[420px] leading-relaxed text-graphite">El Casino de Tortellà, el seu combat de glosa i una companyia de circ. Aviat n'hi haurà més.</p>
       </div>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
         <a href="/casino-tortella" class={cardClass}>
           <div aria-hidden="true" class="flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]">
             <div class="flex h-9 items-center gap-2 bg-[#1c1c1c] px-4 font-slab text-sm text-white">
@@ -349,13 +306,13 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
             <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">15</span><span class="font-slab">Mostra de Cinema Espiritual</span></div>
             <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">31</span><span class="font-slab">Festa de la Castanyada</span></div>
           </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
             <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Casino de Tortellà</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">October CMS</span>
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Casino de Tortellà</h3>
+              <span class="font-mono text-xs text-graphite">October CMS</span>
             </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">La nova web de l'entitat: agenda d'actes, espais, activitats setmanals i fer-se'n soci. Una cartellera on el programa mana.</p>
-            <span class={goClass}>Obrir Casino →</span>
+            <p class="grow text-[15px] leading-relaxed text-graphite">La nova web de l'entitat: agenda d'actes, espais, activitats setmanals i fer-se'n soci. Una cartellera on el programa mana.</p>
+            <span class={goClass}>Veure el projecte</span>
           </div>
         </a>
 
@@ -370,13 +327,13 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
               </span>
             </div>
           </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
             <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Combat de Glosa</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">Nuxt 4</span>
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Combat de Glosa</h3>
+              <span class="font-mono text-xs text-graphite">Nuxt 4</span>
             </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">La web del combat de glosa i corrandes: programa, reserves del dinar, inscripció de glosadors i un panell per canviar-ho tot.</p>
-            <span class={goClass}>Obrir Combat de Glosa →</span>
+            <p class="grow text-[15px] leading-relaxed text-graphite">La web del combat de glosa i corrandes: programa, reserves del dinar, inscripció de glosadors i un panell per canviar-ho tot.</p>
+            <span class={goClass}>Veure el projecte</span>
           </div>
         </a>
 
@@ -387,116 +344,128 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
               <img src="/img/cia-nom-provisional-bg-800.jpg" alt="" width="800" height="398" loading="lazy" decoding="async" class="absolute inset-x-0 top-9 bottom-0 h-[calc(100%-2.25rem)] w-full object-cover object-top" />
             </picture>
             <div class="absolute inset-x-0 top-9 bottom-0 bg-[#1d2b5c]/25"></div>
-            <div class="absolute inset-x-0 top-0 z-10 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-[11px] font-bold tracking-wider">
+            <div class="absolute inset-x-0 top-0 z-10 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-xs font-bold tracking-wider text-[#1c1b19]">
               <span>ESPECTACLE</span><span>COMPANYIA</span><span>AGENDA</span>
             </div>
             <img src="/img/cia-nom-provisional-logo.png" alt="" width="356" height="253" loading="lazy" class="relative mt-9 h-auto w-[140px] drop-shadow-[2px_2px_0_#1d2b5c]" />
             <span class="relative bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
           </div>
-          <div class="flex grow flex-col gap-2.5 p-6">
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
             <div class="flex items-baseline justify-between gap-3">
-              <h3 class="font-display text-[26px] font-bold">Cia Nom Provisional</h3>
-              <span class="font-mono text-xs text-[#9a9da6]">circ</span>
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Cia Nom Provisional</h3>
+              <span class="font-mono text-xs text-graphite">circ</span>
             </div>
-            <p class="grow text-[15px] text-[#b4b6bd]">La web d'una companyia de circ: l'espectacle, la companyia, l'agenda de funcions i el contacte, en quatre idiomes.</p>
-            <span class={goClass}>Visitar la web ↗<span class="sr-only"> (s'obre en una pestanya nova)</span></span>
+            <p class="grow text-[15px] leading-relaxed text-graphite">La web d'una companyia de circ: l'espectacle, la companyia, l'agenda de funcions i el contacte, en quatre idiomes.</p>
+            <span class={goClass}>Visitar la web<span class="sr-only"> (s'obre en una pestanya nova)</span></span>
           </div>
         </a>
-
       </div>
     </section>
 
-    <section id="experiencia" class="rounded-t-[32px] bg-paper text-[#16171a]">
-      <div class="mx-auto flex max-w-[1200px] flex-col gap-7 px-6 pt-20 pb-8">
-        <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-          <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">Experiència</h2>
-          <p class="max-w-[460px] text-[#4b4d55]">Cinc etapes, del primer ecommerce al rol d'analista i programador fullstack.</p>
+    <section id="apps" aria-labelledby="apps-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-24">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
+        <h2 id="apps-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">Apps per al Mac, per gust</h2>
+        <p class="text-[15px] text-graphite">Natives, en Swift i publicades a GitHub.</p>
+      </div>
+      <ul class="flex flex-col border-t border-ink">
+        {openSource.map((a) => (
+          <li class="border-b border-line">
+            <a href={a.href} class="group grid min-h-14 grid-cols-[14px_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-3 sm:grid-cols-[14px_160px_minmax(0,1fr)_auto]">
+              <span aria-hidden="true" class="h-3 w-3" style={`background:${a.swatch}`}></span>
+              <span class="font-display text-lg font-medium underline decoration-transparent decoration-2 underline-offset-4 group-hover:decoration-fageda">{a.name}</span>
+              <span class="col-start-2 text-[15px] text-graphite sm:col-start-auto">{a.text}</span>
+              <span class="row-start-1 font-mono text-xs text-graphite sm:row-start-auto" style="grid-column:-2/-1">{a.version}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section id="experiencia" aria-labelledby="experiencia-titol" class="border-t border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-10">
+        <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+          <h2 id="experiencia-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Experiència</h2>
+          <p class="max-w-[420px] leading-relaxed text-graphite">Del primer ecommerce, el 2008, al rol d'analista i programador sènior fullstack.</p>
         </div>
-        <div class="flex flex-col border-t-2 border-[#16171a]">
+        <ol class="flex flex-col border-t border-ink">
           {experience.map(({ role, period, company, location, tasks }) => (
-            <article class="flex flex-wrap gap-x-8 gap-y-1.5 border-b border-[#d3d1c9] py-[22px]">
-              <div class="flex-[0_0_200px] pt-1 font-mono text-[13px] text-[#4b4d55]">{period}</div>
-              <div class="flex min-w-0 flex-[999_1_420px] flex-col gap-1">
-                <h3 class="font-display text-xl font-semibold">{role}</h3>
-                <div class="text-sm font-medium text-[#4b4d55]">{company} · {location}</div>
-                <ul class="mt-1.5 flex max-w-[760px] flex-col gap-1 text-[15px]">
+            <li class="grid gap-x-8 gap-y-2 border-b border-line py-7 md:grid-cols-[200px_1fr]">
+              <div class="pt-1 font-mono text-[13px] text-graphite">{period}</div>
+              <div class="flex min-w-0 flex-col gap-1.5">
+                <h3 class="font-display text-[22px] font-medium tracking-[-0.02em]">{role}</h3>
+                <div class="text-[15px] text-graphite">{company}, {location}</div>
+                <ul class="mt-2 flex max-w-[72ch] flex-col gap-1.5 text-[15px] leading-relaxed">
                   {tasks.map((task) => (
-                    <li class="flex gap-2.5"><span aria-hidden="true" class="shrink-0 text-[#8a8c93]">—</span><span>{task}</span></li>
+                    <li class="flex gap-3"><span aria-hidden="true" class="mt-[0.7em] h-px w-3 shrink-0 bg-graphite"></span><span>{task}</span></li>
                   ))}
                 </ul>
               </div>
-            </article>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
 
-      <div id="habilitats" class="mx-auto flex max-w-[1200px] flex-wrap gap-x-16 gap-y-10 px-6 pt-10 pb-[88px]">
-        <div class="flex min-w-0 flex-[2_1_380px] flex-col gap-4">
-          <h2 class="font-display text-[32px] font-bold tracking-[-0.02em]">Habilitats</h2>
-          <ul class="flex flex-wrap gap-2 font-mono text-sm">
-            {skills.map((s) => <li class="rounded-full border border-[#16171a] px-4 py-[9px]">{s}</li>)}
-            <li class="rounded-full border border-[#16171a] bg-[#16171a] px-4 py-[9px] text-acid">Swift</li>
-          </ul>
-        </div>
-        <div class="flex flex-[1_1_260px] flex-col gap-3">
-          <h3 class="font-display text-xl font-semibold">Formació</h3>
-          {education.map(({ period, title, center }) => (
-            <div class="text-[15px]">{title}, {center}<br /><span class="font-mono text-xs text-[#4b4d55]">{period}</span></div>
+      <div id="habilitats" class="mx-auto grid max-w-[1200px] gap-x-12 gap-y-10 px-6 pt-10 pb-24 md:grid-cols-[2fr_1fr_1fr]">
+        <div class="flex min-w-0 flex-col gap-6">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">Habilitats</h2>
+          {skills.map(({ group, items }) => (
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[15px] text-graphite">{group}</h3>
+              <ul class="flex flex-wrap gap-2 font-mono text-sm">
+                {items.map((s) => <li class="border border-ink px-3 py-1.5">{s}</li>)}
+              </ul>
+            </div>
           ))}
         </div>
-        <div class="flex flex-[1_1_220px] flex-col gap-3">
-          <h3 class="font-display text-xl font-semibold">Idiomes</h3>
-          {languages.map(({ lang, level }) => <div class="text-[15px]">{lang}, {level}</div>)}
+        <div class="flex flex-col gap-4">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">Formació</h2>
+          {education.map(({ period, title, center }) => (
+            <div class="border-t border-line pt-3 text-[15px] leading-snug">{title}, {center}<br /><span class="font-mono text-xs text-graphite">{period}</span></div>
+          ))}
+        </div>
+        <div class="flex flex-col gap-4">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">Idiomes</h2>
+          {languages.map(({ lang, level }) => <div class="flex justify-between border-t border-line pt-3 text-[15px]"><span>{lang}</span><span class="text-graphite">{level}</span></div>)}
         </div>
       </div>
     </section>
   </main>
 
-  <ContactFooter>
+  <style>
+    /* Hero relief: thin ink traces that draw in once, and light up in their accent when their link is hovered. */
+    .relief .trace,
+    .relief .pad {
+      stroke: var(--color-ink);
+      stroke-width: 1.5;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease;
+    }
+    .relief .pad { fill: var(--color-paper); }
+    .relief .trace { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.6s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+    .relief .t2 { animation-delay: 0.15s; }
+    .relief .t3 { animation-delay: 0.3s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .relief:has(.r1:hover, .r1:focus-visible) .t1 { stroke: var(--color-fageda-deep); stroke-width: 3; }
+    .relief:has(.r2:hover, .r2:focus-visible) .t2 { stroke: var(--color-violeta-deep); stroke-width: 3; }
+    .relief:has(.r3:hover, .r3:focus-visible) .t3 { stroke: var(--color-lava-deep); stroke-width: 3; }
+    .relief:has(.r1:hover, .r1:focus-visible) rect.t1 { fill: var(--color-fageda); }
+    .relief:has(.r2:hover, .r2:focus-visible) rect.t2 { fill: var(--color-violeta); }
+    .relief:has(.r3:hover, .r3:focus-visible) rect.t3 { fill: var(--color-lava); }
+    @media (prefers-reduced-motion: reduce) {
+      .relief .trace { animation: none; stroke-dashoffset: 0; }
+    }
+  </style>
+
+  <ContactFooter title="Parlem del teu projecte">
     Tens un projecte web a la Garrotxa o on sigui? Escriu-me i en parlem.
-    <a href="/serveis" class="font-semibold underline">Mira què puc fer per la teva empresa.</a>
+    <a href="/serveis">Mira què puc fer per la teva empresa.</a>
   </ContactFooter>
 
   <script>
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const tick = () => {
-      const d = new Date();
-      document.querySelectorAll('[data-clock]').forEach((el) => (el.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`));
-    };
-    tick();
-    setInterval(tick, 15000);
-
-    const counter = document.querySelector<HTMLElement>('[data-count-to]');
-    if (counter && !matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-      const target = Number(counter.dataset.countTo);
-      counter.textContent = '0';
-      const io = new IntersectionObserver(([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        const start = performance.now();
-        const step = (now: number) => {
-          const p = Math.min(1, (now - start) / 1200);
-          counter.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
-          if (p < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      }, { threshold: 0.6 });
-      io.observe(counter);
-    }
-
     const glosaDays = document.querySelector('[data-glosa-days]');
     if (glosaDays) {
       const ms = new Date('2026-11-21T16:30:00+01:00').getTime() - Date.now();
       glosaDays.textContent = String(Math.max(0, Math.ceil(ms / 86_400_000)));
     }
 
-    const keys: [string, string][] = [['S', 'Safari'], ['T', 'Terminal'], ['M', 'Mail'], ['N', 'Notes'], ['C', 'Calendari']];
-    const letter = document.querySelector('[data-key-letter]');
-    const app = document.querySelector('[data-key-app]');
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % keys.length;
-      if (letter && app) [letter.textContent, app.textContent] = keys[i];
-    }, 1600);
   </script>
 </BaseLayout>

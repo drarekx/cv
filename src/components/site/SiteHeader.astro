@@ -1,35 +1,42 @@
 ---
+import BrandSymbol from './BrandSymbol.astro';
+
 interface Props {
   current?: 'home' | 'serveis';
+  /** Where "Contacte" points: the footer form on this page, or the home's on pages without one. */
+  contactHref?: string;
 }
-const { current = 'home' } = Astro.props;
+const { current = 'home', contactHref = '#contacte' } = Astro.props;
 
 const links = [
   { href: '/#projectes', label: 'Projectes' },
   { href: '/#experiencia', label: 'Experiència' },
   { href: '/serveis', label: 'Serveis', page: 'serveis' },
-  { href: '#contacte', label: 'Contacte' },
+  { href: contactHref, label: 'Contacte' },
 ];
 ---
 <!--
-  Sticky header. At the top of the page it looks like the full header; once the page scrolls,
-  `data-scrolled` switches it to a compact bar with a translucent background.
+  Sticky header. At the top of the page it is the full logo; once the page scrolls,
+  `data-scrolled` turns it into a compact bar with a hairline underneath.
 -->
 <header
   data-site-header
-  class="group sticky top-0 z-50 border-b border-transparent transition-[background-color,border-color] duration-300 data-[scrolled]:border-[#2a2d35] data-[scrolled]:bg-ink/95 data-[scrolled]:backdrop-blur-md"
+  class="group sticky top-0 z-50 border-b border-line bg-paper transition-[background-color,border-color] duration-300 data-[scrolled]:border-ink data-[scrolled]:bg-paper/95 data-[scrolled]:backdrop-blur-md"
 >
-  <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-1 px-6 py-5 transition-[padding] duration-300 group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:py-1.5">
-    <a href="/" class="flex min-h-11 items-center gap-2.5 font-display text-lg font-bold transition-[font-size] duration-300 group-data-[scrolled]:text-base hover:text-acid">
-      <span aria-hidden="true" class="h-3 w-3 rounded-full bg-acid transition-transform duration-300 group-data-[scrolled]:scale-75"></span>
-      <span class="max-sm:group-data-[scrolled]:sr-only">Gerard Fortea</span>
+  <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-1 px-6 py-4 transition-[padding] duration-300 sm:group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:py-1.5">
+    <a href="/" class="flex min-h-11 items-center gap-3 text-ink" aria-label="Gerard Fortea, inici">
+      <BrandSymbol class="h-auto w-11 transition-[width] duration-300 group-data-[scrolled]:w-9" stroke={4} />
+      <span class="font-display text-[19px] leading-none font-medium tracking-[-0.02em] max-sm:group-data-[scrolled]:sr-only">Gerard Fortea</span>
     </a>
-    <nav aria-label="Principal" class="flex flex-wrap gap-x-7 gap-y-0 text-sm font-medium transition-[font-size] duration-300 group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:text-[13px] sm:group-data-[scrolled]:gap-x-5">
+    <nav aria-label="Principal" class="flex flex-wrap gap-x-4 text-[14px] sm:gap-x-6 sm:text-[15px] sm:group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 sm:group-data-[scrolled]:gap-x-6">
       {links.map(({ href, label, page }) => (
         <a
           href={href}
           aria-current={page === current ? 'page' : undefined}
-          class:list={['flex min-h-11 items-center hover:text-acid', page === current && 'text-acid underline decoration-2 underline-offset-8']}
+          class:list={[
+            'flex min-h-11 items-center border-b-2 hover:border-ink',
+            page === current ? 'border-fageda text-ink' : 'border-transparent',
+          ]}
         >{label}</a>
       ))}
     </nav>

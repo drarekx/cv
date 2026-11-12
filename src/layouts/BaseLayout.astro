@@ -9,18 +9,18 @@ interface Props {
   /** Root-relative path of the 1200×630 social preview image. */
   ogImage?: string;
   ogImageAlt?: string;
-  /** Google Fonts css2 query (the part after `family=`), when the page needs more than Inter. */
-  fonts?: string;
   bodyClass?: string;
+  /** Keep the page out of search results (legal pages). */
+  noindex?: boolean;
 }
 const {
-  title = 'Gerard Fortea — Programador a la Garrotxa',
-  description = 'Gerard Fortea, programador a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida.',
+  title = 'Gerard Fortea — Programador sènior a la Garrotxa',
+  description = 'Gerard Fortea, programador sènior a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida.',
   canonical,
   ogImage = '/og.png',
-  ogImageAlt = 'Gerard Fortea, programador a la Garrotxa: aplicacions de gestió a mida',
-  fonts = 'Inter:wght@300;400;500;600;700',
-  bodyClass = 'bg-ink font-sans text-paper antialiased',
+  ogImageAlt = 'Gerard Fortea, programador sènior a la Garrotxa: aplicacions de gestió a mida',
+  bodyClass = 'bg-paper font-display text-ink antialiased',
+  noindex = false,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://www.gerardfortea.com');
@@ -38,9 +38,12 @@ const ogImageUrl = new URL(ogImage, site).href;
     <meta name="description" content={description} />
     <meta name="author" content="Gerard Fortea Castellsague" />
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" href="/favicon.ico" />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
-    <meta name="theme-color" content="#0e0f12" />
+    <meta name="theme-color" content="#f7f7f4" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Gerard Fortea" />
@@ -57,12 +60,10 @@ const ogImageUrl = new URL(ogImage, site).href;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href={`https://fonts.googleapis.com/css2?family=${fonts}&display=swap`} rel="stylesheet" />
     <slot name="head" />
   </head>
   <body class={bodyClass}>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-ink focus:px-5 focus:py-3 focus:font-medium focus:text-paper">Salta al contingut</a>
     <slot />
   </body>
 </html>
