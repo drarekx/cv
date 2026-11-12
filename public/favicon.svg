@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Gerard Fortea">
+  <title>Gerard Fortea</title>
+  <rect width="64" height="64" fill="#0b0c0e"/>
+  <g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M8 47 L 16 34 L 21 22 L 24 18 L 28 23 L 32 18 L 37 27 L 42 33 L 46 34 H 50"/>
+    <path d="M8 47 H 50"/>
+    <rect x="51" y="30.5" width="7" height="7" fill="#fff"/>
+    <rect x="51" y="43.5" width="7" height="7" fill="#fff"/>
+  </g>
+</svg>
