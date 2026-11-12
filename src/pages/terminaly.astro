@@ -15,6 +15,13 @@ const states = [
   { color: '#7ab7ff', label: 'et necessita', text: 'Demana una resposta: notificació i número a la icona del Dock.' },
 ];
 
+const swarm = [
+  ['Instal·la la skill', 'A Ajustos → Agents, la skill terminaly-swarm per a Claude Code o opencode.'],
+  ['Demana un swarm', 'L\'agent que rep l\'encàrrec es converteix en el lead i reparteix la feina.'],
+  ['Els workers treballen', 'Cadascun en una sessió i un worktree de git propis, penjats del lead a la barra lateral.'],
+  ['El lead revisa i fusiona', 'Espera que acabin, revisa les branques i les fusiona. Els permisos sempre els aproves tu.'],
+];
+
 const features = [
   { title: 'Projectes i sessions', text: 'Barra lateral amb carpetes i les seves sessions: fixa, reanomena, arxiva, posa-hi color. Arrossega una carpeta per afegir-la.' },
   { title: 'Terminals de veritat', text: 'SwiftTerm a sota. Les sessions segueixen vives encara que no les tinguis a la vista.' },
@@ -22,17 +29,20 @@ const features = [
   { title: 'Panells dividits', text: '⌘D a la dreta, ⇧⌘D a sota, ⌘W tanca. La disposició es recorda.' },
   { title: 'Paleta d\'ordres', text: '⌘K per a tot. ⌘[ i ⌘] per passar d\'una sessió a l\'altra.' },
   { title: 'Tanca l\'app, no la feina', text: 'Les sessions viuen al dimoni tly. En tornar a obrir, es reconnecten amb la sortida recent.' },
+  { title: 'Des del navegador', text: 'Obre les sessions del Mac des de qualsevol navegador de la xarxa local o la VPN, també des de l\'iPhone. Desactivat per defecte i protegit amb un token.' },
+  { title: 'Pintat amb la GPU', text: 'Els terminals es dibuixen amb la GPU: la meitat de CPU mentre els agents treballen.' },
 ];
 
 const cli: [string, string?][] = [
   ['tly ls'],
   ['tly new --command claude'],
+  ['tly new --worktree tests --prompt "…"', '# un worker'],
   ['tly send <id> "text" --enter'],
-  ['tly logs <id>'],
+  ['tly ask <id> "text"', '# envia i espera la resposta'],
+  ['tly result <id>'],
+  ['tly wait <id>… --any'],
   ['tly attach <id>', '# Ctrl-\\ per sortir'],
-  ['tly wait <id>'],
-  ['tly kill <id>'],
-  ['tly shutdown'],
+  ['tly kill --tree <id>'],
 ];
 
 /** Structured data: a macOS app by the same person as the home page (#gerard). */
@@ -51,7 +61,7 @@ const jsonLd = {
 ---
 <BaseLayout
   title="Terminaly — tots els teus agents, un sol terminal · Gerard Fortea"
-  description="App nativa de macOS per dirigir sessions de Claude Code, Codex i shell per projecte, amb l'estat de cada agent i sessions que sobreviuen."
+  description="App nativa de macOS per dirigir sessions de Claude Code, Codex, opencode i shell per projecte. Un agent en pot dirigir d'altres en swarm, cadascun en el seu worktree."
   bodyClass="bg-[#050608] font-mono text-[15px] text-[#d6dbe2] antialiased"
 >
   <Fragment slot="head">
@@ -70,14 +80,34 @@ const jsonLd = {
         Tots els teus agents.<br />Un sol terminal<span aria-hidden="true" class="animate-blink text-[#6fdd8b]">█</span>
       </h1>
       <p class="max-w-[680px] text-[17px] text-[#aab2bd]">
-        App nativa de macOS per llançar i dirigir sessions d'agents de CLI. Claude, Codex i el teu shell, ordenats per projecte,
-        i saps en tot moment qui treballa, qui ha acabat i qui t'espera.
+        App nativa de macOS per llançar i dirigir sessions d'agents de CLI. Claude, Codex, opencode i el teu shell, ordenats
+        per projecte, i saps en tot moment qui treballa, qui ha acabat i qui t'espera. I ara un agent en pot dirigir d'altres:
+        un swarm.
       </p>
     </section>
 
     <section class="mx-auto max-w-[1240px] px-6 pb-6">
       <TerminalyDemo client:load />
-      <p class="mt-3.5 text-[13px] text-[#aab2bd]">Tria una sessió a la barra lateral, divideix el panell i respon a la que et necessita.</p>
+      <p class="mt-3.5 text-[13px] text-[#aab2bd]">El lead reparteix la feina entre tres workers, cadascun al seu worktree. Mira'ls tots alhora amb «mostra el swarm» i dona-li permís al que te'l demana.</p>
+    </section>
+
+    <section class="mx-auto flex max-w-[1240px] flex-wrap gap-x-14 gap-y-8 px-6 pt-[72px] pb-6">
+      <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-3.5">
+        <h2 class="text-[clamp(26px,3.4vw,44px)] leading-[1.1] font-extrabold tracking-[-0.03em] text-white">Un agent que en dirigeix d'altres.</h2>
+        <p class="text-sm text-[#aab2bd]">
+          Amb el swarm, una tasca gran es reparteix entre diverses sessions que treballen alhora, sense trepitjar-se. Terminaly
+          només posa les eines: sessions, worktrees i la CLI <span class="text-[#d6dbe2]">tly</span>. Fins a 6 workers per sessió
+          (es canvia a Ajustos → Agents), i «Treu els workers acabats» neteja sessions i worktrees.
+        </p>
+      </div>
+      <ol class="m-0 flex min-w-0 flex-[999_1_460px] flex-col">
+        {swarm.map(([title, text], i) => (
+          <li class="grid grid-cols-[36px_1fr] gap-x-3 border-t border-[#262c36] py-4">
+            <span class="text-[#6fdd8b]">{i + 1}</span>
+            <span class="flex flex-col gap-1"><strong class="font-bold text-white">{title}</strong><span class="text-sm text-[#aab2bd]">{text}</span></span>
+          </li>
+        ))}
+      </ol>
     </section>
 
     <section class="mx-auto flex max-w-[1240px] flex-col gap-7 px-6 pt-[72px] pb-6">
@@ -91,7 +121,7 @@ const jsonLd = {
         ))}
       </div>
       <p class="max-w-[820px] text-sm text-[#aab2bd]">
-        Amb Claude Code, l'estat ve dels seus hooks (s'instal·len des d'Ajustos → Agents). Amb la resta d'agents, de l'activitat de la sortida.
+        Amb Claude Code i opencode, l'estat ve dels seus hooks i del seu plugin (s'instal·len des d'Ajustos → Agents). Amb la resta d'agents, de l'activitat de la sortida.
       </p>
     </section>
 
@@ -109,7 +139,7 @@ const jsonLd = {
         <h2 class="text-[clamp(26px,3.4vw,44px)] leading-[1.1] font-extrabold tracking-[-0.03em] text-white">I també des de la línia d'ordres.</h2>
         <p class="text-sm text-[#aab2bd]">
           <span class="text-[#d6dbe2]">tly</span> és un sol procés per a totes les sessions i, alhora, la CLI per manar-les: llista, crea,
-          envia text, mira els logs o enganxa-t'hi.
+          envia text, espera respostes o enganxa-t'hi. És el que fa servir el lead d'un swarm per dirigir els seus workers.
         </p>
         <ul class="flex flex-col gap-2 text-sm text-[#aab2bd]">
           <li><span class="text-[#6fdd8b]">Terminaly</span> · app SwiftUI, pinta els terminals</li>

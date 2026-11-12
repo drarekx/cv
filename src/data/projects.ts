@@ -50,7 +50,7 @@ export const projects: Project[] = [
     slug: 'terminaly',
     name: 'Terminaly',
     kind: 'mac',
-    version: 'v0.5.0',
+    version: 'v0.6.4',
     repo: 'https://github.com/drarekx/terminaly',
     install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/terminaly/main/install.sh | bash',
   },
