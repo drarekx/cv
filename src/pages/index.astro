@@ -332,10 +332,10 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
 
     <section id="webs" class="mx-auto flex max-w-[1200px] flex-col gap-8 px-6 pb-[88px]">
       <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-3">
-        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">I dues webs per a Tortellà</h2>
-        <p class="max-w-[460px] text-[#b4b6bd]">Per a la gent del poble i de la vall: l'entitat cultural de 1869 i el seu combat de glosa.</p>
+        <h2 class="font-display text-[clamp(32px,4vw,52px)] leading-[1.05] font-bold tracking-[-0.02em]">I algunes webs recents</h2>
+        <p class="max-w-[460px] text-[#b4b6bd]">Per a entitats i companyies: el Casino de Tortellà, el seu combat de glosa i una companyia de circ.</p>
       </div>
-      <div class="grid gap-6 md:grid-cols-2">
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
 
         <a href="/casino-tortella" class={cardClass}>
           <div aria-hidden="true" class="flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]">
@@ -377,6 +377,28 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
             </div>
             <p class="grow text-[15px] text-[#b4b6bd]">La web del combat de glosa i corrandes: programa, reserves del dinar, inscripció de glosadors i un panell per canviar-ho tot.</p>
             <span class={goClass}>Obrir Combat de Glosa →</span>
+          </div>
+        </a>
+
+        <a href="https://www.cianomprovisional.com/" target="_blank" rel="noopener" class={cardClass}>
+          <div
+            aria-hidden="true"
+            class="relative flex h-[260px] flex-col items-center justify-center gap-3 bg-[#3d8fd4] text-white"
+            style="background-image: linear-gradient(rgba(255,255,255,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.35) 1px, transparent 1px); background-size: 22px 22px;"
+          >
+            <div class="absolute inset-x-0 top-0 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-[11px] font-bold tracking-wider">
+              <span>ESPECTACLE</span><span>COMPANYIA</span><span>AGENDA</span>
+            </div>
+            <span class="max-w-full px-5 text-center font-hand text-[52px] leading-[0.85] font-bold drop-shadow-[2px_2px_0_#1d2b5c]">cia.<br />Nom Provisional</span>
+            <span class="bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
+          </div>
+          <div class="flex grow flex-col gap-2.5 p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-bold">Cia Nom Provisional</h3>
+              <span class="font-mono text-xs text-[#9a9da6]">circ</span>
+            </div>
+            <p class="grow text-[15px] text-[#b4b6bd]">La web d'una companyia de circ: l'espectacle, la companyia, l'agenda de funcions i el contacte, en quatre idiomes.</p>
+            <span class={goClass}>Visitar la web ↗<span class="sr-only"> (s'obre en una pestanya nova)</span></span>
           </div>
         </a>
 
