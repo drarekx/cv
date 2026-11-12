@@ -19,7 +19,7 @@ onMounted(startClock);
 </script>
 
 <template>
-  <div class="overflow-x-auto rounded-[20px] border border-[#232838] bg-[#10131c] p-[18px]">
+  <div tabindex="0" role="region" aria-label="Graella de programació" class="overflow-x-auto rounded-[20px] border border-[#232838] bg-[#10131c] p-[18px]">
     <table class="w-full min-w-[640px] border-separate border-spacing-1.5 text-sm">
       <thead>
         <tr>

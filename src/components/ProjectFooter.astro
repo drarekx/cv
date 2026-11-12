@@ -13,11 +13,18 @@ const label = (s: string) => (lowercase ? s.toLowerCase() : s);
 ---
 <footer class={`border-t ${className}`}>
   <nav aria-label="Altres projectes" class="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-x-7 gap-y-1 px-6 py-5 text-sm">
-    <a href="/#projectes" class="flex min-h-11 items-center hover:underline">← {label('Tots els projectes')}</a>
+    <div class="flex flex-wrap gap-x-7 gap-y-1">
+      <a href="/#projectes" class="flex min-h-11 items-center hover:underline">← {label('Tots els projectes')}</a>
+      <a href="/serveis" class="flex min-h-11 items-center hover:underline">{label('Programador web a Olot per a pimes')} →</a>
+    </div>
     <div class="flex flex-wrap gap-x-7 gap-y-1">
       {others.map((p) => (
         <a href={`/${p.slug}`} class="flex min-h-11 items-center hover:underline">{label(p.name)} →</a>
       ))}
     </div>
   </nav>
+  <div class="mx-auto flex max-w-[1240px] flex-wrap gap-x-6 px-6 pb-4 text-xs opacity-80">
+    <a href="/avis-legal" class="flex min-h-11 items-center hover:underline">{label('Avís legal')}</a>
+    <a href="/privacitat" class="flex min-h-11 items-center hover:underline">{label('Privacitat')}</a>
+  </div>
 </footer>

@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/jetbrains-mono';
 import CopyCommand from '../components/CopyCommand.vue';
 import ProjectFooter from '../components/ProjectFooter.astro';
 import TerminalyDemo from '../components/terminaly/TerminalyDemo.vue';
@@ -32,20 +34,36 @@ const cli: [string, string?][] = [
   ['tly kill <id>'],
   ['tly shutdown'],
 ];
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  operatingSystem: 'macOS',
+  applicationCategory: 'DeveloperApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: 'ca',
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
 ---
 <BaseLayout
-  title="Terminaly — tots els teus agents, un sol terminal"
-  description="Terminaly és una app nativa de macOS per llançar i dirigir sessions d'agents de CLI com Claude Code i Codex: projectes, panells dividits, estat de cada agent i sessions que sobreviuen a tancar l'app."
-  fonts="JetBrains+Mono:wght@400;500;700;800"
+  title="Terminaly — tots els teus agents, un sol terminal · Gerard Fortea"
+  description="App nativa de macOS per dirigir sessions de Claude Code, Codex i shell per projecte, amb l'estat de cada agent i sessions que sobreviuen."
   bodyClass="bg-[#050608] font-mono text-[15px] text-[#d6dbe2] antialiased"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <header class="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-[13px]">
     <a href="/" class="flex min-h-11 items-center hover:text-[#6fdd8b]">← gerard fortea</a>
     <div class="text-base font-extrabold text-white"><span class="text-[#6fdd8b]">&gt;_</span> terminaly</div>
     <a href="#installa" class="flex min-h-11 items-center text-[#6fdd8b] hover:text-white">instal·la'l</a>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1" class="outline-none">
     <section class="mx-auto flex max-w-[1240px] flex-col gap-5 px-6 pt-14 pb-10">
       <p class="text-[13px] text-[#6fdd8b]">$ open -a Terminaly</p>
       <h1 class="text-[clamp(34px,6vw,84px)] leading-[1.02] font-extrabold tracking-[-0.04em] text-white">
@@ -99,7 +117,7 @@ const cli: [string, string?][] = [
           <li><span class="text-[#6fdd8b]">TerminalyKit</span> · protocol i sockets compartits</li>
         </ul>
       </div>
-      <pre class="m-0 min-w-0 flex-[999_1_460px] overflow-x-auto rounded-[14px] border border-[#262c36] bg-[#0d1014] p-[22px] font-mono text-[13px] leading-[1.9]">{cli.map(([cmd, comment]) => (
+      <pre tabindex="0" aria-label="Ordres de la CLI tly" class="m-0 min-w-0 flex-[999_1_460px] overflow-x-auto rounded-[14px] border border-[#262c36] bg-[#0d1014] p-[22px] font-mono text-[13px] leading-[1.9]">{cli.map(([cmd, comment]) => (
         <div><span class="text-[#aab2bd]">$</span> {cmd}{comment && <span class="text-[#aab2bd]">{'    '}{comment}</span>}</div>
       ))}</pre>
     </section>

@@ -31,6 +31,7 @@ async function copy() {
 <template>
   <div class="flex flex-wrap items-stretch gap-2.5">
     <code
+      tabindex="0"
       class="min-w-0 flex-[999_1_420px] overflow-x-auto whitespace-nowrap px-[18px] py-4 font-mono text-sm"
       :class="codeClass"
     ><span v-if="prompt" class="text-[#6fdd8b]">{{ prompt }} </span>{{ command }}</code>
@@ -40,7 +41,8 @@ async function copy() {
       :class="buttonClass"
       @click="copy"
     >
-      <span aria-live="polite">{{ copied ? copiedLabel : copyLabel }}</span>
+      {{ copied ? copiedLabel : copyLabel }}
     </button>
+    <span class="sr-only" role="status">{{ copied ? 'Ordre copiada' : '' }}</span>
   </div>
 </template>

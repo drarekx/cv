@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource/caveat/700.css';
 import ProjectFooter from '../components/ProjectFooter.astro';
 import GlosaHero from '../components/glosa/GlosaHero.vue';
 import DinarDemo from '../components/glosa/DinarDemo.vue';
@@ -27,14 +30,27 @@ const details = [
   { title: 'Vídeos sense rastreig', text: 'Els vídeos de les edicions anteriors no es carreguen fins que prems play: abans, YouTube no sap que hi has entrat.' },
   { title: 'Accessibilitat i velocitat, mesurades', text: 'Scripts propis per passar l\'auditoria d\'accessibilitat i PageSpeed abans de cada publicació.' },
 ];
+
+/** Structured data: a website made by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: 'Web del Combat de Glosa i Corrandes de Tortellà',
+  url: p.url,
+  description: 'Landing i panell de gestió del Combat de Glosa de Tortellà.',
+  inLanguage: 'ca',
+  creator: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
 ---
 <BaseLayout
-  title="Combat de Glosa i Corrandes de Tortellà — web de l'acte · Gerard Fortea"
-  description="Web del Combat de Glosa i Corrandes de Tortellà: programa, dinar popular amb reserves, inscripció de glosadors i panell de gestió perquè l'organització ho canviï tot sense tocar codi."
-  fonts="Inter:wght@400;500;700&family=Caveat:wght@700"
+  title="Combat de Glosa i Corrandes de Tortellà · Gerard Fortea"
+  description="Web del Combat de Glosa i Corrandes de Tortellà: programa, reserves del dinar, inscripció de glosadors i un panell per gestionar-ho tot."
   bodyClass="bg-[#fdf6ec] font-sans text-[#111111] antialiased"
 >
-  <main>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <main id="main" tabindex="-1" class="outline-none">
     <GlosaHero client:load />
 
     <section class="mx-auto flex max-w-[1100px] flex-wrap gap-x-14 gap-y-12 px-6 pt-20 pb-16">
@@ -65,7 +81,7 @@ const details = [
           Tots tres es desen a la base de dades, es gestionen des del panell amb estats i exportació a CSV, i cadascun s'obre i es
           tanca per separat. El butlletí fa al revés que els altres: recull correus mentre la web encara no és pública.
         </p>
-        <div class="overflow-x-auto">
+        <div tabindex="0" role="region" aria-label="Taula de formularis" class="overflow-x-auto">
           <table class="w-full min-w-[640px] border-collapse border-[3px] border-[#111111] bg-[#fdf6ec] text-left">
             <thead class="bg-[#111111] text-white">
               <tr><th class="p-3">Formulari</th><th class="p-3">On surt</th><th class="p-3">Què demana</th><th class="p-3">Correu de confirmació</th></tr>

@@ -19,7 +19,13 @@ const answer = ref<'s' | 'n' | null>(null);
 const answeredAt = ref(0);
 let timer: ReturnType<typeof setInterval> | undefined;
 
-onMounted(() => (timer = setInterval(() => step.value++, 1100)));
+const reduceMotion = ref(false);
+onMounted(() => {
+  reduceMotion.value = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Reduced motion: show every line at once and don't keep the output scrolling.
+  if (reduceMotion.value) step.value = s1script.length - 2;
+  else timer = setInterval(() => step.value++, 1100);
+});
 onBeforeUnmount(() => clearInterval(timer));
 
 const s1script: Line[] = [
@@ -80,7 +86,7 @@ const panes = computed<SessionId[]>(() => (split.value ? [sel.value, sel.value =
 
 function reply(a: 's' | 'n') {
   answer.value = a;
-  answeredAt.value = step.value;
+  answeredAt.value = reduceMotion.value ? step.value - 100 : step.value;
 }
 </script>
 

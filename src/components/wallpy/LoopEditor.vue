@@ -10,6 +10,8 @@ const outP = ref(68);
 let timer: ReturnType<typeof setInterval> | undefined;
 
 onMounted(() => {
+  // Don't start the playhead moving for people who asked the system for less motion.
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) playing.value = false;
   timer = setInterval(() => {
     if (!playing.value) return;
     let p = pos.value + 0.5;
@@ -32,11 +34,29 @@ const resetLoop = () => {
   outP.value = 100;
 };
 
+/** The same keys as the app: Space play/pause, I mark in, O mark out. */
+function onKey(e: KeyboardEvent) {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const key = e.key.toLowerCase();
+  if (key === 'i') markIn();
+  else if (key === 'o') markOut();
+  // Space on a focused button already clicks it; only handle it on the editor itself.
+  else if (key === ' ' && e.target === e.currentTarget) playing.value = !playing.value;
+  else return;
+  e.preventDefault();
+}
+
 const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 border-[#454c60] bg-[#1b2030] px-4 text-[#f3f1ec] hover:bg-[#242b3e] active:translate-y-0.5';
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-col gap-4 rounded-[20px] border border-[#232838] bg-[#10131c] p-[22px]">
+  <div
+    class="flex min-w-0 flex-col gap-4 rounded-[20px] border border-[#232838] bg-[#10131c] p-[22px] focus-visible:outline-[#ffb454]"
+    tabindex="0"
+    role="group"
+    aria-label="Editor de bucles. Tecles: Espai reprodueix o atura, I marca l'entrada, O marca la sortida."
+    @keydown="onKey"
+  >
     <div class="flex justify-between font-mono text-[13px] text-[#c5c9d6]">
       <span>entrada {{ inLabel }}</span>
       <span class="text-[#ffb454]">cap {{ posLabel }}</span>
@@ -50,7 +70,7 @@ const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 b
       <div class="absolute inset-y-0 w-[3px] bg-white" :style="{ left: pos + '%' }"></div>
     </div>
     <div class="flex flex-wrap gap-2.5 font-mono text-[13px]">
-      <button type="button" :class="keyClass" :aria-pressed="playing" @click="playing = !playing">Espai · {{ playing ? 'pausa' : 'reprodueix' }}</button>
+      <button type="button" :class="keyClass" @click="playing = !playing">Espai · {{ playing ? 'pausa' : 'reprodueix' }}</button>
       <button type="button" :class="keyClass" @click="markIn">I · entrada</button>
       <button type="button" :class="keyClass" @click="markOut">O · sortida</button>
       <button type="button" :class="keyClass" @click="resetLoop">Tot el vídeo</button>

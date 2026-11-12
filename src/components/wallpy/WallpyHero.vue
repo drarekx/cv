@@ -102,7 +102,7 @@ onMounted(startClock);
         </div>
         <div class="flex flex-col gap-[18px] p-8">
           <h1 class="font-sora text-[clamp(34px,4.6vw,60px)] leading-[1.04] font-bold tracking-[-0.03em]">
-            El teu escriptori, <span class="text-[#ffb454]">en moviment.</span>
+            Wallpy: el teu escriptori, <span class="text-[#ffb454]">en moviment.</span>
           </h1>
           <p class="max-w-[560px] text-lg text-[#c5c9d6]">
             Fons de pantalla amb vídeo per a macOS. Viu a la barra de menús, posa un vídeo en bucle darrere les teves

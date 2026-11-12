@@ -1,5 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import '@fontsource/roboto-slab/400.css';
+import '@fontsource/roboto-slab/500.css';
 import ProjectFooter from '../components/ProjectFooter.astro';
 import CasinoAgenda from '../components/casino/CasinoAgenda.vue';
 import { project } from '../data/projects';
@@ -16,13 +22,26 @@ const rules = [
 ];
 
 const stack = ['October CMS 4.4', 'Laravel 12', 'PHP 8.5', 'MariaDB', 'Tailwind 4', 'Alpine 3'];
+
+/** Structured data: a website made by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: 'Web del Casino de Tortellà',
+  url: p.url,
+  description: 'Web de la Societat Cultural i Recreativa Casino de Tortellà: agenda d\'actes, espais i formularis.',
+  inLanguage: 'ca',
+  creator: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
 ---
 <BaseLayout
   title="Casino de Tortellà — nova web de l'entitat · Gerard Fortea"
-  description="Nova web de la Societat Cultural i Recreativa Casino de Tortellà, entitat de la Garrotxa fundada el 1869: agenda d'actes, espais i formularis per associar-s'hi. October CMS sobre Laravel."
-  fonts="Roboto:wght@400;500;700&family=Roboto+Slab:wght@400;500"
+  description="Web del Casino de Tortellà (Garrotxa, des de 1869): agenda d'actes, espais i formularis per associar-s'hi. October CMS sobre Laravel."
   bodyClass="bg-white font-roboto text-[#1c1c1c] antialiased"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <header class="bg-[#1c1c1c] text-white">
     <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-3 text-sm">
       <a href="/" class="flex min-h-11 items-center hover:text-[#55d8d2]">← Gerard Fortea</a>
@@ -34,7 +53,7 @@ const stack = ['October CMS 4.4', 'Laravel 12', 'PHP 8.5', 'MariaDB', 'Tailwind 
     </div>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1" class="outline-none">
     <section class="bg-[#55d8d2]">
       <div class="mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-14 gap-y-10 px-6 pt-16 pb-16">
         <div class="flex min-w-0 flex-[1_1_560px] flex-col gap-5">

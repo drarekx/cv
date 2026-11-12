@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/sora';
 import CopyCommand from '../components/CopyCommand.vue';
 import ProjectFooter from '../components/ProjectFooter.astro';
 import WallpyHero from '../components/wallpy/WallpyHero.vue';
@@ -17,14 +21,30 @@ const features = [
   { title: 'Estalvi d\'energia', text: 'Pausa quan les finestres tapen l\'escriptori, amb bateria o bateria baixa, i quan s\'apaguen les pantalles.' },
   { title: 'Originals i idiomes', text: 'Desa els vídeos llargs per treure\'n més fons un altre dia. En català, castellà i anglès.' },
 ];
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  operatingSystem: 'macOS',
+  applicationCategory: 'MultimediaApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: 'ca',
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
 ---
 <BaseLayout
-  title="Wallpy — fons de pantalla amb vídeo per a macOS"
-  description="Wallpy posa un vídeo en bucle com a fons de pantalla del Mac i es posa en pausa quan no el veus. Biblioteca, descàrrega de YouTube, editor de bucles i programació per moments del dia."
-  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Sora:wght@300;600;700"
+  title="Wallpy — fons de pantalla amb vídeo per a macOS · Gerard Fortea"
+  description="Fons de pantalla amb vídeo per al Mac: un bucle darrere les finestres que es posa en pausa quan no el mires. Biblioteca i editor de bucles."
   bodyClass="bg-[#07090f] font-sans text-[#f3f1ec] antialiased"
 >
-  <main>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <main id="main" tabindex="-1" class="outline-none">
     <WallpyHero client:load />
 
     <section class="mx-auto flex max-w-[1280px] flex-col gap-9 px-6 pt-[88px] pb-10">

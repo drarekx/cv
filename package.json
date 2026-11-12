@@ -9,6 +9,13 @@
   },
   "dependencies": {
     "@astrojs/vue": "^4.5.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/sora": "^5.3.0",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "@fontsource/caveat": "^5.3.0",
+    "@fontsource/roboto": "^5.3.0",
+    "@fontsource/roboto-slab": "^5.3.0",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^4.16.0",
     "nodemailer": "^10.5.0",

@@ -77,6 +77,7 @@ const left = computed(() => {
           </div>
         </div>
         <p v-else-if="left && left.done" class="font-hand text-3xl font-bold">Ja s'ha fet. Fins a l'any que ve!</p>
+        <div v-else aria-hidden="true" class="h-[58px]"></div>
         <p class="max-w-[560px] text-[17px]">
           La web de l'acte: programa, dinar popular amb reserves, inscripció de glosadors, vídeos de les edicions anteriors i
           un panell perquè l'organització ho canviï tot sense tocar codi.

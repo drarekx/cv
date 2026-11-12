@@ -102,7 +102,7 @@ function keyClass(letter: string) {
           v-for="letter in row"
           :key="letter"
           type="button"
-          class="aspect-square min-h-11 cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 border-b-4 p-0 text-[clamp(14px,2.2vw,28px)] transition-transform active:translate-y-[3px]"
+          class="aspect-square min-h-7 sm:min-h-11 cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 border-b-4 p-0 text-[clamp(14px,2.2vw,28px)] transition-transform active:translate-y-[3px]"
           :class="keyClass(letter)"
           :aria-label="map[letter] ? `${letter}: ${map[letter].join(', ')}` : `${letter}: cap app`"
           @click="press(letter)"

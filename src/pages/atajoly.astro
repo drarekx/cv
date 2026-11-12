@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
 import CopyCommand from '../components/CopyCommand.vue';
 import ProjectFooter from '../components/ProjectFooter.astro';
 import AtajolyDemo from '../components/atajoly/AtajolyDemo.vue';
@@ -24,13 +28,29 @@ const features = [
   { title: 'Triar entre diverses apps', text: 'Mantén la lletra i surt una llista com la de ⌘⇥: lletra o fletxes per moure\'t, 1–9 o ↩ per obrir.' },
   { title: 'Sense permisos', text: 'Canviar d\'app no demana res. Només «passar a la següent finestra» demana Accessibilitat. També funciona amb ⌥ dret.' },
 ];
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  operatingSystem: 'macOS',
+  applicationCategory: 'UtilitiesApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: 'ca',
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
 ---
 <BaseLayout
-  title="Atajoly — canvia d'app amb el polze al Mac"
-  description="Atajoly: mantén ⌘ dret i prem la inicial d'una app per posar-la al davant. App de barra de menús per a macOS, sense permisos, amb teclat visual i mapa de tecles."
-  fonts="Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@500;600;700"
+  title="Atajoly — canvia d'app amb el polze al Mac · Gerard Fortea"
+  description="Atajoly: mantén ⌘ dret i prem la inicial d'una app per posar-la al davant. App de barra de menús per a macOS, sense permisos i amb teclat visual."
   bodyClass="bg-[#ecebe6] font-sans text-[#1c1b19] antialiased"
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <header class="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
     <a href="/" class="flex min-h-11 items-center hover:text-[#a8370f]">← Gerard Fortea</a>
     <div class="flex items-center gap-2.5 font-display text-lg font-bold">
@@ -39,9 +59,9 @@ const features = [
     <a href="#installa" class="flex min-h-11 items-center text-[#a8370f] hover:text-[#1c1b19]">Instal·la'l</a>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1" class="outline-none">
     <section class="mx-auto flex max-w-[1120px] flex-col items-center gap-[18px] px-6 pt-12 pb-8 text-center">
-      <h1 class="font-display text-[clamp(42px,7vw,96px)] leading-[0.98] font-bold tracking-[-0.035em]">Canvia d'app<br />amb el polze.</h1>
+      <h1 class="font-display text-[clamp(42px,7vw,96px)] leading-[0.98] font-bold tracking-[-0.035em]">Atajoly: canvia d'app<br />amb el polze.</h1>
       <p class="max-w-[620px] text-[19px] text-[#46443d]">
         Mantén <strong class="font-semibold text-[#1c1b19]">⌘ dret</strong> i prem la inicial d'una app: es posa davant. Si ja hi era,
         s'amaga o passa a la següent amb la mateixa lletra.
@@ -56,7 +76,7 @@ const features = [
     <section class="bg-[#f7f6f2]">
       <div class="mx-auto flex max-w-[1120px] flex-col gap-7 px-6 py-20">
         <h2 class="font-display text-[clamp(30px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.03em]">Sis dreceres. Res més a aprendre.</h2>
-        <div class="overflow-x-auto">
+        <div tabindex="0" role="region" aria-label="Taula de dreceres" class="overflow-x-auto">
           <table class="w-full min-w-[600px] border-collapse">
             <tbody>
               {shortcuts.map(([keys, action], i) => (
