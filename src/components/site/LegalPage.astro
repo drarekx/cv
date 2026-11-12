@@ -1,0 +1,74 @@
+---
+/** Shared shell for the legal pages: same header and look as the home, readable text column, no index. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from './SiteHeader.astro';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
+
+interface Props {
+  title: string;
+  description: string;
+  updated: string;
+}
+const { title, description, updated } = Astro.props;
+---
+<BaseLayout title={`${title} · Gerard Fortea`} description={description} noindex bodyClass="bg-paper font-display text-ink antialiased">
+  <SiteHeader contactHref="/#contacte" />
+  <main id="main" tabindex="-1" class="outline-none">
+    <article class="legal mx-auto flex max-w-[760px] flex-col gap-4 px-6 pt-14 pb-24 text-[17px] leading-relaxed text-graphite">
+      <h1 class="font-display text-[clamp(36px,5vw,56px)] leading-[1.05] font-medium tracking-[-0.03em] text-ink">{title}</h1>
+      <p class="border-b border-ink pb-4 text-[15px] text-graphite">Última actualització: {updated}</p>
+      <slot />
+    </article>
+  </main>
+  <footer class="border-t border-ink">
+    <div class="mx-auto flex max-w-[1200px] flex-wrap justify-between gap-x-6 gap-y-1 px-6 py-5 text-sm text-graphite">
+      <a href="/" class="flex min-h-11 items-center hover:text-ink">Torna a l'inici</a>
+      <nav aria-label="Legal" class="flex gap-x-6">
+        <a href="/avis-legal" class="flex min-h-11 items-center hover:text-ink">Avís legal</a>
+        <a href="/privacitat" class="flex min-h-11 items-center hover:text-ink">Privacitat</a>
+      </nav>
+    </div>
+  </footer>
+</BaseLayout>
+
+<style>
+  .legal :global(h2) {
+    margin-top: 1.75rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+  .legal :global(a) {
+    color: var(--color-ink);
+    text-decoration-color: var(--color-fageda);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+  .legal :global(dl) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.35rem 1.25rem;
+  }
+  .legal :global(dt) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+  .legal :global(dd) {
+    color: var(--color-ink);
+  }
+  .legal :global(strong) {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+</style>
