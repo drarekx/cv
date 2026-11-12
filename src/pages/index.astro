@@ -381,16 +381,17 @@ const goClass = 'mt-1.5 flex min-h-11 items-center self-start rounded-full borde
         </a>
 
         <a href="https://www.cianomprovisional.com/" target="_blank" rel="noopener" class={cardClass}>
-          <div
-            aria-hidden="true"
-            class="relative flex h-[260px] flex-col items-center justify-center gap-3 bg-[#3d8fd4] text-white"
-            style="background-image: linear-gradient(rgba(255,255,255,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.35) 1px, transparent 1px); background-size: 22px 22px;"
-          >
-            <div class="absolute inset-x-0 top-0 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-[11px] font-bold tracking-wider">
+          <div aria-hidden="true" class="relative flex h-[260px] flex-col items-center justify-center gap-3 overflow-hidden bg-[#3d8fd4] text-white">
+            <picture>
+              <source type="image/webp" srcset="/img/cia-nom-provisional-bg-480.webp 480w, /img/cia-nom-provisional-bg-800.webp 800w" sizes="(min-width: 1024px) 366px, (min-width: 768px) 50vw, 100vw" />
+              <img src="/img/cia-nom-provisional-bg-800.jpg" alt="" width="800" height="398" loading="lazy" decoding="async" class="absolute inset-x-0 top-9 bottom-0 h-[calc(100%-2.25rem)] w-full object-cover object-top" />
+            </picture>
+            <div class="absolute inset-x-0 top-9 bottom-0 bg-[#1d2b5c]/25"></div>
+            <div class="absolute inset-x-0 top-0 z-10 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-[11px] font-bold tracking-wider">
               <span>ESPECTACLE</span><span>COMPANYIA</span><span>AGENDA</span>
             </div>
-            <span class="max-w-full px-5 text-center font-hand text-[52px] leading-[0.85] font-bold drop-shadow-[2px_2px_0_#1d2b5c]">cia.<br />Nom Provisional</span>
-            <span class="bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
+            <img src="/img/cia-nom-provisional-logo.png" alt="" width="356" height="253" loading="lazy" class="relative mt-9 h-auto w-[140px] drop-shadow-[2px_2px_0_#1d2b5c]" />
+            <span class="relative bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
           </div>
           <div class="flex grow flex-col gap-2.5 p-6">
             <div class="flex items-baseline justify-between gap-3">
