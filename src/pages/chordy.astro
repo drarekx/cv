@@ -21,12 +21,12 @@ const wheel = [
 
 const features = [
   { title: 'Teclat d\'acords', text: 'Tres modes (major, menor i dòric), els dotze tons i nou colors d\'acord. Si canvies el color o el to amb l\'acord premut, el que sona el segueix al moment.' },
-  { title: 'Loops', text: 'Grava amb metrònom, retalla, desplaça i torna-hi a tocar a sobre. A l\'editor mous, allargues i esborres notes, i cada loop té la seva reverb, eco i filtre.' },
+  { title: 'Loops', text: 'Grava amb metrònom i edita les notes: moure, allargar, esborrar. Si avances un acord abans del final, sona lligat a la volta. Cada loop té la seva reverb, eco i filtre.' },
   { title: 'Sintetitzador', text: 'Tres oscil·ladors amb una ona d\'harmònics que es dibuixa, filtre amb envolupant, ADSR i vibrato. Catorze sons de fàbrica i els teus.' },
   { title: 'Instruments de debò', text: 'Piano de cua Salamander, piano de paret, pianos elèctrics, orgues, cordes, guitarres, baixos i vuit bateries, que sonen amb la força amb què toques.' },
   { title: 'MIDI', text: 'Detecta qualsevol teclat sol i aprèn qualsevol pad, tecla o rodeta. Amb el Launchkey 25 MK2 els pads s\'il·luminen amb l\'acord que sona.' },
   { title: 'Cap al teu DAW', text: 'Un aparell MIDI virtual, «Chordy», per gravar el que toques a Logic, GarageBand o Ableton.' },
-  { title: 'Estudi', text: 'Cada teclat connectat té el seu so, zona, octava, volum i efectes, i una mescla amb un fader per teclat, bateria i loops.' },
+  { title: 'Estudi', text: 'Cada teclat connectat té el seu so, zona, octava, volum i efectes, i una mescla amb un fader per teclat, bateria i loops. Tries per quina sortida d\'àudio sona.' },
   { title: 'Caixa de ritmes i cançó', text: 'Patrons A–H de setze passos, una cançó amb pistes de bateria i loops, i projectes .chordy que es desen sols.' },
 ];
 
@@ -36,13 +36,37 @@ const shots = [
   { file: 'midi', alt: 'Panell MIDI de Chordy amb el Launchkey connectat', caption: 'El panell MIDI amb un Launchkey connectat.' },
 ];
 
+/** Chordy Pads, the iPad and iPhone remote: each device gets its own screen. */
+const remotes = [
+  {
+    device: 'iPad',
+    title: 'Pads, passos, teclats i mescla',
+    items: [
+      ['Pads', 'Setze pads grans per tocar la bateria en directe: com més amunt piques, més fort sona.'],
+      ['Passos', 'La graella del patró: toca un pas per posar-lo i arrossega amunt o avall per donar-li força.'],
+      ['Teclats', 'Els teclats MIDI del Mac dibuixats, amb les tecles que toques il·luminades, els sons preferits i els efectes.'],
+      ['Mescla', 'Faders grans per a la bateria, cada teclat i els loops, amb mut i solo per pista.'],
+    ],
+  },
+  {
+    device: 'iPhone',
+    title: 'El comandament de butxaca',
+    items: [
+      ['Compte', 'L\'1 · 2 · 3 · 4 ben gran, en vermell quan grava.'],
+      ['Tempo', 'Amb botons o marcant-lo amb el dit al ritme.'],
+      ['Grava', 'Un botó per gravar un loop i desar-lo quan acabes.'],
+      ['Toca i para', 'Engega els loops o la bateria, i atura-ho tot d\'un cop.'],
+    ],
+  },
+];
+
 /** Structured data: a macOS app by the same person as the home page (#gerard). */
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: p.name,
   url: `https://www.gerardfortea.com/${p.slug}`,
-  operatingSystem: 'macOS',
+  operatingSystem: 'macOS, iPadOS, iOS',
   applicationCategory: 'MultimediaApplication',
   softwareVersion: p.version?.replace(/^v/, ''),
   codeRepository: p.repo,
@@ -50,8 +74,8 @@ const jsonLd = {
 };
 ---
 <BaseLayout
-  title="Chordy — toca progressions d'acords amb el Mac o un teclat MIDI · Gerard Fortea"
-  description="Chordy: cada tecla toca un grau de l'escala ja harmonitzat i W A S D en canvien el color. Loops, sintetitzador, instruments reals, MIDI i caixa de ritmes. App gratuïta per al Mac."
+  title="Chordy — acords al Mac, amb l'iPad i l'iPhone de comandament · Gerard Fortea"
+  description="Chordy: cada tecla toca un grau de l'escala ja harmonitzat i W A S D en canvien el color. Loops, sintetitzador, instruments reals, MIDI i caixa de ritmes al Mac, amb l'iPad i l'iPhone de comandament."
   bodyClass="bg-[#121214] font-['Space_Grotesk_Variable',sans-serif] text-[#e8e8ea] antialiased"
 >
   <Fragment slot="head">
@@ -73,8 +97,11 @@ const jsonLd = {
       <h1 class="max-w-[15ch] text-[clamp(40px,6.4vw,84px)] leading-[1] font-semibold tracking-[-0.04em]">Acords sense saber on van els dits</h1>
       <p class="max-w-[640px] text-[19px] leading-relaxed text-[#a1a1a8]">
         Tries el to i el mode, i cada tecla del Mac toca un grau de l'escala ja harmonitzat. Amb W A S D li canvies el color: menor,
-        maj7, sus… Amb un teclat MIDI, els pads, les rodetes i els knobs ho fan tot.
+        maj7, sus… Amb un teclat MIDI, els pads, les rodetes i els knobs ho fan tot. I l'iPad i l'iPhone fan de comandament.
       </p>
+      <ul aria-label="Plataformes" class="flex flex-wrap justify-center gap-2 font-mono text-[13px]">
+        {['Mac', 'iPad', 'iPhone'].map((d) => <li class="rounded-full border border-[#2e2e34] px-3.5 py-1.5 text-[#a1a1a8]">{d}</li>)}
+      </ul>
     </section>
 
     <!--
@@ -177,13 +204,38 @@ const jsonLd = {
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-[1160px] gap-x-16 gap-y-6 px-6 pb-20 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-      <h2 class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">L'iPad com a comandament</h2>
-      <p class="text-[17px] leading-relaxed text-[#a1a1a8]">
-        Chordy Pads converteix l'iPad en un comandament per a Chordy: pads de bateria, passos dels patrons, mescla, tempo i els
-        teclats amb els seus sons preferits. Troba el Mac sol a la mateixa wifi i el so surt del Mac. Ara per ara es compila des del
-        codi, a la carpeta <code class="font-mono text-[15px] text-[#e8e8ea]">iPad/</code> del repositori.
-      </p>
+    <section aria-labelledby="pads-titol" class="border-y border-[#26262b] bg-[#161618]">
+      <div class="mx-auto flex max-w-[1160px] flex-col gap-10 px-6 py-20">
+        <div class="grid gap-x-16 gap-y-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <h2 id="pads-titol" class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">L'iPad i l'iPhone, de comandament</h2>
+          <p class="text-[17px] leading-relaxed text-[#a1a1a8]">
+            Chordy Pads és l'app nativa per a l'iPad i l'iPhone. Troba el Mac sola a la mateixa wifi, et diu quants mil·lisegons
+            triga cada ordre i el so surt del Mac. Així toques la bateria amb els dits o canvies el tempo des de l'altra punta
+            de l'habitació.
+          </p>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-2">
+          {remotes.map((r) => (
+            <div class="flex flex-col gap-5 rounded-2xl border border-[#2e2e34] bg-[#1a1a1d] p-[clamp(24px,3vw,36px)]">
+              <div class="flex flex-col gap-1">
+                <span class="font-mono text-[12px] font-semibold tracking-[0.08em] text-[#5c8cff]">{r.device.toUpperCase()}</span>
+                <h3 class="text-[clamp(22px,2.4vw,28px)] leading-tight font-semibold tracking-[-0.02em]">{r.title}</h3>
+              </div>
+              <dl class="grid gap-x-5 gap-y-3 sm:grid-cols-[96px_1fr]">
+                {r.items.map(([term, text]) => (
+                  <>
+                    <dt class="font-medium">{term}</dt>
+                    <dd class="text-[15px] leading-relaxed text-[#a1a1a8]">{text}</dd>
+                  </>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
+        <p class="text-[15px] text-[#8a8a93]">
+          Encara no és a l'App Store: es compila amb Xcode des de la carpeta <code class="font-mono text-[#e8e8ea]">iPad/</code> del repositori.
+        </p>
+      </div>
     </section>
 
     <section id="installa" class="mx-auto max-w-[1160px] px-6 pb-[88px]">
@@ -192,7 +244,7 @@ const jsonLd = {
           <h2 class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">Instal·la Chordy</h2>
           <p class="text-[17px] leading-relaxed text-[#a1a1a8]">
             Enganxa això al Terminal. Baixa l'última versió, la posa a Aplicacions i l'obre. S'actualitza sola i comprova cada
-            descàrrega amb el seu SHA-256. Està en català, castellà i anglès.
+            descàrrega amb el seu SHA-256. Està en català, castellà i anglès. Per a l'iPad i l'iPhone, mira Chordy Pads més amunt.
           </p>
         </div>
         <div class="flex min-w-0 flex-col gap-5">
