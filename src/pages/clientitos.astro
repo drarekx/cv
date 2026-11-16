@@ -1,0 +1,482 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/sora';
+import '@fontsource-variable/jetbrains-mono';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+
+const p = project('clientitos');
+
+/**
+ * Client profiles shown on the page and used by the demo. Same shape as the tool's own profiles:
+ * budget per night, what they come to do (book / ask / just look) and what they ask about.
+ */
+const personas = [
+  { id: 'curios', label: 'Curiós', emoji: '👀', color: '#8a8f96', budget: [80, 250], intent: [2, 8, 90], nights: [2, 4], guests: [1, 3], fav: 0.15, abandon: 0, concern: 'Té ascensor?', motive: 'mira pisos per a un viatge algun dia' },
+  { id: 'xollos', label: 'Caçagangues', emoji: '💸', color: '#b08d57', budget: [60, 130], intent: [20, 20, 60], nights: [2, 5], guests: [2, 2], fav: 0.6, abandon: 0.1, concern: 'La neteja final està inclosa en el preu?', motive: 'busca una escapada barata de cap de setmana' },
+  { id: 'familia', label: 'Família', emoji: '👨‍👩‍👧', color: '#6f8f7b', budget: [150, 350], intent: [30, 50, 20], nights: [4, 7], guests: [4, 6], fav: 0.4, abandon: 0.1, concern: 'Teniu bressol i trona?', motive: 'prepara les vacances amb els nens' },
+  { id: 'executiva', label: 'Executiva', emoji: '💼', color: '#2b3a4a', budget: [150, 450], intent: [70, 10, 20], nights: [1, 3], guests: [1, 1], fav: 0.05, abandon: 0.02, concern: 'Feu factura a nom d\'empresa?', motive: 'té reunions i poc temps' },
+  { id: 'nomada', label: 'Nòmada digital', emoji: '💻', color: '#7d6f8f', budget: [50, 120], intent: [10, 70, 20], nights: [21, 35], guests: [1, 1], fav: 0.3, abandon: 0.1, concern: 'Is the wifi fast enough for video calls?', motive: 'vol un mes de feina en remot' },
+  { id: 'parella', label: 'Parella', emoji: '💕', color: '#a8737b', budget: [120, 300], intent: [45, 15, 40], nights: [2, 3], guests: [2, 2], fav: 0.7, abandon: 0.1, concern: 'És un pis tranquil a la nit?', motive: 'busca una escapada per l\'aniversari' },
+  { id: 'indecis', label: 'Indecís', emoji: '🤔', color: '#a3846a', budget: [90, 220], intent: [60, 10, 30], nights: [2, 6], guests: [2, 4], fav: 0.5, abandon: 0.8, concern: 'Es pot cancel·lar gratis?', motive: 'potser fa un viatge, potser no' },
+  { id: 'turista', label: 'Turista internacional', emoji: '🌍', color: '#5f7f8f', budget: [100, 280], intent: [40, 30, 30], nights: [3, 6], guests: [2, 3], fav: 0.3, abandon: 0.1, concern: 'Can we leave our luggage before check-in?', motive: 'hi va per primer cop' },
+  { id: 'luxe', label: 'Alt standing', emoji: '🥂', color: '#4a4036', budget: [400, 1200], intent: [55, 35, 10], nights: [2, 5], guests: [2, 4], fav: 0.5, abandon: 0.05, concern: 'Hi ha plaça de garatge?', motive: 'vol el millor que hi hagi' },
+  { id: 'gos', label: 'Amb gos', emoji: '🐕', color: '#9a7a52', budget: [90, 220], intent: [30, 55, 15], nights: [2, 5], guests: [2, 3], fav: 0.4, abandon: 0.1, concern: 'S\'hi admeten gossos?', motive: 'viatja sempre amb el seu gos' },
+];
+
+const stages = ['Inici', 'Llistat', 'Fitxa', 'Preu', 'Pagament', 'Sortida'];
+
+const experts = [
+  { emoji: '🔎', name: 'Laura', role: 'SEO', color: '#2f6f5e', checks: 'Títols, meta description, canonical, hreflang, dades estructurades, Open Graph, robots.txt i sitemap.' },
+  { emoji: '🎨', name: 'Marc', role: 'Disseny', color: '#8a4b2f', checks: 'Imatges trencades, textos de farciment, massa tipografies, lletra minúscula, botons que no lliguen.' },
+  { emoji: '♿', name: 'Núria', role: 'Accessibilitat', color: '#3d4f8a', checks: 'axe-core (WCAG 2.2 AA), teclat, ordre i visibilitat del focus, contingut fora de les zones.' },
+  { emoji: '📱', name: 'Iker', role: 'Mòbil i tauleta', color: '#6a5a8a', checks: 'Viewport, desbordaments, zones tàctils petites, camps que fan zoom a l\'iPhone, elements fixos que tapen.' },
+  { emoji: '🌍', name: 'Claire', role: 'Traduccions', color: '#7a6a2f', checks: 'Compara cada pàgina amb l\'altre idioma: textos sense traduir, claus a la vista, enllaços d\'idioma trencats.' },
+];
+
+/** Sample findings for the review board; `after` is what the check finds once you've fixed things. */
+const findings = [
+  { who: '🔎 Laura', sev: 'Alta', text: 'La fitxa no té meta description: el cercador hi posa un tros del peu de pàgina.', after: 'Arreglat' },
+  { who: '♿ Núria', sev: 'Alta', text: 'El calendari de dates no es pot fer servir amb el teclat (WCAG 2.1.1).', after: 'Arreglat' },
+  { who: '🎨 Marc', sev: 'Mitjana', text: '«Reserva» i «Demana informació» són idèntics: no se sap quin és el principal.', after: 'A mitges' },
+  { who: '📱 Iker', sev: 'Mitjana', text: 'Els camps del formulari tenen 14 px de lletra: l\'iPhone fa zoom en tocar-los.', after: 'Arreglat' },
+  { who: '🌍 Claire', sev: 'Baixa', text: 'A la versió anglesa, el filtre de persones encara diu «Huéspedes».', after: 'Sense arreglar' },
+];
+
+const features = [
+  { title: 'Un Chrome de debò per client', text: 'Cada client obre el seu Chrome amb Playwright i navega com una persona: busca, obre fitxes, mira fotos, compara preus i torna enrere. La seva pantalla es veu en directe.' },
+  { title: 'Mòbil, tauleta o ordinador', text: 'En entrar, cada client sorteja un aparell real (iPhone, Galaxy, Pixel, iPad, Mac o Windows) amb la seva pantalla, densitat i pantalla tàctil.' },
+  { title: 'Viatges amb sentit', text: 'Cada client tria un motiu i en treu dates coherents: un cap de setmana comença en divendres, una estada llarga dura un mes, un congrés comença en dilluns.' },
+  { title: 'Tres cervells', text: 'Guió, determinista i gratuït. IA, en què un model decideix cada pas amb eines. I Jev, que respon amb probabilitats calibrades i el client sorteja, perquè cent clients es reparteixin com la gent.' },
+  { title: 'Pagaments de proves', text: 'Paguen amb targetes de proves, s\'equivoquen de número, els la deneguen o es fan enrere, i tornen a provar-ho. Només ho fan si la passarel·la és de proves.' },
+  { title: 'Opinen de la web', text: 'En marxar, alguns miren les captures del que han vist i escriuen què els agrada, què no i què trobarien a faltar, amb una nota de l\'1 al 10, pel formulari de contacte.' },
+  { title: 'Un client cec', text: 'De tant en tant entra algú amb lector de pantalla: no veu res, només sent l\'arbre d\'accessibilitat i es mou amb el teclat. Apunta cada barrera que troba.' },
+  { title: 'Vídeo i historial', text: 'Es grava cada visita que acaba en alguna cosa i tot queda a SQLite: el que van dir, les pàgines, els errors agrupats, el cost d\'IA i l\'embut per aparell.' },
+];
+
+const stack = ['Node.js', 'Express', 'Playwright', 'Three.js', 'WebSocket', 'SQLite', 'axe-core', 'Claude', 'ffmpeg'];
+
+/** Structured data: a tool by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `https://www.gerardfortea.com/${p.slug}`,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'macOS, Windows, Linux',
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+
+---
+<BaseLayout
+  title="Clientitos — clients simulats que proven la teva web · Gerard Fortea"
+  description="Clientitos omple una web de clients simulats, cadascun amb personalitat, pressupost i intenció, que naveguen en un Chrome de debò. I un equip d'experts en SEO, disseny, accessibilitat, mòbil i traduccions la revisa i comprova els arreglos."
+  bodyClass="bg-[#f3efe6] font-['Inter_Variable',sans-serif] text-[#1b1d21] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href="/" class="flex min-h-11 items-center hover:text-[#c44d22]">← Gerard Fortea</a>
+    <div class="flex items-center gap-2.5 font-['Sora_Variable',sans-serif] text-lg font-semibold">
+      <span aria-hidden="true" class="flex -space-x-1">
+        {['#6f8f7b', '#b08d57', '#a8737b'].map((c) => <span class="h-3.5 w-3.5 rounded-full border-2 border-[#f3efe6]" style={`background:${c}`}></span>)}
+      </span>
+      Clientitos
+    </div>
+    <a href="#equip" class="flex min-h-11 items-center text-[#c44d22] hover:text-[#1b1d21]">L'equip</a>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto flex max-w-[1160px] flex-col items-center gap-6 px-6 pt-10 text-center">
+      <h1 class="max-w-[17ch] font-['Sora_Variable',sans-serif] text-[clamp(38px,6vw,78px)] leading-[1.02] font-semibold tracking-[-0.035em]">
+        Clients de mentida que proven la teva web de veritat
+      </h1>
+      <p class="max-w-[660px] text-[19px] leading-relaxed text-[#5f5b53]">
+        Clientitos omple una web de clients simulats. Cadascun té la seva personalitat, un pressupost i una intenció, i navega
+        en un Chrome de debò: busca, compara, pregunta, reserva o marxa. Després, un equip d'experts revisa la web i et diu què
+        cal arreglar.
+      </p>
+    </section>
+
+    <!--
+      Demo: a small simulation with the tool's own logic, simplified. Each client walks the funnel (home, listing, property,
+      price, payment), skips what's over budget and ends up booking, asking or leaving depending on what they came to do.
+      It pauses off screen and doesn't start by itself with reduced motion.
+    -->
+    <section aria-labelledby="demo-titol" class="mx-auto max-w-[1160px] px-6 pt-14 pb-24" data-sim>
+      <h2 id="demo-titol" class="sr-only">Simulació</h2>
+      <div class="overflow-hidden rounded-2xl border border-[#1b1d21] bg-[#fbf9f4] shadow-[8px_8px_0_#1b1d21]">
+        <div class="flex items-center gap-3 border-b border-[#1b1d21] bg-[#1b1d21] px-4 py-2.5 text-[#f3efe6]">
+          <span aria-hidden="true" class="flex gap-1.5">{[1, 2, 3].map(() => <span class="h-2.5 w-2.5 rounded-full bg-[#f3efe6]/30"></span>)}</span>
+          <span class="truncate rounded-md bg-[#f3efe6]/10 px-3 py-1 font-mono text-xs">la-teva-web.test</span>
+          <span class="ml-auto font-mono text-xs text-[#f3efe6]/70"><span data-live>0</span> a la web</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <div class="relative h-[250px] min-w-[620px]" data-stage>
+            <div aria-hidden="true" class="absolute inset-0 grid grid-cols-6">
+              {stages.map((s, i) => (
+                <div class:list={['flex flex-col items-center border-r border-dashed border-[#d9d2c3] pt-3 last:border-r-0', i === 5 && 'bg-[#f3efe6]']}>
+                  <span class="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#8a8478] uppercase">{s}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="grid border-t border-[#1b1d21] lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+          <div class="flex min-w-0 flex-col gap-2 p-5 lg:border-r lg:border-[#1b1d21]">
+            <span class="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#8a8478]">EL QUE FAN I PENSEN</span>
+            <ol data-log aria-live="polite" class="flex h-[204px] flex-col gap-1.5 overflow-hidden font-mono text-[12.5px] leading-snug"></ol>
+          </div>
+          <div class="flex flex-col gap-4 p-5">
+            <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+              {[['visits', 'Visites'], ['booked', 'Reserves'], ['asked', 'Sol·licituds'], ['left', 'Marxen sense res']].map(([k, label]) => (
+                <div class="flex flex-col"><dt class="text-[#5f5b53]">{label}</dt><dd data-count={k} class="font-['Sora_Variable',sans-serif] text-2xl font-semibold">0</dd></div>
+              ))}
+            </dl>
+            <p class="text-sm text-[#5f5b53]">Conversió: <strong data-rate class="text-[#1b1d21]">—</strong></p>
+            <div class="mt-auto flex flex-wrap gap-2">
+              <button type="button" data-doors aria-pressed="false" class="min-h-11 rounded-full bg-[#1b1d21] px-5 text-sm font-medium text-[#f3efe6] hover:bg-[#c44d22]">Obre les portes</button>
+              <button type="button" data-reset class="min-h-11 rounded-full border border-[#1b1d21] px-5 text-sm font-medium hover:bg-[#1b1d21] hover:text-[#f3efe6]">Torna a començar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-12 flex flex-col gap-5">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2">
+          <h2 class="font-['Sora_Variable',sans-serif] text-[clamp(26px,3vw,36px)] leading-tight font-semibold tracking-[-0.02em]">Qui hi entra</h2>
+          <p class="text-[15px] text-[#5f5b53]">Toca un perfil perquè n'entri un ara. A l'eina, tot es pot editar i en pots crear de nous.</p>
+        </div>
+        <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {personas.map((pe) => (
+            <li>
+              <button type="button" data-spawn={pe.id}
+                class="flex h-full w-full flex-col gap-2 rounded-xl border border-[#d9d2c3] bg-[#fbf9f4] p-3.5 text-left hover:border-[#1b1d21]">
+                <span class="flex items-center gap-2.5">
+                  <span aria-hidden="true" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg" style={`background:${pe.color}`}>{pe.emoji}</span>
+                  <span class="font-semibold leading-tight">{pe.label}</span>
+                </span>
+                <span class="font-mono text-xs text-[#5f5b53]">{pe.budget[0]}–{pe.budget[1]} €/nit</span>
+                <span class="flex h-1.5 w-full overflow-hidden rounded-full" title={`Reserva ${pe.intent[0]} % · Pregunta ${pe.intent[1]} % · Mira ${pe.intent[2]} %`}>
+                  <span style={`width:${pe.intent[0]}%`} class="bg-[#2f7a4f]"></span>
+                  <span style={`width:${pe.intent[1]}%`} class="bg-[#d39a2c]"></span>
+                  <span style={`width:${pe.intent[2]}%`} class="bg-[#c9c1b1]"></span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p class="flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#5f5b53]">
+          <span><span aria-hidden="true" class="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#2f7a4f]"></span>ve a reservar</span>
+          <span><span aria-hidden="true" class="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#d39a2c]"></span>ve a preguntar</span>
+          <span><span aria-hidden="true" class="mr-1.5 inline-block h-2 w-2 rounded-full bg-[#c9c1b1]"></span>només mira</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="border-y border-[#1b1d21] bg-[#fbf9f4]">
+      <div class="mx-auto grid max-w-[1160px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-4">
+        {features.map((f) => (
+          <div class="flex flex-col gap-2">
+            <h2 class="font-['Sora_Variable',sans-serif] text-lg leading-snug font-semibold">{f.title}</h2>
+            <p class="text-[15px] leading-relaxed text-[#5f5b53]">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="equip" aria-labelledby="equip-titol" class="mx-auto flex max-w-[1160px] flex-col gap-12 px-6 py-24">
+      <div class="grid gap-x-16 gap-y-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <h2 id="equip-titol" class="font-['Sora_Variable',sans-serif] text-[clamp(30px,4vw,50px)] leading-[1.04] font-semibold tracking-[-0.03em]">I un equip que revisa la web</h2>
+        <p class="text-[17px] leading-relaxed text-[#5f5b53]">
+          A més dels clients, hi ha cinc experts. Cadascun obre la web en els seus aparells, la recorre i hi passa les seves
+          eines automàtiques. Amb IA, a més, ho mira com una persona: confirma o descarta el que han trobat les eines i apunta cada
+          error, millora o detall amb on és, per què és un problema, com s'arregla i com es comprova.
+        </p>
+      </div>
+
+      <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {experts.map((e) => (
+          <li class="flex flex-col gap-3 rounded-xl border border-[#1b1d21] bg-[#fbf9f4] p-4">
+            <span class="flex items-center gap-2.5">
+              <span aria-hidden="true" class="flex h-10 w-10 items-center justify-center rounded-full text-lg" style={`background:${e.color}`}>{e.emoji}</span>
+              <span class="flex flex-col leading-tight"><strong class="font-semibold">{e.name}</strong><span class="text-sm text-[#5f5b53]">{e.role}</span></span>
+            </span>
+            <p class="text-[14px] leading-relaxed text-[#5f5b53]">{e.checks}</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="grid gap-x-12 gap-y-8 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)]">
+        <ol class="flex flex-col">
+          {[
+            ['Revisen', 'Recorren l\'inici, el llistat, una fitxa, el contacte i les pàgines que els diguis. No envien formularis ni reserven: només miren. En acabar, cadascun deixa un comentari.'],
+            ['Arregles', 'Filtres per expert, estat i gravetat, i descarregues els punts en Markdown, a punt per passar-los a qui ho arregla o a Claude Code. També en CSV o JSON.'],
+            ['Comproven', 'Tornen a passar per les pàgines afectades i marquen cada punt: arreglat, a mitges o sense arreglar. Si veuen alguna cosa nova trencada, l\'apunten.'],
+          ].map(([t, d], i) => (
+            <li class="grid grid-cols-[36px_1fr] gap-x-3 border-t border-[#1b1d21] py-4">
+              <span class="font-mono text-sm text-[#c44d22]">{i + 1}</span>
+              <span class="flex flex-col gap-1"><strong class="font-semibold">{t}</strong><span class="text-[15px] leading-relaxed text-[#5f5b53]">{d}</span></span>
+            </li>
+          ))}
+        </ol>
+
+        <div class="flex min-w-0 flex-col self-start overflow-hidden rounded-2xl border border-[#1b1d21] bg-[#fbf9f4]" data-board>
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#1b1d21] px-5 py-3">
+            <span class="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#8a8478]">PUNTS DE LA REVISIÓ</span>
+            <button type="button" data-check class="min-h-10 rounded-full bg-[#1b1d21] px-4 text-sm font-medium text-[#f3efe6] hover:bg-[#c44d22]">Ja ho he arreglat: que ho comprovin</button>
+          </div>
+          <ul class="flex flex-col">
+            {findings.map((f) => (
+              <li class="grid gap-x-4 gap-y-1 border-b border-[#e6dfd0] px-5 py-3.5 last:border-b-0 sm:grid-cols-[110px_minmax(0,1fr)_120px] sm:items-center">
+                <span class="flex items-center gap-2 text-sm font-medium">{f.who}</span>
+                <span class="text-[15px] leading-snug">
+                  {f.text}
+                  <span class:list={['ml-1 font-mono text-[11px]', f.sev === 'Alta' ? 'text-[#b4361c]' : 'text-[#8a8478]']}>{f.sev.toLowerCase()}</span>
+                </span>
+                <span data-status data-after={f.after} class="justify-self-start rounded-full border border-[#d9d2c3] px-2.5 py-1 font-mono text-[11px] sm:justify-self-end">Pendent</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-[#1b1d21] bg-[#1b1d21] text-[#f3efe6]">
+      <div class="mx-auto grid max-w-[1160px] gap-x-16 gap-y-8 px-6 py-20 lg:grid-cols-2">
+        <div class="flex flex-col gap-5">
+          <h2 class="font-['Sora_Variable',sans-serif] text-[clamp(30px,4vw,50px)] leading-[1.04] font-semibold tracking-[-0.03em]">Tot es veu com un joc</h2>
+          <p class="text-[17px] leading-relaxed text-[#f3efe6]/75">
+            Els clients i l'equip es mouen per una escena en 3D. Si en toques un, veus la pantalla del seu navegador en directe i
+            tot el que ha fet. Al costat hi ha l'activitat, les fitxes més vistes, els errors de la web i l'embut de conversió.
+          </p>
+          <p class="text-[15px] leading-relaxed text-[#f3efe6]/60">
+            Ho vaig fer per a un motor de reserves d'allotjaments, per provar-lo amb gent abans que hi arribés la gent de debò. El
+            codi és privat. Si voleu passar-la per la vostra web, <a href="/serveis#contacte" class="text-[#f3efe6] underline decoration-[#e8643c] decoration-2 underline-offset-4 hover:decoration-[#f3efe6]">parlem-ne</a>.
+          </p>
+        </div>
+        <ul aria-label="Tecnologies" class="flex flex-wrap content-start gap-2 lg:justify-end">
+          {stack.map((s) => <li class="rounded-full border border-[#f3efe6]/25 px-3.5 py-1.5 font-mono text-[13px]">{s}</li>)}
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter current="clientitos" class="border-[#1b1d21] text-[#c44d22]" />
+</BaseLayout>
+
+<script define:vars={{ personas }}>
+  const root = document.querySelector('[data-sim]');
+  if (root) {
+    const stageEl = root.querySelector('[data-stage]');
+    const logEl = root.querySelector('[data-log]');
+    const liveEl = root.querySelector('[data-live]');
+    const doors = root.querySelector('[data-doors]');
+    const rateEl = root.querySelector('[data-rate]');
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const NAMES = ['Marta', 'Jordi', 'Laia', 'Pau', 'Núria', 'Arnau', 'Clara', 'Oriol', 'Júlia', 'Marc', 'Aina', 'Biel', 'Lucía', 'Javier', 'Carmen', 'Diego'];
+    const FOREIGN = ['Emma', 'Liam', 'Sophie', 'Lukas', 'Chloé', 'Noah', 'Mia', 'Hugo'];
+    const DEVICES = [['💻', 'ordinador', 45], ['📱', 'mòbil', 40], ['📲', 'tauleta', 15]];
+
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const randInt = (a, b) => Math.round(rand(a, b));
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+    const weighted = (pairs) => { let r = Math.random() * pairs.reduce((s, p) => s + p[1], 0); for (const p of pairs) if ((r -= p[1]) <= 0) return p[0]; return pairs[0][0]; };
+
+    const counts = { visits: 0, booked: 0, asked: 0, left: 0 };
+    const clients = new Set();
+    let open = false;
+    let visible = false;
+    let spawnTimer = 0;
+
+    function setCount(k) {
+      root.querySelector(`[data-count="${k}"]`).textContent = String(counts[k]);
+      const done = counts.booked + counts.asked + counts.left;
+      rateEl.textContent = done ? `${Math.round((counts.booked / done) * 100)} % reserva · ${Math.round((counts.asked / done) * 100)} % pregunta` : '—';
+    }
+
+    function log(c, text, tone) {
+      const li = document.createElement('li');
+      li.className = 'flex gap-2';
+      const who = document.createElement('span');
+      who.className = 'shrink-0';
+      who.textContent = `${c.p.emoji} ${c.name}`;
+      who.style.color = c.p.color;
+      const what = document.createElement('span');
+      what.textContent = text;
+      if (tone === 'good') what.style.color = '#2f7a4f';
+      if (tone === 'ask') what.style.color = '#9a6b12';
+      if (tone === 'bad') what.style.color = '#8a8478';
+      li.append(who, what);
+      logEl.prepend(li);
+      while (logEl.children.length > 12) logEl.lastElementChild.remove();
+    }
+
+    /** Put the client's figure in a funnel column, at its own row so they don't pile up. */
+    function place(c, stage) {
+      c.stage = stage;
+      c.el.style.left = `calc(${((stage + 0.5) / 6) * 100}% - 17px)`;
+      c.el.style.top = `${44 + c.row * 38}px`;
+    }
+
+    function freeRow() {
+      const used = new Set([...clients].map((c) => c.row));
+      for (let r = 0; r < 5; r++) if (!used.has(r)) return r;
+      return -1;
+    }
+
+    function spawn(p = weighted(personas.map((x) => [x, x.id === 'curios' ? 3 : 2]))) {
+      const row = freeRow();
+      if (row < 0) return;
+      const foreign = p.id === 'turista' || p.id === 'nomada';
+      const c = {
+        p, row,
+        name: pick(foreign ? FOREIGN : NAMES),
+        budget: Math.round(rand(p.budget[0], p.budget[1]) / 5) * 5,
+        nights: randInt(p.nights[0], p.nights[1]),
+        guests: randInt(p.guests[0], p.guests[1]),
+        intent: weighted([['book', p.intent[0]], ['ask', p.intent[1]], ['look', p.intent[2]]]),
+        device: weighted(DEVICES.map((d) => [d, d[2]])),
+        views: randInt(2, 4),
+        price: 0,
+        el: document.createElement('span'),
+      };
+      c.el.className = 'absolute flex h-[34px] w-[34px] items-center justify-center rounded-full border-2 border-[#fbf9f4] text-base shadow-[0_2px_0_#1b1d21] motion-safe:transition-[left,top,opacity] motion-safe:duration-700';
+      c.el.style.background = p.color;
+      c.el.textContent = p.emoji;
+      c.el.title = `${c.name} · ${p.label}`;
+      c.el.setAttribute('aria-hidden', 'true');
+      stageEl.append(c.el);
+      clients.add(c);
+      place(c, 0);
+      counts.visits++;
+      setCount('visits');
+      liveEl.textContent = String(clients.size);
+      log(c, `entra des del ${c.device[1]} ${c.device[0]}: ${p.motive}. Té ${c.budget} €/nit.`);
+      schedule(c);
+    }
+
+    function schedule(c) {
+      c.timer = setTimeout(() => step(c), rand(1100, 2000));
+    }
+
+    function finish(c, outcome, text) {
+      const tone = outcome === 'booked' ? 'good' : outcome === 'asked' ? 'ask' : 'bad';
+      log(c, text, tone);
+      place(c, 5);
+      counts[outcome]++;
+      setCount(outcome);
+      const badge = document.createElement('span');
+      badge.className = 'absolute -right-1 -bottom-1 flex h-4 w-4 items-center justify-center rounded-full border border-[#fbf9f4] text-[9px] text-white';
+      badge.style.background = tone === 'good' ? '#2f7a4f' : tone === 'ask' ? '#d39a2c' : '#8a8478';
+      badge.textContent = tone === 'good' ? '✓' : tone === 'ask' ? '?' : '×';
+      c.el.append(badge);
+      c.timer = setTimeout(() => {
+        c.el.style.opacity = '0';
+        c.timer = setTimeout(() => { c.el.remove(); clients.delete(c); liveEl.textContent = String(clients.size); }, reduce ? 0 : 700);
+      }, 1800);
+    }
+
+    function step(c) {
+      if (!visible) { c.timer = setTimeout(() => step(c), 500); return; }
+      const p = c.p;
+      switch (c.stage) {
+        case 0:
+          place(c, 1);
+          log(c, `busca per a ${c.guests} ${c.guests === 1 ? 'persona' : 'persones'} i ${c.nights} nits.`);
+          break;
+        case 1: {
+          // A property priced around this profile's range: sometimes over this client's own budget.
+          c.price = Math.round(rand(p.budget[0] * 0.8, p.budget[1] * 1.3) / 5) * 5;
+          place(c, 2);
+          log(c, `obre una fitxa: ${c.price} €/nit.`);
+          break;
+        }
+        case 2:
+          if (c.price > c.budget) {
+            c.views--;
+            if (c.views <= 0) return finish(c, 'left', `res li quadra amb ${c.budget} €/nit. Marxa.`);
+            place(c, 1);
+            log(c, `massa car per a ${c.budget} €/nit. Torna al llistat.`, 'bad');
+            break;
+          }
+          if (Math.random() < p.fav) log(c, 'li agrada. La guarda a preferits ♥');
+          place(c, 3);
+          log(c, `consulta el preu: ${c.price * c.nights} € per ${c.nights} nits.`);
+          break;
+        case 3:
+          if (c.intent === 'look') return finish(c, 'left', 'només mirava. Se\'n va sense fer res.');
+          if (c.intent === 'ask') return finish(c, 'asked', `envia una sol·licitud: «${p.concern}»`);
+          place(c, 4);
+          log(c, 'passa al pagament.');
+          break;
+        case 4: {
+          if (Math.random() < p.abandon) return finish(c, 'left', 's\'ho repensa al darrer moment i marxa.');
+          const r = Math.random();
+          if (r < 0.1 && !c.retried) { c.retried = true; log(c, 'escriu malament la targeta i la corregeix.'); break; }
+          if (r < 0.16 && !c.retried) { c.retried = true; log(c, 'li deneguen la targeta de proves. Ho torna a provar.', 'bad'); break; }
+          return finish(c, 'booked', `reserva feta: ${c.price * c.nights} €.`);
+        }
+      }
+      schedule(c);
+    }
+
+    function loop() {
+      clearTimeout(spawnTimer);
+      if (open && visible) spawn();
+      spawnTimer = setTimeout(loop, rand(1400, 2400));
+    }
+
+    function setOpen(v) {
+      open = v;
+      doors.setAttribute('aria-pressed', String(v));
+      doors.textContent = v ? 'Tanca les portes' : 'Obre les portes';
+    }
+
+    doors.addEventListener('click', () => setOpen(!open));
+    root.querySelector('[data-reset]').addEventListener('click', () => {
+      clients.forEach((c) => { clearTimeout(c.timer); c.el.remove(); });
+      clients.clear();
+      Object.keys(counts).forEach((k) => { counts[k] = 0; setCount(k); });
+      logEl.replaceChildren();
+      liveEl.textContent = '0';
+    });
+    root.querySelectorAll('[data-spawn]').forEach((b) =>
+      b.addEventListener('click', () => spawn(personas.find((x) => x.id === b.dataset.spawn))),
+    );
+
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      // Opens by itself the first time it's seen, unless the visitor prefers less motion.
+      if (visible && !reduce && !root.dataset.started) { root.dataset.started = '1'; setOpen(true); }
+    }, { threshold: 0.25 }).observe(root);
+    loop();
+  }
+
+  // Review board: the check marks each finding with what the expert finds after your fixes.
+  const board = document.querySelector('[data-board]');
+  board?.querySelector('[data-check]')?.addEventListener('click', (ev) => {
+    const btn = ev.currentTarget;
+    const statuses = [...board.querySelectorAll('[data-status]')];
+    const styles = { Arreglat: ['#2f7a4f', '#e3efe6'], 'A mitges': ['#9a6b12', '#f6ecd6'], 'Sense arreglar': ['#b4361c', '#f6e1da'] };
+    statuses.forEach((s) => { s.textContent = 'Comprovant…'; });
+    btn.disabled = true;
+    statuses.forEach((s, i) =>
+      setTimeout(() => {
+        const after = s.dataset.after;
+        s.textContent = after;
+        const [fg, bg] = styles[after];
+        s.style.color = fg;
+        s.style.background = bg;
+        s.style.borderColor = 'transparent';
+        if (i === statuses.length - 1) { btn.disabled = false; btn.textContent = 'Torna-ho a comprovar'; }
+      }, 500 + i * 450),
+    );
+  });
+</script>

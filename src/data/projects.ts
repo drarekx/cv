@@ -1,9 +1,9 @@
-export type ProjectSlug = 'canconers' | 'chordy' | 'ledly' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
+export type ProjectSlug = 'canconers' | 'clientitos' | 'chordy' | 'ledly' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
 
 export interface Project {
   slug: ProjectSlug;
   name: string;
-  kind: 'mac' | 'web';
+  kind: 'mac' | 'web' | 'tool';
   /** Mac apps: release version. */
   version?: string;
   /** Public repo (Mac apps). The web projects' repos are private. */
@@ -21,6 +21,11 @@ export const projects: Project[] = [
     version: 'v1.5.10',
     repo: 'https://github.com/drarekx/songery',
     install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/songery/main/install.sh | bash',
+  },
+  {
+    slug: 'clientitos',
+    name: 'Clientitos',
+    kind: 'tool',
   },
   {
     slug: 'chordy',
