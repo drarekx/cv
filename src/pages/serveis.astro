@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import spaceGroteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 // Self-hosted fonts (no request to Google): only the families this page uses.
 import '@fontsource-variable/jetbrains-mono';
 import '@fontsource-variable/space-grotesk';
@@ -106,6 +107,7 @@ const stack = ['PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'MySQL'];
   bodyClass="bg-paper font-display text-ink antialiased"
 >
   <Fragment slot="head">
+    <link rel="preload" href={spaceGroteskLatin} as="font" type="font/woff2" crossorigin />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
 

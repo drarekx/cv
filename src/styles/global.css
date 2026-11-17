@@ -4,7 +4,7 @@
 
 @theme {
   --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-display: 'Space Grotesk Variable', 'Space Grotesk', 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', 'Space Grotesk Fallback', 'Inter Variable', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, Menlo, monospace;
   --font-sora: 'Sora Variable', 'Sora', 'Inter Variable', system-ui, sans-serif;
   --font-slab: 'Roboto Slab', Georgia, serif;
@@ -49,6 +49,19 @@
   @keyframes twinkle {
     50% { opacity: 0.35; }
   }
+}
+
+/*
+ * Arial resized to take the same room as Space Grotesk (weight 500), so the hero doesn't move when the real font
+ * arrives (it was causing CLS 0.21). Values measured in Chrome with canvas measureText; recompute if the font changes.
+ */
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 108.19%;
+  ascent-override: 90.58%;
+  descent-override: 26.81%;
+  line-gap-override: 0%;
 }
 
 /* Clouds: `drift` moves relative to the element, `drift-wide` crosses the viewport. */

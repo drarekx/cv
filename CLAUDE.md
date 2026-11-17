@@ -63,6 +63,7 @@ Las versiones de las apps de Mac (`version` en `projects.ts`) se actualizan a ma
 - **Clases de Tailwind dinámicas**: Tailwind solo ve las clases escritas enteras en el código. `` `border-[${color}]` `` no funciona; escribir la clase literal.
 - **Fechas fijas en la portada**: la cuenta atrás del Combat de Glosa (21-11-2026 16:30) y «Més de 50 projectes». Revisar cuando caduquen.
 - **Search Console «Página con redirección»**: es lo esperado. `gerardfortea.com` y `http://` redirigen (308) a `https://www.gerardfortea.com`; las URL del sitemap responden 200.
+- **CLS por la fuente de titulares**: Space Grotesk llega tarde y el texto del hero se recolocaba (CLS 0,21 en escritorio). `global.css` define `Space Grotesk Fallback` (Arial con `size-adjust` y `*-override` medidos) y la portada y `/serveis` precargan el woff2. Si cambia la fuente de titulares, recalcular. Para medir CLS: `PerformanceObserver` con `{ type: 'layout-shift', buffered: true }` (`getEntriesByType` no devuelve nada).
 
 ## Commits
 
