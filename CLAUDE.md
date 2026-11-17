@@ -30,7 +30,8 @@ Astro 4 + Vue 3 (islas) + Tailwind 4 (`@tailwindcss/vite`, sin `tailwind.config`
 | `src/pages/serveis.astro` | Servicios para pymes, con el formulario (`ContactFooter`, `voice="vos"`) en `#contacte` |
 | `src/pages/<slug>.astro` | Una página por proyecto, cada una con su propia paleta y fuentes |
 | `src/pages/sitemap.xml.ts` | Sitemap a mano: `/`, `/serveis` y un `/<slug>` por proyecto de `projects.ts` |
-| `src/data/projects.ts` | Lista de proyectos (`slug`, `name`, `kind`: `mac` / `web` / `tool`, `version`, `repo`, `install`, `url`). Alimenta `ProjectFooter`, el sitemap y `project('slug')` |
+| `src/pages/llms.txt.ts` | `/llms.txt` para LLMs y agentes: quién soy, servicios, contacto y proyectos, generado desde `projects.ts` |
+| `src/data/projects.ts` | Lista de proyectos (`slug`, `name`, `kind`: `mac` / `web` / `tool` / `utility`, `summary`, `version`, `repo`, `install`, `url`). Alimenta `ProjectFooter`, el sitemap y `project('slug')` |
 | `src/layouts/BaseLayout.astro` | `title`, `description`, `bodyClass`, `canonical`, `ogImage`, `noindex`; slot `head` para el JSON-LD. Canonical sin barra final, `lang="ca"`, enlace «Salta al contingut» a `#main` |
 | `src/components/site/` | `SiteHeader`, `ContactFooter` (tu/vos), `LegalPage`, `BrandSymbol` |
 | `src/components/ProjectFooter.astro` | Pie de cada página de proyecto: enlaces a los demás proyectos y a `/serveis` |
@@ -41,7 +42,7 @@ Astro 4 + Vue 3 (islas) + Tailwind 4 (`@tailwindcss/vite`, sin `tailwind.config`
 
 ## Añadir un proyecto
 
-1. Entrada en `src/data/projects.ts` (añadir el slug al tipo `ProjectSlug`). Con eso ya sale en el pie de las demás páginas y en el sitemap.
+1. Entrada en `src/data/projects.ts` (añadir el slug al tipo `ProjectSlug`). Con eso ya sale en el pie de las demás páginas y en el sitemap. Rellenar `summary` (una línea en catalán): sale en las listas de la portada y en `/llms.txt`. Las herramientas web gratuitas son `kind: 'utility'`.
 2. `src/pages/<slug>.astro`: misma estructura que las demás (cabecera con «← Gerard Fortea», hero, demo, funciones, instalación o enlace, `ProjectFooter`), JSON-LD `SoftwareApplication` o `WebApplication` con `author: { '@id': 'https://www.gerardfortea.com/#gerard' }`.
 3. Línea en `index.astro`, arriba del todo si es la más nueva: en `utilities` (bloque «Utilitats») si es una herramienta web gratuita, o en `openSource` (bloque «Apps i eines») si no. Las dos listas son manuales e independientes de `projects.ts` y se pintan con `src/components/site/ProjectList.astro`.
 4. Imágenes en `public/img/<slug>-<nombre>-<ancho>.webp` (`cwebp`), con `srcset`.
@@ -64,6 +65,7 @@ Las versiones de las apps de Mac (`version` en `projects.ts`) se actualizan a ma
 - **Fechas fijas en la portada**: la cuenta atrás del Combat de Glosa (21-11-2026 16:30) y «Més de 50 projectes». Revisar cuando caduquen.
 - **Search Console «Página con redirección»**: es lo esperado. `gerardfortea.com` y `http://` redirigen (308) a `https://www.gerardfortea.com`; las URL del sitemap responden 200.
 - **CLS por la fuente de titulares**: Space Grotesk llega tarde y el texto del hero se recolocaba (CLS 0,21 en escritorio). `global.css` define `Space Grotesk Fallback` (Arial con `size-adjust` y `*-override` medidos) y la portada y `/serveis` precargan el woff2. Si cambia la fuente de titulares, recalcular. Para medir CLS: `PerformanceObserver` con `{ type: 'layout-shift', buffered: true }` (`getEntriesByType` no devuelve nada).
+- **Bots de IA** (`public/robots.txt`): se dejan entrar los buscadores y los asistentes que buscan para responder (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) y se bloquean los que recogen datos para entrenar (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot…). Decisión del usuario; no cambiarla sin preguntar.
 
 ## Commits
 
