@@ -43,7 +43,7 @@ Astro 4 + Vue 3 (islas) + Tailwind 4 (`@tailwindcss/vite`, sin `tailwind.config`
 
 1. Entrada en `src/data/projects.ts` (añadir el slug al tipo `ProjectSlug`). Con eso ya sale en el pie de las demás páginas y en el sitemap.
 2. `src/pages/<slug>.astro`: misma estructura que las demás (cabecera con «← Gerard Fortea», hero, demo, funciones, instalación o enlace, `ProjectFooter`), JSON-LD `SoftwareApplication` o `WebApplication` con `author: { '@id': 'https://www.gerardfortea.com/#gerard' }`.
-3. Línea en `openSource` de `index.astro` (lista «Apps i eines», manual e independiente de `projects.ts`), arriba del todo si es la más nueva.
+3. Línea en `index.astro`, arriba del todo si es la más nueva: en `utilities` (bloque «Utilitats») si es una herramienta web gratuita, o en `openSource` (bloque «Apps i eines») si no. Las dos listas son manuales e independientes de `projects.ts` y se pintan con `src/components/site/ProjectList.astro`.
 4. Imágenes en `public/img/<slug>-<nombre>-<ancho>.webp` (`cwebp`), con `srcset`.
 5. `npm run build` y mirar la página con `npm run preview` y Chrome headless (`--screenshot`, `--window-size`). La captura headless no baja de ~500 px de ancho: no sirve para comprobar el móvil.
 
