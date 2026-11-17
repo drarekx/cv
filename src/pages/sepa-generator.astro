@@ -1,0 +1,322 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the family this page uses.
+import '@fontsource-variable/jetbrains-mono';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+
+const p = project('sepa-generator');
+
+/** The IBAN countries in the demo; the tool itself has the 24 SEPA countries listed in `allCountries`. */
+const demoCountries = [
+  ['ES', 'Espanya'], ['DE', 'Alemanya'], ['FR', 'França'], ['PT', 'Portugal'], ['BE', 'Bèlgica'], ['AT', 'Àustria'],
+];
+const allCountries = 'ES DE FR PT IT BE AT IE PL LU FI SE DK CZ SK HR BG GR CY EE LT SI MC SM'.split(' ');
+
+const features = [
+  ['24 països SEPA', 'Cada IBAN té la llargada i l\'estructura del seu país, i els dígits de control MOD-97 de l\'ISO 13616.'],
+  ['Control nacional', 'Quan el país en té, també el calcula: el CCC espanyol, la clau RIB francesa, el CIN italià, Luhn a Finlàndia, MOD 11,10 a Croàcia…'],
+  ['Bancs de debò', 'Els IBAN espanyols porten una entitat real, amb el seu nom i el BIC, i l\'oficina i el compte aleatoris.'],
+  ['NIF, NIE i CIF', 'NIF i NIE amb la lletra del mòdul 23. CIF de qualsevol dels vint tipus d\'entitat, amb el control en número o en lletra segons toqui.'],
+  ['Valida i calcula', 'Diu si un IBAN, NIF, NIE o CIF és correcte i, si no, quin control esperava. Calcula la lletra d\'un NIF i el control d\'un CIF.'],
+  ['Dreceres', 'i, n, e, c i p generen un IBAN, NIF, NIE, CIF o CIF per tipus i el copien al porta-retalls en una sola tecla.'],
+  ['Historial', 'Cada generador guarda el que ha tret, per copiar-ho de nou o baixar-ho en un .txt.'],
+  ['Al navegador', 'No hi ha servidor: tot es calcula a la teva pàgina, amb l\'atzar criptogràfic del navegador.'],
+];
+
+/** Structured data: a web tool by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: p.name,
+  url: p.url,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+
+const btn = 'min-h-10 border px-3.5 text-[13px] font-medium';
+---
+<BaseLayout
+  title="sepa-gen — IBAN, NIF, NIE i CIF de prova · Gerard Fortea"
+  description="sepa-gen genera i valida IBAN de 24 països SEPA i NIF, NIE i CIF ficticis, vàlids de format, per provar programari sense fer servir dades de ningú. Tot al navegador."
+  bodyClass="bg-[#0a0d09] font-['JetBrains_Mono_Variable',monospace] text-[#c9e8b4] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1100px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm">
+    <a href="/" class="flex min-h-11 items-center hover:text-[#a6f36b]">← Gerard Fortea</a>
+    <span class="text-base font-bold"><span class="text-[#f5a524]">&gt;</span> <span class="text-[#a6f36b]">sepa-gen</span></span>
+    <a href={p.url} class="flex min-h-11 items-center text-[#f5a524] hover:text-[#a6f36b]">Obre-la →</a>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto flex max-w-[1100px] flex-col gap-6 px-6 pt-12">
+      <p class="text-sm text-[#6f8f5e]"># Per a programadors i testers</p>
+      <h1 class="max-w-[20ch] text-[clamp(32px,5vw,64px)] leading-[1.05] font-bold tracking-[-0.03em] text-[#a6f36b]">
+        IBAN, NIF, NIE i CIF de prova, vàlids de format
+      </h1>
+      <p class="max-w-[680px] text-[17px] leading-relaxed text-[#9fbf8a]">
+        Per omplir formularis i provar programari sense fer servir les dades de ningú. Passen totes les comprovacions de format i
+        dels dígits de control, però no corresponen a cap compte, persona ni empresa reals.
+      </p>
+      <div class="flex flex-wrap gap-3 pt-2">
+        <a href={p.url} class="flex min-h-12 items-center bg-[#a6f36b] px-6 text-sm font-bold text-[#0a0d09] hover:bg-[#f5a524]">./obre sepa-gen</a>
+        <span class="flex min-h-12 items-center text-sm text-[#6f8f5e]">{p.url!.replace('https://', '')}</span>
+      </div>
+    </section>
+
+    <!--
+      Demo: the same algorithms as the tool (iban.js and doi.js), trimmed to six countries and a few Spanish banks.
+      Shortcuts i, n, e and c only work while the demo is on screen and you aren't typing.
+    -->
+    <section aria-labelledby="demo-titol" class="mx-auto max-w-[1100px] px-6 pt-14 pb-24" data-sepa>
+      <div class="border border-[#26331f] bg-[#0e130c] shadow-[0_30px_80px_-40px_rgba(166,243,107,.25)]">
+        <div class="flex items-center gap-3 border-b border-[#26331f] px-4 py-2.5 text-xs text-[#6f8f5e]">
+          <span aria-hidden="true" class="flex gap-1.5"><span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]"></span><span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]"></span><span class="h-2.5 w-2.5 rounded-full bg-[#28c840]"></span></span>
+          <h2 id="demo-titol">~/proves — sepa-gen --demo</h2>
+        </div>
+
+        <div class="flex flex-col gap-8 p-[clamp(16px,3vw,32px)]">
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+              <span><span class="text-[#f5a524]">$</span> gen --iban --pais</span>
+              <label class="sr-only" for="sepa-country">País de l'IBAN</label>
+              <select id="sepa-country" data-country class="min-h-10 border border-[#26331f] bg-[#0a0d09] px-2 text-[13px] text-[#c9e8b4]">
+                {demoCountries.map(([code, name]) => <option value={code}>{code} · {name}</option>)}
+              </select>
+              <span class="ml-auto text-xs text-[#6f8f5e]">[i]</span>
+            </div>
+            <output data-iban class="text-[clamp(20px,3.6vw,38px)] font-bold tracking-[0.04em] break-all text-[#a6f36b]">—</output>
+            <p data-iban-info class="min-h-5 text-xs text-[#6f8f5e]"></p>
+            <div class="flex flex-wrap gap-2">
+              <button type="button" data-gen="iban" class={`${btn} border-[#a6f36b] bg-[#a6f36b] text-[#0a0d09] hover:bg-[#f5a524] hover:border-[#f5a524]`}>./generar</button>
+              <button type="button" data-copy="iban" class={`${btn} border-[#26331f] hover:border-[#a6f36b]`}>copy</button>
+            </div>
+          </div>
+
+          <div class="grid gap-4 border-t border-[#26331f] pt-8 md:grid-cols-3">
+            {[['nif', 'n', 'sin_letra'], ['nie', 'e', 'sin_letra'], ['cif', 'c', 'sin_control']].map(([kind, key, label]) => (
+              <div class="flex min-w-0 flex-col gap-3 border border-[#26331f] p-4">
+                <div class="flex items-center justify-between text-sm">
+                  <span><span class="text-[#f5a524]">$</span> gen --{kind}</span>
+                  <span class="text-xs text-[#6f8f5e]">[{key}]</span>
+                </div>
+                <output data-out={kind} class="text-[26px] font-bold tracking-[0.06em] text-[#a6f36b]">—</output>
+                <p class="text-xs text-[#6f8f5e]">{label}=<span data-short={kind} class="text-[#c9e8b4]"></span></p>
+                <div class="flex flex-wrap gap-2">
+                  <button type="button" data-gen={kind} class={`${btn} border-[#a6f36b] bg-[#a6f36b] text-[#0a0d09] hover:bg-[#f5a524] hover:border-[#f5a524]`}>./generar</button>
+                  <button type="button" data-copy={kind} class={`${btn} border-[#26331f] hover:border-[#a6f36b]`}>copy</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="flex flex-col gap-3 border-t border-[#26331f] pt-8">
+            <label for="sepa-check" class="text-sm"><span class="text-[#f5a524]">$</span> validar <span class="text-[#6f8f5e]">— enganxa-hi un IBAN, NIF, NIE o CIF</span></label>
+            <input id="sepa-check" data-check type="text" autocomplete="off" spellcheck="false" placeholder="ES91 2100 0418 4502 0005 1332"
+              class="min-h-12 w-full border border-[#26331f] bg-[#0a0d09] px-3 text-[15px] text-[#c9e8b4] placeholder:text-[#3d4f33] focus:border-[#a6f36b] focus:outline-none" />
+            <output data-verdict aria-live="polite" class="min-h-6 text-sm text-[#6f8f5e]"># esperant…</output>
+          </div>
+        </div>
+      </div>
+      <p data-toast role="status" class="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 border border-[#a6f36b] bg-[#0a0d09] px-4 py-2 text-sm text-[#a6f36b] opacity-0 transition-opacity"></p>
+    </section>
+
+    <section class="border-y border-[#26331f] bg-[#0e130c]">
+      <div class="mx-auto grid max-w-[1100px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-4">
+        {features.map(([title, text]) => (
+          <div class="flex flex-col gap-2">
+            <h2 class="text-base font-bold text-[#a6f36b]"># {title}</h2>
+            <p class="text-[14px] leading-relaxed text-[#9fbf8a]">{text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1100px] gap-x-16 gap-y-8 px-6 py-20 lg:grid-cols-2">
+      <div class="flex flex-col gap-5">
+        <h2 class="text-[clamp(26px,3.4vw,40px)] leading-tight font-bold tracking-[-0.02em] text-[#a6f36b]">Un terminal al navegador</h2>
+        <p class="text-[15px] leading-relaxed text-[#9fbf8a]">
+          Cada generador és una ordre, amb el seu historial, i les dreceres ho fan tot sense tocar el ratolí. Genera IBAN
+          d'aquests 24 països. És un sol fitxer HTML amb JavaScript sense dependències i Tailwind.
+        </p>
+        <a href={p.url} class="flex min-h-12 items-center self-start bg-[#a6f36b] px-6 text-sm font-bold text-[#0a0d09] hover:bg-[#f5a524]">./obre sepa-gen</a>
+      </div>
+      <ul aria-label="Països" class="flex flex-wrap content-start gap-2">
+        {allCountries.map((c) => <li class="border border-[#26331f] px-3 py-1.5 text-sm">{c}</li>)}
+      </ul>
+    </section>
+  </main>
+
+  <ProjectFooter current="sepa-generator" class="border-[#26331f] text-[#a6f36b]" />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sepa]');
+  if (root) {
+    // ── Same algorithms as the tool (iban.js, doi.js), trimmed ─────────────────────────────────────────
+    const randomInt = (max: number) => crypto.getRandomValues(new Uint32Array(1))[0] % max;
+    const n = (len: number) => Array.from({ length: len }, () => randomInt(10)).join('');
+    const pick = <T,>(list: T[]) => list[randomInt(list.length)];
+
+    function mod97(numeric: string) {
+      let rest = 0;
+      for (let i = 0; i < numeric.length; i += 7) rest = Number(String(rest) + numeric.slice(i, i + 7)) % 97;
+      return rest;
+    }
+    const toNumeric = (text: string) => text.replace(/[A-Z]/g, (ch) => String(ch.charCodeAt(0) - 55));
+    const ibanCheck = (country: string, bban: string) => String(98 - mod97(toNumeric(bban + country + '00'))).padStart(2, '0');
+
+    function spanishDigit(d10: string) {
+      const w = [1, 2, 4, 8, 5, 10, 9, 7, 3, 6];
+      let sum = 0;
+      for (let i = 0; i < 10; i++) sum += Number(d10[i]) * w[i];
+      const d = 11 - (sum % 11);
+      return d === 11 ? 0 : d === 10 ? 1 : d;
+    }
+    const ribKey = (bank: string, branch: string, account: string) =>
+      String(97 - ((89 * Number(bank) + 15 * Number(branch) + 3 * (Number(account) % 97)) % 97)).padStart(2, '0');
+    const nationalMod97 = (digits: string) => String(98 - mod97(digits + '00')).padStart(2, '0');
+    const belgianCheck = (d10: string) => { const r = mod97(d10); return String(r === 0 ? 97 : r).padStart(2, '0'); };
+
+    const BANKS = [
+      { code: '0049', name: 'Banco Santander, S.A.', bic: 'BSCHESMMXXX' },
+      { code: '0182', name: 'Banco Bilbao Vizcaya Argentaria, S.A.', bic: 'BBVAESMMXXX' },
+      { code: '2100', name: 'CaixaBank, S.A.', bic: 'CAIXESBBXXX' },
+      { code: '0081', name: 'Banco de Sabadell, S.A.', bic: 'BSABESBBXXX' },
+      { code: '0128', name: 'Bankinter, S.A.', bic: 'BKBKESMMXXX' },
+      { code: '1465', name: 'ING Bank N.V., S.E.', bic: 'INGDESMMXXX' },
+    ];
+    const COUNTRIES: Record<string, { length: number; bban?: () => string }> = {
+      ES: { length: 24 },
+      DE: { length: 22, bban: () => n(8) + n(10) },
+      FR: { length: 27, bban: () => { const b = n(5), br = n(5), a = n(11); return b + br + a + ribKey(b, br, a); } },
+      PT: { length: 25, bban: () => { const b = n(4) + n(4) + n(11); return b + nationalMod97(b); } },
+      BE: { length: 16, bban: () => { const b = n(3) + n(7); return b + belgianCheck(b); } },
+      AT: { length: 20, bban: () => n(5) + n(11) },
+    };
+
+    function generateIban(code: string) {
+      if (code === 'ES') {
+        const bank = pick(BANKS), branch = n(4), account = n(10);
+        const bban = bank.code + branch + spanishDigit('00' + bank.code + branch) + spanishDigit(account) + account;
+        return { iban: 'ES' + ibanCheck('ES', bban) + bban, info: `banco=${bank.name}  bic=${bank.bic}` };
+      }
+      const bban = COUNTRIES[code].bban!();
+      return { iban: code + ibanCheck(code, bban) + bban, info: `pais=${code}` };
+    }
+    function isValidIban(raw: string) {
+      const v = raw.replace(/\s+/g, '').toUpperCase();
+      if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(v)) return false;
+      // Countries the demo doesn't know are checked only with MOD-97.
+      if (COUNTRIES[v.slice(0, 2)] && COUNTRIES[v.slice(0, 2)].length !== v.length) return false;
+      return mod97(toNumeric(v.slice(4) + v.slice(0, 4))) === 1;
+    }
+    const formatIban = (iban: string) => iban.replace(/(.{4})/g, '$1 ').trim();
+
+    const NIF_LETTERS = 'TRWAGMYFPDXBNJZSQVHLCKE';
+    const nifLetter = (num: string) => NIF_LETTERS[Number(num) % 23];
+    const generateNif = () => { const num = n(8); return num + nifLetter(num); };
+    const generateNie = () => { const pre = randomInt(3), d = n(7); return 'XYZ'[pre] + d + nifLetter(pre + d); };
+    function cifControls(prefix: string) {
+      const letter = prefix[0], digits = prefix.slice(1);
+      if ('KLM'.includes(letter)) return [nifLetter(digits)];
+      let sum = 0;
+      for (let i = 0; i < digits.length; i++) {
+        const d = Number(digits[i]);
+        if (i % 2 === 1) sum += d;
+        else { const x = d * 2; sum += Math.floor(x / 10) + (x % 10); }
+      }
+      const control = (10 - (sum % 10)) % 10;
+      const asDigit = String(control), asLetter = 'JABCDEFGHI'[control];
+      if ('NPQRSW'.includes(letter)) return [asLetter];
+      if ('ABEH'.includes(letter)) return [asDigit];
+      return [asDigit, asLetter];
+    }
+    const generateCif = () => { const l = pick([...'ABCDEFGHJNPQRSUVW']); const body = l + n(7); return body + cifControls(body)[0]; };
+
+    function validateDoi(raw: string) {
+      const v = raw.toUpperCase().replace(/[\s.-]/g, '');
+      const body = v.slice(0, 8), control = v.slice(8);
+      let type = '', expected: string[] = [];
+      if (/^\d{8}[A-Z]$/.test(v)) { type = 'NIF'; expected = [nifLetter(body)]; }
+      else if (/^[XYZ]\d{7}[A-Z]$/.test(v)) { type = 'NIE'; expected = [nifLetter('XYZ'.indexOf(v[0]) + body.slice(1))]; }
+      else if (/^[KLM]\d{7}[A-Z]$/.test(v)) { type = `NIF especial (${v[0]})`; expected = [nifLetter(body.slice(1))]; }
+      else if (/^[ABCDEFGHJNPQRSUVW]\d{7}[0-9A-J]$/.test(v)) { type = 'CIF'; expected = cifControls(body); }
+      else return null;
+      return { type, valid: expected.includes(control), expected };
+    }
+
+    // ── View ────────────────────────────────────────────────────────────────────────────────────────────
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const country = $<HTMLSelectElement>('[data-country]');
+    const values: Record<string, string> = {};
+    const toast = $<HTMLElement>('[data-toast]');
+    let toastTimer = 0;
+
+    function flash(text: string) {
+      toast.textContent = text;
+      toast.style.opacity = '1';
+      clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => (toast.style.opacity = '0'), 1400);
+    }
+    async function copy(kind: string) {
+      if (!values[kind]) return;
+      try { await navigator.clipboard.writeText(values[kind]); flash(`✓ copiat: ${values[kind]}`); }
+      catch { flash('# no s\'ha pogut copiar'); }
+    }
+    function gen(kind: string) {
+      if (kind === 'iban') {
+        const r = generateIban(country.value);
+        values.iban = r.iban;
+        $('[data-iban]').textContent = formatIban(r.iban);
+        $('[data-iban-info]').textContent = r.info;
+        return;
+      }
+      const v = kind === 'nif' ? generateNif() : kind === 'nie' ? generateNie() : generateCif();
+      values[kind] = v;
+      $(`[data-out="${kind}"]`).textContent = v;
+      $(`[data-short="${kind}"]`).textContent = v.slice(0, 8);
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('[data-gen]').forEach((b) => b.addEventListener('click', () => gen(b.dataset.gen!)));
+    root.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', () => copy(b.dataset.copy!)));
+    country.addEventListener('change', () => gen('iban'));
+
+    const check = $<HTMLInputElement>('[data-check]');
+    const verdict = $<HTMLElement>('[data-verdict]');
+    check.addEventListener('input', () => {
+      const v = check.value.trim();
+      verdict.style.color = '';
+      if (!v) { verdict.textContent = '# esperant…'; return; }
+      if (/^[A-Za-z]{2}\d{2}/.test(v.replace(/\s/g, '')) && v.replace(/\s/g, '').length > 12) {
+        const ok = isValidIban(v);
+        verdict.textContent = ok ? '✓ IBAN vàlid (MOD-97)' : '✗ IBAN no vàlid';
+        verdict.style.color = ok ? '#a6f36b' : '#ff6b5b';
+        return;
+      }
+      const r = validateDoi(v);
+      if (!r) { verdict.textContent = '✗ format no reconegut'; verdict.style.color = '#ff6b5b'; return; }
+      verdict.textContent = r.valid ? `✓ ${r.type} vàlid` : `✗ ${r.type} no vàlid: esperava ${r.expected.join(' o ')}`;
+      verdict.style.color = r.valid ? '#a6f36b' : '#ff6b5b';
+    });
+
+    // Shortcuts: generate and copy, as in the tool.
+    let visible = false;
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.2 }).observe(root);
+    const KEYS: Record<string, string> = { i: 'iban', n: 'nif', e: 'nie', c: 'cif' };
+    window.addEventListener('keydown', (e) => {
+      const kind = KEYS[e.key.toLowerCase()];
+      if (!kind || !visible || e.metaKey || e.ctrlKey || e.altKey) return;
+      if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable]')) return;
+      e.preventDefault();
+      gen(kind);
+      copy(kind);
+    });
+
+    ['iban', 'nif', 'nie', 'cif'].forEach(gen);
+  }
+</script>

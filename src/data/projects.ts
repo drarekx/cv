@@ -1,4 +1,4 @@
-export type ProjectSlug = 'canconers' | 'clientitos' | 'chordy' | 'ledly' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
+export type ProjectSlug = 'canconers' | 'sepa-generator' | 'xml-viewer' | 'clientitos' | 'chordy' | 'ledly' | 'wallpy' | 'atajoly' | 'terminaly' | 'casino-tortella' | 'combat-glosa';
 
 export interface Project {
   slug: ProjectSlug;
@@ -21,6 +21,18 @@ export const projects: Project[] = [
     version: 'v1.5.10',
     repo: 'https://github.com/drarekx/songery',
     install: 'curl -fsSL https://raw.githubusercontent.com/drarekx/songery/main/install.sh | bash',
+  },
+  {
+    slug: 'sepa-generator',
+    name: 'sepa-gen',
+    kind: 'web',
+    url: 'https://sepa-generator.mrdrarek.es/',
+  },
+  {
+    slug: 'xml-viewer',
+    name: 'XML Viewer',
+    kind: 'web',
+    url: 'https://xml-viewer.mrdrarek.es/',
   },
   {
     slug: 'clientitos',
