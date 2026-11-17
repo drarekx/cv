@@ -167,18 +167,18 @@ const jsonLd = {
 
 /** Free web utilities, shown as a compact list above the apps. Add new ones here. */
 const utilities = [
-  { href: '/sepa-generator', name: 'sepa-gen', version: 'web', swatch: '#a6f36b', text: 'IBAN de 24 països SEPA i NIF, NIE i CIF de prova, vàlids de format, per provar programari.' },
-  { href: '/xml-viewer', name: 'XML Viewer', version: 'web', swatch: '#0ea5e9', text: "Visor d'XML i JSON i editor de CSV al navegador, ràpid amb fitxers de desenes de MB." },
+  { href: '/sepa-generator', name: 'sepa-gen', version: 'web', swatch: '#a6f36b', text: project('sepa-generator').summary },
+  { href: '/xml-viewer', name: 'XML Viewer', version: 'web', swatch: '#0ea5e9', text: project('xml-viewer').summary },
 ];
 
 /** Apps and tools, shown as a compact list under the utilities. Add new ones here. */
 const openSource = [
-  { href: '/clientitos', name: 'Clientitos', version: 'Node.js', swatch: '#b08d57', text: "Clients simulats amb personalitat i pressupost que proven una web, i un equip d'experts que la revisa." },
-  { href: '/chordy', name: 'Chordy', version: project('chordy').version, swatch: '#5c8cff', text: "Toca progressions d'acords amb el Mac o un teclat MIDI, amb l'iPad i l'iPhone de comandament." },
-  { href: '/ledly', name: 'Ledly', version: project('ledly').version, swatch: '#38a8ff', text: 'Ambilight per al Mac i Windows: una tira de LEDs que segueix els colors de la pantalla.' },
-  { href: '/wallpy', name: 'Wallpy', version: project('wallpy').version, swatch: '#f2a65a', text: 'Fons de pantalla amb vídeo per al Mac, que es posa en pausa quan no el veus.' },
-  { href: '/atajoly', name: 'Atajoly', version: project('atajoly').version, swatch: '#ff6a3d', text: "Canvia d'app amb el polze: ⌘ dret i la inicial de l'app." },
-  { href: '/terminaly', name: 'Terminaly', version: project('terminaly').version, swatch: '#6fdd8b', text: 'Tots els teus agents de terminal en una finestra, i un que dirigeix els altres en swarm.' },
+  { href: '/clientitos', name: 'Clientitos', version: 'Node.js', swatch: '#b08d57', text: project('clientitos').summary },
+  { href: '/chordy', name: 'Chordy', version: project('chordy').version, swatch: '#5c8cff', text: project('chordy').summary },
+  { href: '/ledly', name: 'Ledly', version: project('ledly').version, swatch: '#38a8ff', text: project('ledly').summary },
+  { href: '/wallpy', name: 'Wallpy', version: project('wallpy').version, swatch: '#f2a65a', text: project('wallpy').summary },
+  { href: '/atajoly', name: 'Atajoly', version: project('atajoly').version, swatch: '#ff6a3d', text: project('atajoly').summary },
+  { href: '/terminaly', name: 'Terminaly', version: project('terminaly').version, swatch: '#6fdd8b', text: project('terminaly').summary },
 ];
 
 
