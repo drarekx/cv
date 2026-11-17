@@ -182,6 +182,8 @@ const openSource = [
 
 
 const cardClass = 'group flex flex-col border border-ink bg-white text-ink no-underline';
+/** Card previews start a little dark and light up on hover or keyboard focus. */
+const previewClass = 'brightness-80 transition-[filter] duration-300 group-hover:brightness-100 group-focus-visible:brightness-100';
 const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-line decoration-2 underline-offset-[6px] group-hover:decoration-fageda';
 ---
 <BaseLayout
@@ -241,7 +243,7 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
         </svg>
         <ul class="flex flex-col border-t border-line text-lg font-medium md:contents">
           <li class="md:absolute md:top-[37.5%] md:right-[6%] md:-translate-y-full"><a class="r1 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-fageda" href="#gestio">Aplicacions de gestió</a></li>
-          <li class="md:absolute md:top-[59.4%] md:right-[6%] md:-translate-y-full"><a class="r2 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-violeta" href="#webs">Webs per a entitats</a></li>
+          <li class="md:absolute md:top-[59.4%] md:right-[6%] md:-translate-y-full"><a class="r2 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-violeta" href="#webs">Projectes web</a></li>
           <li class="md:absolute md:top-[81.2%] md:right-[6%] md:-translate-y-full"><a class="r3 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-lava" href="#utilitats">Apps i utilitats</a></li>
         </ul>
       </nav>
@@ -327,12 +329,12 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
 
     <section id="webs" aria-labelledby="webs-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-20">
       <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
-        <h2 id="webs-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Webs per a entitats i companyies</h2>
+        <h2 id="webs-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Projectes web</h2>
         <p class="max-w-[420px] leading-relaxed text-graphite">El Casino de Tortellà, el seu combat de glosa i una companyia de circ. Aviat n'hi haurà més.</p>
       </div>
       <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <a href="/casino-tortella" class={cardClass}>
-          <div aria-hidden="true" class="flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]">
+          <div aria-hidden="true" class:list={['flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]', previewClass]}>
             <div class="flex h-9 items-center gap-2 bg-[#1c1c1c] px-4 font-slab text-sm text-white">
               <svg viewBox="0 0 24 22" class="h-3.5 w-3.5"><path d="M12 0 24 22H0Z" fill="#55d8d2"></path></svg>Casino de Tortellà
             </div>
@@ -354,7 +356,7 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
         </a>
 
         <a href="/combat-glosa" class={cardClass}>
-          <div aria-hidden="true" class="flex h-[260px] items-center justify-center bg-[repeating-linear-gradient(90deg,#f4a3b9_0_46px,#8fd94a_46px_52px,#f4a3b9_52px_96px)] p-6">
+          <div aria-hidden="true" class:list={['flex h-[260px] items-center justify-center bg-[repeating-linear-gradient(90deg,#f4a3b9_0_46px,#8fd94a_46px_52px,#f4a3b9_52px_96px)] p-6', previewClass]}>
             <div class="flex flex-col items-center gap-2 border-[3px] border-[#111111] bg-[#fdf6ec] px-6 py-4 text-center text-[#111111] shadow-[6px_6px_0_#111111]">
               <span class="font-hand text-[34px] leading-none font-bold text-[#e5006d]">Combat de Glosa</span>
               <span class="text-xs font-bold">21 de novembre · 16:30h</span>
@@ -375,7 +377,7 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
         </a>
 
         <a href="https://www.cianomprovisional.com/" target="_blank" rel="noopener" class={cardClass}>
-          <div aria-hidden="true" class="relative flex h-[260px] flex-col items-center justify-center gap-3 overflow-hidden bg-[#3d8fd4] text-white">
+          <div aria-hidden="true" class:list={['relative flex h-[260px] flex-col items-center justify-center gap-3 overflow-hidden bg-[#3d8fd4] text-white', previewClass]}>
             <picture>
               <source type="image/webp" srcset="/img/cia-nom-provisional-bg-480.webp 480w, /img/cia-nom-provisional-bg-800.webp 800w" sizes="(min-width: 1024px) 366px, (min-width: 768px) 50vw, 100vw" />
               <img src="/img/cia-nom-provisional-bg-800.jpg" alt="" width="800" height="398" loading="lazy" decoding="async" class="absolute inset-x-0 top-9 bottom-0 h-[calc(100%-2.25rem)] w-full object-cover object-top" />
