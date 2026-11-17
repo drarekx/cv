@@ -9,6 +9,7 @@ import '@fontsource/caveat/700.css';
 import SiteHeader from '../components/site/SiteHeader.astro';
 import ContactFooter from '../components/site/ContactFooter.astro';
 import BrandSymbol from '../components/site/BrandSymbol.astro';
+import ProjectList from '../components/site/ProjectList.astro';
 import { project } from '../data/projects';
 
 const experience = [
@@ -163,10 +164,14 @@ const jsonLd = {
   ],
 };
 
-/** Open-source side projects, shown as a compact list under the websites. Add new ones here. */
-const openSource = [
+/** Free web utilities, shown as a compact list above the apps. Add new ones here. */
+const utilities = [
   { href: '/sepa-generator', name: 'sepa-gen', version: 'web', swatch: '#a6f36b', text: 'IBAN de 24 països SEPA i NIF, NIE i CIF de prova, vàlids de format, per provar programari.' },
   { href: '/xml-viewer', name: 'XML Viewer', version: 'web', swatch: '#0ea5e9', text: "Visor d'XML i JSON i editor de CSV al navegador, ràpid amb fitxers de desenes de MB." },
+];
+
+/** Apps and tools, shown as a compact list under the utilities. Add new ones here. */
+const openSource = [
   { href: '/clientitos', name: 'Clientitos', version: 'Node.js', swatch: '#b08d57', text: "Clients simulats amb personalitat i pressupost que proven una web, i un equip d'experts que la revisa." },
   { href: '/chordy', name: 'Chordy', version: project('chordy').version, swatch: '#5c8cff', text: "Toca progressions d'acords amb el Mac o un teclat MIDI, amb l'iPad i l'iPhone de comandament." },
   { href: '/ledly', name: 'Ledly', version: project('ledly').version, swatch: '#38a8ff', text: 'Ambilight per al Mac i Windows: una tira de LEDs que segueix els colors de la pantalla.' },
@@ -394,23 +399,20 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
       </div>
     </section>
 
+    <section id="utilitats" aria-labelledby="utilitats-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-16">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
+        <h2 id="utilitats-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">Utilitats</h2>
+        <p class="text-[15px] text-graphite">Eines web gratuïtes per a programadors. Tot passa al navegador.</p>
+      </div>
+      <ProjectList items={utilities} />
+    </section>
+
     <section id="apps" aria-labelledby="apps-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-24">
       <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
         <h2 id="apps-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">Apps i eines, per gust</h2>
         <p class="text-[15px] text-graphite">Per al Mac, l'iPad, Windows i el navegador.</p>
       </div>
-      <ul class="flex flex-col border-t border-ink">
-        {openSource.map((a) => (
-          <li class="border-b border-line">
-            <a href={a.href} class="group grid min-h-14 grid-cols-[14px_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 py-3 sm:grid-cols-[14px_160px_minmax(0,1fr)_auto]">
-              <span aria-hidden="true" class="h-3 w-3" style={`background:${a.swatch}`}></span>
-              <span class="font-display text-lg font-medium underline decoration-transparent decoration-2 underline-offset-4 group-hover:decoration-fageda">{a.name}</span>
-              <span class="col-start-2 text-[15px] text-graphite sm:col-start-auto">{a.text}</span>
-              <span class="row-start-1 font-mono text-xs text-graphite sm:row-start-auto" style="grid-column:-2/-1">{a.version}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      <ProjectList items={openSource} />
     </section>
 
     <section id="experiencia" aria-labelledby="experiencia-titol" class="border-t border-ink bg-white">
