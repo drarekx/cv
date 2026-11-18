@@ -1,0 +1,464 @@
+---
+/** /chordy: Mac app with an iPad and iPhone remote. Texts: src/i18n/pages/chordy.ts. Routes: src/pages/chordy.astro, src/pages/es/chordy.astro, src/pages/en/chordy.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import CopyCommand from '../components/CopyCommand.vue';
+import LangSwitch from '../components/site/LangSwitch.astro';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+import { canonicalPath, localePath, site, type Lang } from '../i18n';
+import { chordy } from '../i18n/pages/chordy';
+import { useUi } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = chordy[lang];
+const ui = useUi(lang);
+
+const p = project('chordy');
+
+/** Degree pads in the app's order: bottom row J K L ;, top row U I O. */
+const degreeKeys = ['J', 'U', 'K', 'I', 'L', 'O', ';'];
+
+/** Colour wheel as a 3 × 3 grid, as in the app: W A S D and their diagonals around the key's own chord. */
+const wheel = [
+  ['sus2', 'W+A'], ['maj', 'W'], ['maj7', 'W+D'],
+  ['dim', 'A'], ['diatonic', ''], ['aug', 'D'],
+  ['add9', 'S+A'], ['min', 'S'], ['sus4', 'S+D'],
+];
+
+const shots = ['loops', 'sonido', 'midi'].map((file, i) => ({ file, ...t.shots.items[i] }));
+
+/** Chordy Pads, the iPad and iPhone remote: each device gets its own screen. */
+const remotes = ['iPad', 'iPhone'].map((device, i) => ({ device, ...t.remote.devices[i] }));
+
+/** Texts the client script needs (it can't import the dictionaries). */
+const scriptText = { modes: t.demo.modes };
+
+const kbd = (html: string) => html.replaceAll('<kbd>', '<kbd class="font-mono text-[#e8e8ea]">');
+const code = (html: string) => html.replace('<code>', '<code class="font-mono text-[#e8e8ea]">');
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `${site}${canonicalPath(localePath(lang, `/${p.slug}`))}`,
+  description: t.meta.description,
+  inLanguage: lang,
+  operatingSystem: 'macOS, iPadOS, iOS',
+  applicationCategory: 'MultimediaApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-[#121214] font-['Space_Grotesk_Variable',sans-serif] text-[#e8e8ea] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href={localePath(lang, '/')} class="flex min-h-11 items-center hover:text-white">← Gerard Fortea</a>
+    <div class="flex items-center gap-2.5 text-lg font-semibold">
+      <span aria-hidden="true" class="flex items-end gap-[3px]">
+        {[10, 16, 13].map((h) => <span class="w-[5px] rounded-sm bg-[#5c8cff]" style={`height:${h}px`}></span>)}
+      </span>
+      Chordy
+    </div>
+    <div class="flex items-center gap-x-5">
+      <a href="#installa" class="flex min-h-11 items-center text-[#5c8cff] hover:text-white">{t.header.install}</a>
+      <LangSwitch lang={lang} />
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto flex max-w-[1160px] flex-col items-center gap-6 px-6 pt-10 text-center">
+      <h1 class="max-w-[15ch] text-[clamp(40px,6.4vw,84px)] leading-[1] font-semibold tracking-[-0.04em]">{t.hero.title}</h1>
+      <p class="max-w-[640px] text-[19px] leading-relaxed text-[#a1a1a8]">
+        {t.hero.text}
+      </p>
+      <ul aria-label={t.hero.platforms} class="flex flex-wrap justify-center gap-2 font-mono text-[13px]">
+        {['Mac', 'iPad', 'iPhone'].map((d) => <li class="rounded-full border border-[#2e2e34] px-3.5 py-1.5 text-[#a1a1a8]">{d}</li>)}
+      </ul>
+    </section>
+
+    <!--
+      Playable demo: the same theory as Music.swift (degrees, modes, colours, symbols) and a small Web Audio pad. The keyboard
+      keys only act while the demo is on screen, so the page still scrolls with the space bar elsewhere.
+    -->
+    <section aria-labelledby="prova-titol" class="mx-auto max-w-[1160px] px-6 pt-14 pb-24" data-chordy>
+      <h2 id="prova-titol" class="sr-only">{t.demo.srTitle}</h2>
+      <div class="mx-auto flex max-w-[820px] flex-col gap-5 rounded-[18px] border border-[#2e2e34] bg-[#1a1a1d] p-[clamp(16px,3vw,28px)] shadow-[0_40px_80px_-40px_rgba(0,0,0,.9)]">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="flex min-w-0 flex-col gap-1">
+            <span class="font-mono text-[11px] font-semibold tracking-[0.08em] text-[#8a8a93]">{t.demo.chord}</span>
+            <output data-now aria-live="polite" class="min-h-[1.2em] truncate text-[clamp(28px,4vw,40px)] leading-none font-semibold tracking-[-0.02em]">—</output>
+          </div>
+          <div class="flex items-center gap-1 rounded-xl border border-[#2e2e34] bg-[#1f1f23] p-1">
+            <button type="button" data-key-step="-1" aria-label={t.demo.prevKey} class="flex size-11 items-center justify-center rounded-lg hover:bg-[#26262b]">‹</button>
+            <span class="flex min-w-[96px] flex-col items-center">
+              <span class="font-mono text-[10px] font-semibold tracking-[0.08em] text-[#8a8a93]">{t.demo.keyTitle}</span>
+              <span data-key class="font-mono text-[15px] font-semibold">C {t.demo.modes.major}</span>
+            </span>
+            <button type="button" data-key-step="1" aria-label={t.demo.nextKey} class="flex size-11 items-center justify-center rounded-lg hover:bg-[#26262b]">›</button>
+          </div>
+        </div>
+
+        <ol data-history aria-label={t.demo.history} class="flex h-9 gap-1.5 overflow-hidden"><li class="flex items-center font-mono text-sm text-[#5d5d66]">{t.demo.historyEmpty}</li></ol>
+
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div role="group" aria-label={t.demo.modeGroup} class="flex rounded-xl border border-[#2e2e34] bg-[#1f1f23] p-1 text-sm">
+            {(['major', 'minor', 'dorian'] as const).map((mode, i) => (
+              <button type="button" data-mode={mode} aria-pressed={i === 0 ? 'true' : 'false'}
+                class="min-h-9 rounded-lg px-3.5 text-[#a1a1a8] hover:text-white aria-pressed:bg-[#2e2e34] aria-pressed:font-semibold aria-pressed:text-white">{t.demo.modes[mode]}</button>
+            ))}
+          </div>
+          <button type="button" data-octave aria-pressed="false" class="min-h-11 rounded-xl border border-[#2e2e34] px-4 text-sm text-[#a1a1a8] hover:text-white aria-pressed:border-[#5c8cff] aria-pressed:text-white">
+            {t.demo.octaveDown} <span class="font-mono text-xs text-[#8a8a93]">{t.demo.space}</span>
+          </button>
+        </div>
+
+        <div class="grid items-center gap-5 sm:grid-cols-[auto_1fr]">
+          <div role="group" aria-label={t.demo.colorGroup} class="mx-auto grid size-[188px] grid-cols-3 grid-rows-3 gap-1 rounded-full border border-[#2e2e34] bg-[#1f1f23] p-3">
+            {wheel.map(([color, keys]) => (
+              <button type="button" data-color={color} aria-pressed={color === 'diatonic' ? 'true' : 'false'}
+                title={keys ? t.demo.hold.replace('{keys}', () => keys) : t.demo.ownChord}
+                class:list={[
+                  'flex flex-col items-center justify-center rounded-full font-mono text-[12px] text-[#a1a1a8] hover:text-white aria-pressed:bg-[#5c8cff]/25 aria-pressed:text-[#9db8ff]',
+                  color === 'diatonic' && 'border border-[#5c8cff]/60 font-semibold',
+                ]}>
+                {color === 'diatonic' ? t.demo.diatonic : color}
+              </button>
+            ))}
+          </div>
+          <div class="grid grid-cols-7 gap-1.5 sm:gap-2" role="group" aria-label={t.demo.degrees}>
+            {degreeKeys.map((k, i) => (
+              <button type="button" data-degree={i + 1}
+                class="flex aspect-[9/14] min-w-0 touch-none overflow-hidden flex-col justify-between rounded-xl border border-[#2e2e34] bg-[#1f1f23] p-1.5 text-left select-none hover:border-[#4a4a52] data-[on]:border-[#5c8cff] data-[on]:bg-[#5c8cff] data-[on]:text-white sm:p-2.5">
+                <span class="font-mono text-[11px] font-bold text-[#5c8cff] [[data-on]>&]:text-white/80">{k}</span>
+                <span class="flex flex-col">
+                  <span data-numeral class="font-mono text-[11px] text-[#a1a1a8] [[data-on]>span>&]:text-white/80 sm:text-[13px]"></span>
+                  <span data-symbol class="text-[clamp(13px,2.4vw,22px)] leading-tight font-semibold"></span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      <p class="mx-auto mt-5 max-w-[640px] text-center text-[15px] leading-relaxed text-[#8a8a93]" set:html={kbd(t.demo.hint)} />
+      <script type="application/json" data-chordy-copy set:html={JSON.stringify(scriptText)} />
+    </section>
+
+    <section class="border-y border-[#26262b] bg-[#161618]">
+      <div class="mx-auto grid max-w-[1160px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-4">
+        {t.features.map((f) => (
+          <div class="flex flex-col gap-2">
+            <h2 class="text-xl font-semibold tracking-[-0.01em]">{f.title}</h2>
+            <p class="text-[15px] leading-relaxed text-[#a1a1a8]">{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1160px] flex-col gap-10 px-6 py-20">
+      <h2 class="max-w-[18ch] text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">{t.shots.title}</h2>
+      <div class="grid gap-8 lg:grid-cols-3">
+        {shots.map((s) => (
+          <figure class="flex flex-col gap-3">
+            <img
+              src={`/img/chordy-${s.file}-1180.webp`}
+              srcset={`/img/chordy-${s.file}-640.webp 640w, /img/chordy-${s.file}-1180.webp 1180w`}
+              sizes="(min-width: 1024px) 360px, 100vw"
+              width="1180" height="760" loading="lazy" decoding="async" alt={s.alt}
+              class="w-full rounded-xl border border-[#2e2e34]"
+            />
+            <figcaption class="text-[15px] text-[#a1a1a8]">{s.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section aria-labelledby="pads-titol" class="border-y border-[#26262b] bg-[#161618]">
+      <div class="mx-auto flex max-w-[1160px] flex-col gap-10 px-6 py-20">
+        <div class="grid gap-x-16 gap-y-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <h2 id="pads-titol" class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">{t.remote.title}</h2>
+          <p class="text-[17px] leading-relaxed text-[#a1a1a8]">
+            {t.remote.text}
+          </p>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-2">
+          {remotes.map((r) => (
+            <div class="flex flex-col gap-5 rounded-2xl border border-[#2e2e34] bg-[#1a1a1d] p-[clamp(24px,3vw,36px)]">
+              <div class="flex flex-col gap-1">
+                <span class="font-mono text-[12px] font-semibold tracking-[0.08em] text-[#5c8cff]">{r.device.toUpperCase()}</span>
+                <h3 class="text-[clamp(22px,2.4vw,28px)] leading-tight font-semibold tracking-[-0.02em]">{r.title}</h3>
+              </div>
+              <dl class="grid gap-x-5 gap-y-3 sm:grid-cols-[96px_1fr]">
+                {r.items.map(([term, text]) => (
+                  <>
+                    <dt class="font-medium">{term}</dt>
+                    <dd class="text-[15px] leading-relaxed text-[#a1a1a8]">{text}</dd>
+                  </>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </div>
+        <p class="text-[15px] text-[#8a8a93]" set:html={code(t.remote.note)} />
+      </div>
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1160px] px-6 pb-[88px]">
+      <div class="grid gap-x-12 gap-y-6 rounded-2xl border border-[#2e2e34] bg-[#1a1a1d] p-[clamp(24px,4vw,48px)] shadow-[inset_0_-2px_0_#5c8cff] lg:grid-cols-2">
+        <div class="flex flex-col gap-4">
+          <h2 class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-semibold tracking-[-0.03em]">{t.install.title}</h2>
+          <p class="text-[17px] leading-relaxed text-[#a1a1a8]">
+            {t.install.text}
+          </p>
+        </div>
+        <div class="flex min-w-0 flex-col gap-5">
+          <CopyCommand
+            client:visible
+            command={p.install!}
+            codeClass="rounded-xl bg-black text-[#e8e8ea]"
+            buttonClass="rounded-xl bg-[#5c8cff] text-white hover:bg-[#7aa2ff]"
+            copyLabel={ui.copy.copy}
+            copiedLabel={ui.copy.copied}
+            srCopied={ui.copy.srCopied}
+          />
+          <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <span>{t.install.macos}</span>
+            <span>{t.install.chips}</span>
+            <span>{p.version}</span>
+            <a href={p.repo} class="underline underline-offset-4">{p.repo!.replace('https://', '')}</a>
+          </div>
+          <p class="text-sm text-[#8a8a93]" set:html={t.install.basedOn.replace('{link}', () => '<a href="https://www.jameshsi.com/?ref=chordboy" class="underline underline-offset-4">ChordBoy</a>')} />
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter lang={lang} current="chordy" class="border-[#26262b] text-[#5c8cff]" />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-chordy]');
+  if (root) {
+    // Texts from the page's dictionary, passed as JSON (scripts can't import it).
+    const T = JSON.parse(root.querySelector('[data-chordy-copy]')!.textContent!) as { modes: Record<'major' | 'minor' | 'dorian', string> };
+    // ── Theory, as in Chordy's Music.swift ──────────────────────────────────────────────────────────────
+    const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    type Mode = 'major' | 'minor' | 'dorian';
+    const MODE_NAMES: Record<Mode, string> = T.modes;
+    const MODES: Mode[] = ['major', 'minor', 'dorian'];
+    const SCALES: Record<Mode, [string, number[]][]> = {
+      major: [['I', [0, 4, 7]], ['ii', [2, 5, 9]], ['iii', [4, 7, 11]], ['IV', [5, 9, 12]], ['V', [7, 11, 14]], ['vi', [9, 12, 16]], ['vii°', [11, 14, 17]]],
+      minor: [['i', [0, 3, 7]], ['ii°', [2, 5, 8]], ['III', [3, 7, 10]], ['iv', [5, 8, 12]], ['v', [7, 10, 14]], ['VI', [8, 12, 15]], ['VII', [10, 14, 17]]],
+      dorian: [['i', [0, 3, 7]], ['ii', [2, 5, 9]], ['III', [3, 7, 10]], ['IV', [5, 9, 12]], ['v', [7, 10, 14]], ['vi°', [9, 12, 15]], ['VII', [10, 14, 17]]],
+    };
+    // Colour → shape over the degree's root and suffix of its symbol.
+    const COLORS: Record<string, { shape: number[]; suffix: string }> = {
+      maj: { shape: [0, 4, 7], suffix: '' },
+      min: { shape: [0, 3, 7], suffix: 'm' },
+      dim: { shape: [0, 3, 6], suffix: 'dim' },
+      aug: { shape: [0, 4, 8], suffix: 'aug' },
+      maj7: { shape: [0, 4, 7, 11], suffix: 'maj7' },
+      sus2: { shape: [0, 2, 7], suffix: 'sus2' },
+      sus4: { shape: [0, 5, 7], suffix: 'sus4' },
+      add9: { shape: [0, 4, 7, 14], suffix: 'add9' },
+    };
+    // Held W A S D → colour; diagonals win, as in Direction.resolve.
+    function colorFromKeys(h: Set<string>): string | null {
+      const w = h.has('w'), s = h.has('s'), a = h.has('a'), d = h.has('d');
+      if (w && d) return 'maj7';
+      if (w && a) return 'sus2';
+      if (s && d) return 'sus4';
+      if (s && a) return 'add9';
+      if (w) return 'maj';
+      if (s) return 'min';
+      if (a) return 'dim';
+      if (d) return 'aug';
+      return null;
+    }
+    const triad = (iv: number[]) => {
+      const third = iv[1] - iv[0], fifth = iv[2] - iv[0];
+      if (third === 3 && fifth === 6) return 'dim';
+      if (third === 4 && fifth === 8) return 'aug';
+      return third === 3 ? 'm' : '';
+    };
+
+    let tonic = 0;
+    let mode: Mode = 'major';
+    let fixedColor = 'diatonic'; // picked on the wheel
+    let octaveDown = false;
+    let spaceDown = false;
+    const colorKeys = new Set<string>();
+    const held = new Set<number>(); // degrees 1…7
+    const color = () => colorFromKeys(colorKeys) ?? fixedColor;
+
+    function intervals(degree: number, c = color()) {
+      const diatonic = SCALES[mode][degree - 1][1];
+      return c === 'diatonic' ? diatonic : COLORS[c].shape.map((s) => diatonic[0] + s);
+    }
+    function symbol(degree: number, c = color()) {
+      const iv = intervals(degree, c);
+      return NOTES[(tonic + iv[0]) % 12] + (c === 'diatonic' ? triad(iv) : COLORS[c].suffix);
+    }
+
+    // ── Sound: a soft two-saw pad through a low-pass filter ─────────────────────────────────────────────
+    let ctx: AudioContext | null = null;
+    let bus: GainNode;
+    const voices = new Map<number, { gain: GainNode; oscs: OscillatorNode[] }>();
+    function audio() {
+      if (!ctx) {
+        ctx = new AudioContext();
+        bus = ctx.createGain();
+        bus.gain.value = 0.16;
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 2200;
+        const comp = ctx.createDynamicsCompressor();
+        bus.connect(filter).connect(comp).connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume();
+      return ctx;
+    }
+    function noteOn(midi: number) {
+      const c = audio(), t = c.currentTime;
+      const f = 440 * 2 ** ((midi - 69) / 12);
+      const gain = c.createGain();
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.5, t + 0.015);
+      gain.gain.setTargetAtTime(0.3, t + 0.015, 0.3);
+      gain.connect(bus);
+      const oscs = [-7, 7].map((detune) => {
+        const o = c.createOscillator();
+        o.type = 'sawtooth';
+        o.frequency.value = f;
+        o.detune.value = detune;
+        o.connect(gain);
+        o.start(t);
+        return o;
+      });
+      voices.set(midi, { gain, oscs });
+    }
+    function noteOff(midi: number) {
+      const v = voices.get(midi);
+      if (!v || !ctx) return;
+      const t = ctx.currentTime;
+      v.gain.gain.cancelScheduledValues(t);
+      v.gain.gain.setValueAtTime(v.gain.gain.value, t);
+      v.gain.gain.setTargetAtTime(0, t, 0.18);
+      v.oscs.forEach((o) => o.stop(t + 1.2));
+      voices.delete(midi);
+    }
+    /** Make the sounding notes match the held chords: they follow colour, key and octave changes live. */
+    function sync() {
+      const want = new Set<number>();
+      held.forEach((d) => intervals(d).forEach((iv) => want.add(60 + tonic + iv - (octaveDown || spaceDown ? 12 : 0))));
+      voices.forEach((_, m) => { if (!want.has(m)) noteOff(m); });
+      want.forEach((m) => { if (!voices.has(m)) noteOn(m); });
+    }
+
+    // ── View ────────────────────────────────────────────────────────────────────────────────────────────
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const now = $<HTMLOutputElement>('[data-now]');
+    const keyLabel = $<HTMLElement>('[data-key]');
+    const history = $<HTMLOListElement>('[data-history]');
+    const pads = [...root.querySelectorAll<HTMLButtonElement>('[data-degree]')];
+    let last = '—';
+
+    function render() {
+      keyLabel.textContent = `${NOTES[tonic]} ${MODE_NAMES[mode]}`;
+      pads.forEach((pad, i) => {
+        pad.querySelector('[data-numeral]')!.textContent = SCALES[mode][i][0];
+        pad.querySelector('[data-symbol]')!.textContent = symbol(i + 1);
+        pad.toggleAttribute('data-on', held.has(i + 1));
+      });
+      const c = color();
+      root.querySelectorAll<HTMLButtonElement>('[data-color]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.color === c)));
+      root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+      $('[data-octave]').setAttribute('aria-pressed', String(octaveDown || spaceDown));
+      const playing = [...held].sort().map((d) => symbol(d));
+      if (playing.length) last = playing.join(' · ');
+      now.textContent = last;
+      now.classList.toggle('text-[#8a8a93]', !playing.length);
+    }
+    function update() { sync(); render(); }
+
+    function press(degree: number) {
+      if (held.has(degree)) return;
+      held.add(degree);
+      history.querySelector('li:not([data-chord])')?.remove();
+      const li = document.createElement('li');
+      li.dataset.chord = '';
+      li.className = 'flex shrink-0 items-center rounded-lg bg-[#5c8cff]/20 px-3 font-mono text-sm text-[#9db8ff]';
+      li.textContent = symbol(degree);
+      history.prepend(li);
+      while (history.children.length > 8) history.lastElementChild!.remove();
+      [...history.children].forEach((el, i) => ((el as HTMLElement).style.opacity = String(1 - i * 0.11)));
+      update();
+    }
+    function release(degree: number) {
+      if (held.delete(degree)) update();
+    }
+    function releaseAll() {
+      held.clear(); colorKeys.clear(); spaceDown = false;
+      update();
+    }
+
+    // Pads: hold with the mouse or a finger.
+    pads.forEach((pad) => {
+      const d = Number(pad.dataset.degree);
+      pad.addEventListener('pointerdown', (e) => { pad.setPointerCapture(e.pointerId); press(d); });
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => pad.addEventListener(ev, () => release(d)));
+      // Keyboard users on the button itself: Enter plays a short chord.
+      pad.addEventListener('click', (e) => { if (e.detail === 0) { press(d); setTimeout(() => release(d), 600); } });
+    });
+    root.querySelectorAll<HTMLButtonElement>('[data-color]').forEach((b) =>
+      b.addEventListener('click', () => { fixedColor = b.dataset.color === fixedColor ? 'diatonic' : b.dataset.color!; update(); }),
+    );
+    root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) =>
+      b.addEventListener('click', () => { mode = b.dataset.mode as Mode; update(); }),
+    );
+    root.querySelectorAll<HTMLButtonElement>('[data-key-step]').forEach((b) =>
+      b.addEventListener('click', () => { tonic = (tonic + Number(b.dataset.keyStep) + 12) % 12; update(); }),
+    );
+    $('[data-octave]').addEventListener('click', () => { octaveDown = !octaveDown; update(); });
+
+    // Mac keyboard, only while the demo is on screen.
+    let visible = false;
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (!visible) releaseAll(); }, { threshold: 0.3 }).observe(root);
+    const DEGREE_KEYS: Record<string, number> = { j: 1, u: 2, k: 3, i: 4, l: 5, o: 6, ';': 7 };
+    const ignore = (e: KeyboardEvent) => !visible || e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).closest?.('input, textarea, [contenteditable]');
+    window.addEventListener('keydown', (e) => {
+      if (ignore(e)) return;
+      const k = e.key.toLowerCase();
+      if (k in DEGREE_KEYS) { if (!e.repeat) press(DEGREE_KEYS[k]); }
+      else if ('wasd'.includes(k) && k.length === 1) { colorKeys.add(k); update(); }
+      else if (k === ' ') { spaceDown = true; update(); }
+      else if (k === 'z' || k === 'c') { if (!e.repeat) { tonic = (tonic + (k === 'z' ? 11 : 1)) % 12; update(); } }
+      else if (k === 'q' || k === 'e') { if (!e.repeat) { mode = MODES[(MODES.indexOf(mode) + (k === 'q' ? 2 : 1)) % 3]; update(); } }
+      else return;
+      e.preventDefault();
+    });
+    window.addEventListener('keyup', (e) => {
+      const k = e.key.toLowerCase();
+      if (k in DEGREE_KEYS) release(DEGREE_KEYS[k]);
+      else if (colorKeys.delete(k)) update();
+      else if (k === ' ' && spaceDown) { spaceDown = false; update(); }
+    });
+    window.addEventListener('blur', releaseAll);
+
+    render();
+  }
+</script>

@@ -1,0 +1,419 @@
+---
+/** /xml-viewer: free web tool. Texts: src/i18n/pages/xml-viewer.ts. Routes: src/pages/xml-viewer.astro, src/pages/es/xml-viewer.astro, src/pages/en/xml-viewer.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import LangSwitch from '../components/site/LangSwitch.astro';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import { project } from '../data/projects';
+import { localePath, type Lang } from '../i18n';
+import { xmlViewer } from '../i18n/pages/xml-viewer';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = xmlViewer[lang];
+
+const p = project('xml-viewer');
+
+const sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <book id="bk101" lang="ca">
+    <title>Mirall trencat</title>
+    <author>Mercè Rodoreda</author>
+    <price currency="EUR">12.50</price>
+  </book>
+  <book id="bk102" lang="ca">
+    <title>Canigó</title>
+    <author>Jacint Verdaguer</author>
+    <price currency="EUR">9.95</price>
+  </book>
+  <book id="bk103" lang="es">
+    <title>Nada</title>
+    <author>Carmen Laforet</author>
+    <price currency="EUR">14.00</price>
+  </book>
+</catalog>`;
+
+const sampleJson = JSON.stringify(
+  {
+    store: {
+      name: 'Llibreria del Carme',
+      open: true,
+      book: [
+        { title: 'Mirall trencat', author: 'Mercè Rodoreda', price: 12.5 },
+        { title: 'Canigó', author: 'Jacint Verdaguer', price: 9.95, reviews: [{ user: 'anna', stars: 5 }] },
+        { title: 'Nada', author: 'Carmen Laforet', price: 14, tags: null },
+      ],
+    },
+  },
+  null,
+  2,
+);
+
+/** Texts the client script needs (it can't import the dictionaries). */
+const scriptText = t.viewer;
+
+/** Structured data: a web tool by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: p.name,
+  url: p.url,
+  description: t.meta.description,
+  inLanguage: lang,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  isAccessibleForFree: true,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-white font-['Inter_Variable',sans-serif] text-[#0f172a] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="border-b border-[#e2e8f0]">
+    <div class="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-3 text-sm font-medium">
+      <a href={localePath(lang, '/')} class="flex min-h-11 items-center hover:text-[#0284c7]">← Gerard Fortea</a>
+      <span class="flex items-center gap-2 text-base font-semibold">
+        <span aria-hidden="true" class="flex h-7 w-7 items-center justify-center rounded-md bg-[#0ea5e9] font-mono text-xs font-bold text-white">&lt;/&gt;</span>
+        XML Viewer
+      </span>
+      <div class="flex items-center gap-x-5">
+        <a href={p.url} class="flex min-h-11 items-center text-[#0284c7] hover:text-[#0f172a]">{t.header.open}</a>
+        <LangSwitch lang={lang} />
+      </div>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto flex max-w-[1160px] flex-col items-center gap-6 px-6 pt-16 text-center">
+      <ul aria-label={t.hero.formats} class="flex gap-1 rounded-lg bg-[#f1f5f9] p-1 font-mono text-xs font-semibold">
+        {['XML', 'JSON', 'CSV'].map((f) => <li class="rounded-md px-3 py-1.5 text-[#475569] first:bg-white first:text-[#0f172a] first:shadow-sm">{f}</li>)}
+      </ul>
+      <h1 class="max-w-[18ch] text-[clamp(36px,5.6vw,72px)] leading-[1.03] font-bold tracking-[-0.035em]">
+        {t.hero.title}
+      </h1>
+      <p class="max-w-[640px] text-[19px] leading-relaxed text-[#475569]">
+        {t.hero.text}
+      </p>
+      <a href={p.url} class="flex min-h-12 items-center rounded-lg bg-[#0ea5e9] px-6 text-[15px] font-semibold text-white hover:bg-[#0284c7]">{t.hero.cta}</a>
+    </section>
+
+    <!--
+      Demo: a small viewer built on the same browser APIs as the tool (DOMParser, document.evaluate, JSON.parse).
+      Folding uses <details>, so it works with the keyboard too; clicking a line shows its path.
+    -->
+    <section aria-labelledby="demo-titol" class="mx-auto max-w-[1160px] px-6 pt-14 pb-24" data-viewer>
+      <h2 id="demo-titol" class="sr-only">{t.demo.srTitle}</h2>
+      <div class="overflow-hidden rounded-xl border border-[#e2e8f0] shadow-[0_30px_70px_-35px_rgba(15,23,42,.35)]">
+        <div class="flex flex-wrap items-center gap-3 border-b border-[#e2e8f0] bg-white px-4 py-2.5">
+          <div role="group" aria-label={t.demo.formatGroup} class="flex gap-1 rounded-lg bg-[#f1f5f9] p-1 text-xs font-semibold">
+            {['xml', 'json'].map((f, i) => (
+              <button type="button" data-format={f} aria-pressed={i === 0 ? 'true' : 'false'}
+                class="min-h-8 rounded-md px-3 text-[#475569] aria-pressed:bg-white aria-pressed:text-[#0f172a] aria-pressed:shadow-sm">{f.toUpperCase()}</button>
+            ))}
+          </div>
+          <div class="flex min-w-[220px] flex-1 items-center gap-2 rounded-lg border border-[#e2e8f0] px-2.5 focus-within:border-[#0ea5e9]">
+            <span data-query-label class="rounded bg-[#f1f5f9] px-1.5 py-0.5 text-[11px] font-semibold text-[#475569]">XPath</span>
+            <label for="xv-query" class="sr-only">{t.demo.queryLabel}</label>
+            <input id="xv-query" data-query type="text" spellcheck="false" autocomplete="off" value="//book[price > 10]/title"
+              class="min-h-9 w-full bg-transparent font-mono text-[13px] outline-none" />
+            <span data-count class="shrink-0 font-mono text-xs text-[#64748b]"></span>
+          </div>
+          <div class="flex gap-1 text-xs font-medium">
+            <button type="button" data-all="open" class="min-h-8 rounded-md bg-[#f1f5f9] px-2.5 text-[#475569] hover:text-[#0f172a]">{t.demo.openAll}</button>
+            <button type="button" data-all="close" class="min-h-8 rounded-md bg-[#f1f5f9] px-2.5 text-[#475569] hover:text-[#0f172a]">{t.demo.closeAll}</button>
+          </div>
+        </div>
+        <div class="grid lg:grid-cols-2">
+          <div class="flex min-w-0 flex-col border-b border-[#e2e8f0] bg-[#f8fafc] lg:border-r lg:border-b-0">
+            <span class="px-4 pt-3 text-[11px] font-semibold tracking-[0.08em] text-[#64748b]">{t.demo.inputTitle}</span>
+            <label for="xv-input" class="sr-only">{t.demo.inputLabel}</label>
+            <textarea id="xv-input" data-input spellcheck="false"
+              class="h-[380px] w-full resize-none bg-transparent px-4 py-3 font-mono text-[12.5px] leading-relaxed text-[#334155] outline-none">{sampleXml}</textarea>
+          </div>
+          <div class="flex min-w-0 flex-col">
+            <div data-tree class="h-[380px] overflow-auto px-3 py-3 font-mono text-[12.5px] leading-[1.7]"></div>
+            <div class="flex min-h-10 items-center gap-2 border-t border-[#e2e8f0] px-4 font-mono text-xs text-[#64748b]">
+              <span class="shrink-0">{t.demo.path}</span><output data-path class="truncate text-[#0f172a]">{t.demo.clickLine}</output>
+            </div>
+          </div>
+        </div>
+      </div>
+      <template data-sample-json>{sampleJson}</template>
+      <p class="mt-5 text-center text-[15px] text-[#64748b]">
+        {t.demo.note}
+      </p>
+      <script type="application/json" data-xv-copy set:html={JSON.stringify(scriptText)} />
+    </section>
+
+    <section class="border-y border-[#e2e8f0] bg-[#f8fafc]">
+      <div class="mx-auto grid max-w-[1160px] gap-x-12 gap-y-10 px-6 py-20 sm:grid-cols-2 lg:grid-cols-4">
+        {t.features.map(([title, text]) => (
+          <div class="flex flex-col gap-2">
+            <h2 class="text-lg font-semibold tracking-[-0.01em]">{title}</h2>
+            <p class="text-[15px] leading-relaxed text-[#475569]">{text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1160px] flex-col gap-8 px-6 py-20">
+      <div class="grid gap-x-16 gap-y-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <h2 class="text-[clamp(30px,4vw,48px)] leading-[1.05] font-bold tracking-[-0.03em]">{t.large.title}</h2>
+        <p class="text-[17px] leading-relaxed text-[#475569]">
+          {t.large.text}
+        </p>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
+        <table class="w-full min-w-[640px] text-left text-[15px]">
+          <thead class="bg-[#f8fafc] text-sm text-[#475569]">
+            <tr>{t.large.headers.map((h) => <th scope="col" class="px-5 py-3 font-semibold">{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {t.large.rows.map(([file, size, load, search, query]) => (
+              <tr class="border-t border-[#e2e8f0]">
+                <th scope="row" class="px-5 py-3 font-semibold">{file}</th>
+                <td class="px-5 py-3 text-[#64748b]">{size}</td>
+                <td class="px-5 py-3 font-mono text-[#0284c7]">{load}</td>
+                <td class="px-5 py-3 font-mono">{search}</td>
+                <td class="px-5 py-3 font-mono">{query}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-4">
+        <a href={p.url} class="flex min-h-12 items-center rounded-lg bg-[#0ea5e9] px-6 text-[15px] font-semibold text-white hover:bg-[#0284c7]">{t.hero.cta}</a>
+        <span class="text-sm text-[#64748b]">{t.large.stack}</span>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter lang={lang} current="xml-viewer" class="border-[#e2e8f0] text-[#0284c7]" />
+</BaseLayout>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-viewer]');
+  if (root) {
+    // Texts from the page's dictionary, passed as JSON (scripts can't import it).
+    const T = JSON.parse(root.querySelector('[data-xv-copy]')!.textContent!) as Record<
+      'paste' | 'invalidXml' | 'invalidQuery' | 'child' | 'children' | 'item' | 'items' | 'key' | 'keys' | 'result' | 'results',
+      string
+    >;
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const input = $<HTMLTextAreaElement>('[data-input]');
+    const tree = $<HTMLElement>('[data-tree]');
+    const pathOut = $<HTMLOutputElement>('[data-path]');
+    const clickLine = pathOut.textContent ?? '';
+    const query = $<HTMLInputElement>('[data-query]');
+    const count = $<HTMLElement>('[data-count]');
+    const queryLabel = $<HTMLElement>('[data-query-label]');
+    const sampleJson = $<HTMLTemplateElement>('[data-sample-json]').content.textContent ?? '';
+
+    let format: 'xml' | 'json' = 'xml';
+    let texts = { xml: input.value, json: sampleJson };
+    let xmlDoc: Document | null = null;
+    let jsonData: unknown = null;
+    const lineOf = new Map<unknown, HTMLElement>(); // XML node or JSON path → its line in the tree
+
+    const C = { tag: '#0369a1', attr: '#7c3aed', val: '#047857', text: '#0f172a', punct: '#94a3b8', num: '#c2410c', lit: '#be185d', count: '#94a3b8' };
+    const span = (text: string, color: string) => { const s = document.createElement('span'); s.textContent = text; s.style.color = color; return s; };
+
+    /** One line: clickable, shows its path. Inside <summary> when it has children. */
+    function line(parts: HTMLElement[], path: string) {
+      const el = document.createElement('div');
+      el.className = 'cursor-pointer rounded px-1 hover:bg-[#f1f5f9] data-[hit]:bg-[#fef3c7]';
+      el.append(...parts);
+      el.addEventListener('click', (e) => { e.preventDefault(); pathOut.textContent = path; });
+      return el;
+    }
+    function group(head: HTMLElement, children: HTMLElement[], closed: HTMLElement[]) {
+      const d = document.createElement('details');
+      d.open = true;
+      const s = document.createElement('summary');
+      s.className = 'list-none marker:hidden [&::-webkit-details-marker]:hidden';
+      const tri = span('▾ ', C.punct);
+      tri.className = 'inline-block w-3 [details:not([open])>summary_&]:-rotate-90';
+      head.prepend(tri);
+      head.append(...closed.map((c) => { c.classList.add('[details[open]>summary_&]:hidden'); return c; }));
+      s.append(head);
+      const body = document.createElement('div');
+      body.className = 'ml-[7px] border-l border-[#e2e8f0] pl-3';
+      body.append(...children);
+      d.append(s, body);
+      // Clicking the triangle folds; clicking the text shows the path (handled in line()).
+      tri.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); d.open = !d.open; });
+      return d;
+    }
+
+    // ── XML ──
+    function xmlPath(el: Element): string {
+      const parts: string[] = [];
+      for (let n: Element | null = el; n; n = n.parentElement) {
+        const same = n.parentElement ? [...n.parentElement.children].filter((c) => c.nodeName === n!.nodeName) : [n];
+        parts.unshift(same.length > 1 ? `${n.nodeName}[${same.indexOf(n) + 1}]` : n.nodeName);
+      }
+      return '/' + parts.join('/');
+    }
+    function openTag(el: Element, selfClose = false) {
+      const parts = [span('<', C.punct), span(el.nodeName, C.tag)];
+      for (const a of el.attributes) parts.push(span(` ${a.name}`, C.attr), span('="', C.punct), span(a.value, C.val), span('"', C.punct));
+      parts.push(span(selfClose ? '/>' : '>', C.punct));
+      return parts;
+    }
+    function renderXml(el: Element): HTMLElement {
+      const kids = [...el.children];
+      const text = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent!.trim()).join(' ').trim();
+      const path = xmlPath(el);
+      if (!kids.length) {
+        const l = line(text ? [...openTag(el), span(text, C.text), span('</', C.punct), span(el.nodeName, C.tag), span('>', C.punct)] : openTag(el, true), path);
+        l.style.paddingLeft = '16px';
+        lineOf.set(el, l);
+        return l;
+      }
+      const head = line(openTag(el), path);
+      lineOf.set(el, head);
+      const children = kids.map(renderXml);
+      const close = line([span('</', C.punct), span(el.nodeName, C.tag), span('>', C.punct)], path);
+      close.style.marginLeft = '-12px';
+      children.push(close);
+      return group(head, children, [span(` … ${kids.length} ${kids.length === 1 ? T.child : T.children}`, C.count)]);
+    }
+
+    // ── JSON ──
+    const key = (k: string | number) => (typeof k === 'number' ? `[${k}]` : /^[A-Za-z_$][\w$]*$/.test(k) ? `.${k}` : `['${k}']`);
+    function valueSpan(v: unknown) {
+      if (v === null || typeof v === 'boolean') return span(String(v), C.lit);
+      if (typeof v === 'number') return span(String(v), C.num);
+      return span(JSON.stringify(v), C.val);
+    }
+    function renderJson(v: unknown, path: string, name: string | number | null, last: boolean): HTMLElement {
+      const label = name === null ? [] : typeof name === 'number' ? [] : [span(JSON.stringify(name), C.tag), span(': ', C.punct)];
+      const comma = last ? [] : [span(',', C.punct)];
+      if (v && typeof v === 'object') {
+        const isArr = Array.isArray(v);
+        const entries = isArr ? (v as unknown[]).map((x, i) => [i, x] as const) : Object.entries(v as object);
+        const head = line([...label, span(isArr ? '[' : '{', C.punct)], path);
+        lineOf.set(path, head);
+        const children = entries.map(([k, x], i) => renderJson(x, path + key(k), k, i === entries.length - 1));
+        const close = line([span(isArr ? ']' : '}', C.punct), ...comma], path);
+        close.style.marginLeft = '-12px';
+        children.push(close);
+        const n = entries.length;
+        return group(head, children, [span(` … ${n} ${isArr ? (n === 1 ? T.item : T.items) : n === 1 ? T.key : T.keys} ${isArr ? ']' : '}'}`, C.count)]);
+      }
+      const l = line([...label, valueSpan(v), ...comma], path);
+      l.style.paddingLeft = '16px';
+      lineOf.set(path, l);
+      return l;
+    }
+
+    /** Basic JSONPath: $, .key, ['key'], [n], [*], .* — the same subset the tool supports minus slices and `..`. */
+    function jsonPath(expr: string, data: unknown): string[] {
+      const tokens = expr.trim().replace(/^\$/, '').match(/\.\*|\[\*\]|\.[A-Za-z_$][\w$]*|\['[^']*'\]|\[-?\d+\]/g);
+      if (!expr.trim().startsWith('$') || (expr.trim() !== '$' && !tokens)) return [];
+      let cur: [unknown, string][] = [[data, '$']];
+      for (const t of tokens ?? []) {
+        const next: [unknown, string][] = [];
+        for (const [v, p] of cur) {
+          if (!v || typeof v !== 'object') continue;
+          if (t === '.*' || t === '[*]') {
+            (Array.isArray(v) ? v.map((x, i) => [i, x] as const) : Object.entries(v)).forEach(([k, x]) => next.push([x, p + key(k)]));
+          } else if (t.startsWith('[') && !t.startsWith("['")) {
+            const arr = v as unknown[];
+            let i = Number(t.slice(1, -1));
+            if (i < 0) i += arr.length;
+            if (Array.isArray(arr) && i in arr) next.push([arr[i], p + key(i)]);
+          } else {
+            const k = t.startsWith("['") ? t.slice(2, -2) : t.slice(1);
+            if (k in (v as object)) next.push([(v as Record<string, unknown>)[k], p + key(k)]);
+          }
+        }
+        cur = next;
+      }
+      return cur.map(([, p]) => p);
+    }
+
+    function render() {
+      lineOf.clear();
+      tree.replaceChildren();
+      pathOut.textContent = clickLine;
+      const text = input.value.trim();
+      if (!text) { tree.append(span(T.paste.replace('{format}', () => format.toUpperCase()), '#94a3b8')); return; }
+      try {
+        if (format === 'xml') {
+          xmlDoc = new DOMParser().parseFromString(text, 'application/xml');
+          const err = xmlDoc.querySelector('parsererror');
+          if (err) throw new Error(err.textContent?.split('\n')[0] || T.invalidXml);
+          tree.append(renderXml(xmlDoc.documentElement));
+        } else {
+          jsonData = JSON.parse(text);
+          tree.append(renderJson(jsonData, '$', null, true));
+        }
+      } catch (e) {
+        xmlDoc = null; jsonData = null;
+        const msg = span(`✗ ${(e as Error).message}`, '#b91c1c');
+        tree.append(msg);
+      }
+      runQuery();
+    }
+
+    function runQuery() {
+      lineOf.forEach((l) => l.removeAttribute('data-hit'));
+      const q = query.value.trim();
+      count.textContent = '';
+      if (!q) return;
+      let hits: HTMLElement[] = [];
+      try {
+        if (format === 'xml' && xmlDoc) {
+          const r = xmlDoc.evaluate(q, xmlDoc, null, XPathResult.ANY_TYPE, null);
+          if (r.resultType === XPathResult.NUMBER_TYPE) { count.textContent = `= ${r.numberValue}`; return; }
+          if (r.resultType === XPathResult.STRING_TYPE) { count.textContent = `= ${r.stringValue}`; return; }
+          if (r.resultType === XPathResult.BOOLEAN_TYPE) { count.textContent = `= ${r.booleanValue}`; return; }
+          for (let n = r.iterateNext(); n; n = r.iterateNext()) {
+            const el = n.nodeType === 1 ? n : n.parentElement ?? (n as Attr).ownerElement;
+            const l = el && lineOf.get(el);
+            if (l) hits.push(l);
+          }
+        } else if (format === 'json' && jsonData !== null) {
+          hits = jsonPath(q, jsonData).map((p) => lineOf.get(p)).filter((l): l is HTMLElement => !!l);
+        }
+      } catch {
+        count.textContent = T.invalidQuery;
+        return;
+      }
+      hits.forEach((l) => l.setAttribute('data-hit', ''));
+      count.textContent = `${hits.length} ${hits.length === 1 ? T.result : T.results}`;
+      hits[0]?.scrollIntoView({ block: 'nearest' });
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('[data-format]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (b.dataset.format === format) return;
+        texts[format] = input.value;
+        format = b.dataset.format as 'xml' | 'json';
+        input.value = texts[format];
+        queryLabel.textContent = format === 'xml' ? 'XPath' : 'JSONPath';
+        query.value = format === 'xml' ? '//book[price > 10]/title' : '$.store.book[*].title';
+        root.querySelectorAll('[data-format]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+        render();
+      }),
+    );
+    root.querySelectorAll<HTMLButtonElement>('[data-all]').forEach((b) =>
+      b.addEventListener('click', () => tree.querySelectorAll('details').forEach((d) => (d.open = b.dataset.all === 'open'))),
+    );
+    let timer = 0;
+    input.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(render, 150); });
+    query.addEventListener('input', runQuery);
+    render();
+  }
+</script>
