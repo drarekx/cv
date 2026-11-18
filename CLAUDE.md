@@ -30,7 +30,7 @@ Astro 4 + Vue 3 (islas) + Tailwind 4 (`@tailwindcss/vite`, sin `tailwind.config`
 | `src/views/Serveis.astro` | Servicios para pymes, con el formulario (`ContactFooter`, `voice="vos"`) en `#contacte`. Textos en `src/i18n/pages/serveis.ts` |
 | `src/views/AvisLegal.astro`, `Privacitat.astro` | Páginas legales (noindex), con `LegalPage`. Textos en `src/i18n/pages/avis-legal.ts` y `privacitat.ts` |
 | `src/pages/index.astro`, `serveis.astro`, `avis-legal.astro`, `privacitat.astro` y sus copias en `src/pages/es/` y `src/pages/en/` | Rutas finas: solo `<Vista lang="ca" />` (o `es`, `en`) |
-| `src/pages/<slug>.astro` | Una página por proyecto, cada una con su propia paleta y fuentes. De momento solo en catalán |
+| `src/views/<Proyecto>.astro` | Una página por proyecto, cada una con su propia paleta y fuentes; textos en `src/i18n/pages/<slug>.ts` y rutas finas en `src/pages/<slug>.astro`, `es/` y `en/` |
 | `src/i18n/index.ts` | `Lang`, `langs`, `localePath`, `hasRoute`, `alternates`, `localizeLinks`… |
 | `src/i18n/ui.ts` | Textos compartidos (layout, cabecera, formulario, páginas legales, pie de proyecto, `CopyCommand`, selector de idioma) |
 | `src/i18n/pages/<página>.ts` | Textos de cada página: `{ ca, es, en }` con la misma forma (el tipo sale del catalán) |
@@ -58,7 +58,9 @@ Las versiones de las apps de Mac (`version` en `projects.ts`) se actualizan a ma
 ## Idiomas
 
 - URLs: catalán en la raíz con las URLs de siempre (`/serveis`), castellano en `/es/…` e inglés en `/en/…`, con el mismo slug (`/es/serveis`, `/en/chordy`). Sin redirección por idioma del navegador. Configurado con `i18n` en `astro.config.mjs`.
-- Cada página es una vista `src/views/<Nombre>.astro` con la prop `lang: Lang` y tres rutas finas: `src/pages/x.astro` (`<X lang="ca" />`), `src/pages/es/x.astro` y `src/pages/en/x.astro`. Una página existe en un idioma cuando existe su ruta (`hasRoute`); con eso salen solos el hreflang, el selector de idioma y el sitemap. Las páginas que aún no tienen rutas `es`/`en` no muestran selector ni hreflang, y los enlaces hacia ellas desde otro idioma van a la versión catalana.
+- Cada página es una vista `src/views/<Nombre>.astro` con la prop `lang: Lang` y tres rutas finas: `src/pages/x.astro` (`<X lang="ca" />`), `src/pages/es/x.astro` y `src/pages/en/x.astro`. Una página existe en un idioma cuando existe su ruta (`hasRoute`); con eso salen solos el hreflang, el selector de idioma y el sitemap. Si una página no tuviera rutas `es`/`en`, no mostraría selector ni hreflang, y los enlaces hacia ella desde otro idioma irían a la versión catalana.
+- Islas Vue que pintan la cabecera de su página (`WallpyHero`, `GlosaHero`): reciben `homeHref` por prop y el `LangSwitch` por un slot con nombre desde la vista. Si un texto en catalán servía de clave en JS (filtros, estados, severidades), ahora la clave es neutra en inglés y la etiqueta sale del diccionario.
+- Al traducir, vigilar el CLS en móvil: un título más largo puede cambiar de líneas al llegar la fuente (en Wallpy se precarga Sora por eso) y un texto que solo pinta el cliente puede hacer saltar una cabecera.
 - Textos: los compartidos en `src/i18n/ui.ts` (`useUi(lang)`); los de cada página en `src/i18n/pages/<página>.ts`, agrupados por sección y en el orden de la página. El objeto catalán es la referencia del tipo: si falta una clave en `es` o `en`, el build falla. Los textos con `<strong>` o `<a href="/ruta">` se pintan con `set:html={localizeLinks(lang, t.x)}` (el enlace se escribe con la ruta catalana).
 - Enlaces internos siempre con `localePath(lang, '/ruta')` (también `'/#projectes'`); los `#ancla` de la misma página se quedan tal cual.
 - Scripts de cliente: no pueden importar los diccionarios. Pasarles los textos con un `<script type="application/json" data-…>` (ver `ContactFooter`) o atributos `data-*`. Islas Vue: por props (p. ej. `CopyCommand` con `copyLabel`, `copiedLabel`, `srCopied` de `ui[lang].copy`).
