@@ -506,7 +506,7 @@ const en: HomeText = {
     title: 'Web projects',
     text: 'The Casino de Tortellà, its glosa contest and a circus company. More coming soon.',
     casinoText:
-      "The club's new website: events calendar, venues, weekly activities and becoming a member. A billboard where the program comes first.",
+      "The club's new website: events calendar, venues, weekly activities and becoming a member. Listings where the program comes first.",
     glosaDate: 'November 21 · 4:30 pm',
     glosaDayOne: 'day',
     glosaDayOther: 'days',
