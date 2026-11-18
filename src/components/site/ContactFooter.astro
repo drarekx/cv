@@ -1,14 +1,26 @@
 ---
+import { localePath, type Lang } from '../../i18n';
+import { useUi } from '../../i18n/ui';
+
 interface Props {
+  lang: Lang;
   title?: string;
-  /** Voice of the form copy: `tu` (home) or `vos` (/serveis, addressed to companies). */
+  /** Voice of the form copy: `tu` (home) or `vos` (/serveis, addressed to companies). Spanish: tú / vosotros. */
   voice?: 'tu' | 'vos';
 }
-const { title = 'Parlem?', voice = 'tu' } = Astro.props;
-const copy =
-  voice === 'vos'
-    ? { heading: 'Escriviu-me', need: 'Què necessiteu?', note: 'Només faig servir aquestes dades per respondre-us.' }
-    : { heading: 'Escriu-me', need: 'Què necessites?', note: 'Només faig servir aquestes dades per respondre\'t.' };
+const t = useUi(Astro.props.lang).contact;
+const legal = useUi(Astro.props.lang).legal;
+const { lang, title = t.title, voice = 'tu' } = Astro.props;
+const copy = t.voice[voice];
+/** Texts the client script needs (it runs in the browser and can't import the dictionaries). */
+const scriptCopy = {
+  doneTitle: copy.doneTitle,
+  doneTitleNamed: copy.doneTitleNamed,
+  sendFailed: copy.sendFailed,
+  offline: copy.offline,
+  send: t.send,
+  sending: t.sending,
+};
 
 const field = 'w-full border border-fog bg-ink px-4 py-3 text-base text-paper placeholder:text-fog focus:border-fageda focus:outline-none focus-visible:ring-2 focus-visible:ring-fageda';
 const label = 'flex flex-col gap-2 text-[15px] text-fog';
@@ -22,8 +34,8 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
           <div class="max-w-[520px] text-lg text-fog [&_a]:text-paper [&_a]:underline [&_a]:decoration-fageda [&_a]:underline-offset-4"><slot /></div>
         </div>
         <ul class="flex flex-col border-t border-line-dark text-[15px]">
-          <li class="border-b border-line-dark"><a href="mailto:fortea.gerard@mail.com" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>fortea.gerard@mail.com</span><span class="text-fog">Correu</span></a></li>
-          <li class="border-b border-line-dark"><a href="tel:+34616271011" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>+34 616 27 10 11</span><span class="text-fog">Telèfon</span></a></li>
+          <li class="border-b border-line-dark"><a href="mailto:fortea.gerard@mail.com" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>fortea.gerard@mail.com</span><span class="text-fog">{t.email}</span></a></li>
+          <li class="border-b border-line-dark"><a href="tel:+34616271011" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>+34 616 27 10 11</span><span class="text-fog">{t.phone}</span></a></li>
           <li class="border-b border-line-dark"><a href="https://github.com/drarekx" target="_blank" rel="noopener noreferrer" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>github.com/drarekx</span><span class="text-fog">GitHub</span></a></li>
           <li class="border-b border-line-dark"><a href="https://www.linkedin.com/in/gerard-fortea-a3863741/" target="_blank" rel="noopener noreferrer" class="flex min-h-12 items-center justify-between gap-4 hover:text-fageda"><span>linkedin.com/in/gerard-fortea</span><span class="text-fog">LinkedIn</span></a></li>
         </ul>
@@ -39,16 +51,16 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
         <h3 id="contacte-form-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">{copy.heading}</h3>
         <div class="grid gap-5 sm:grid-cols-2">
           <label class={label}>
-            Nom
+            {t.nameField}
             <input class={field} type="text" name="nom" required minlength="2" maxlength="100" autocomplete="name" />
           </label>
           <label class={label}>
-            Correu
+            {t.emailField}
             <input class={field} type="email" name="email" required maxlength="200" autocomplete="email" />
           </label>
         </div>
         <label class={label}>
-          <span>Telèfon (opcional)</span>
+          <span>{t.phoneField}</span>
           <input class={field} type="tel" name="telefon" maxlength="30" autocomplete="tel" />
         </label>
         <label class={label}>
@@ -58,16 +70,18 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
 
         <!-- Anti-spam: people never see or fill `web`; `t` records when the form was shown. -->
         <div aria-hidden="true" class="absolute -left-[9999px] h-px w-px overflow-hidden">
-          <label>No omplis aquest camp <input type="text" name="web" tabindex="-1" autocomplete="off" /></label>
+          <label>{t.honeypot} <input type="text" name="web" tabindex="-1" autocomplete="off" /></label>
         </div>
         <input type="hidden" name="t" value="" />
+        <!-- Language of the visitor: the server answers in it (no-JS page, errors). -->
+        <input type="hidden" name="lang" value={lang} />
 
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
           <button
             type="submit"
             class="flex min-h-[52px] cursor-pointer items-center gap-3 bg-fageda px-7 text-[15px] font-medium text-ink hover:bg-paper disabled:cursor-wait disabled:opacity-70"
-          >Envia el missatge</button>
-          <p class="text-sm text-fog">{copy.note} <a href="/privacitat" class="text-paper underline underline-offset-2">Privacitat</a></p>
+          >{t.send}</button>
+          <p class="text-sm text-fog">{copy.note} <a href={localePath(lang, '/privacitat')} class="text-paper underline underline-offset-2">{t.privacy}</a></p>
         </div>
         <p data-contact-status id="contacte-error" role="alert" tabindex="-1" class="min-h-6 text-base font-medium text-lava outline-none empty:hidden"></p>
       </form>
@@ -85,33 +99,40 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
         </span>
         <div class="flex flex-col gap-2">
           <h3 data-contact-done-title tabindex="-1" class="font-display text-[clamp(28px,3.4vw,40px)] leading-[1.05] font-medium tracking-[-0.02em] outline-none">
-            He rebut el teu missatge!
+            {copy.doneTitle}
           </h3>
-          <p class="max-w-[440px] text-lg text-fog">En breu em poso en contacte amb tu.</p>
+          <p class="max-w-[440px] text-lg text-fog">{copy.doneText}</p>
         </div>
         <button
           type="button"
           data-contact-again
           class="flex min-h-11 cursor-pointer items-center border border-paper px-5 text-[15px] hover:bg-paper hover:text-ink"
-        >Envia'n un altre</button>
+        >{t.sendAnother}</button>
       </div>
     </div>
   </div>
   <div class="border-t border-line-dark">
     <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-6 gap-y-1 px-6 py-4 text-sm text-fog">
       <p>© {new Date().getFullYear()} Gerard Fortea Castellsague</p>
-      <nav aria-label="Legal" class="flex gap-x-6">
-        <a href="/avis-legal" class="flex min-h-11 items-center hover:text-paper">Avís legal</a>
-        <a href="/privacitat" class="flex min-h-11 items-center hover:text-paper">Privacitat</a>
+      <nav aria-label={legal.navLabel} class="flex gap-x-6">
+        <a href={localePath(lang, '/avis-legal')} class="flex min-h-11 items-center hover:text-paper">{legal.notice}</a>
+        <a href={localePath(lang, '/privacitat')} class="flex min-h-11 items-center hover:text-paper">{legal.privacy}</a>
       </nav>
     </div>
   </div>
+  <script type="application/json" data-contact-copy set:html={JSON.stringify(scriptCopy)} />
 </footer>
 
 <script>
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
   const done = document.querySelector<HTMLElement>('[data-contact-done]');
-  if (form && done) {
+  const copyEl = document.querySelector('[data-contact-copy]');
+  if (form && done && copyEl) {
+    // Translated texts, written by the component as JSON (see `scriptCopy`).
+    const copy = JSON.parse(copyEl.textContent ?? '{}') as Record<
+      'doneTitle' | 'doneTitleNamed' | 'sendFailed' | 'offline' | 'send' | 'sending',
+      string
+    >;
     const status = form.querySelector<HTMLElement>('[data-contact-status]')!;
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
     const started = form.querySelector<HTMLInputElement>('input[name="t"]')!;
@@ -120,7 +141,7 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
 
     const showDone = (name: string) => {
       const first = name.trim().split(/\s+/)[0];
-      doneTitle.textContent = first ? `Gràcies, ${first}! He rebut el teu missatge.` : 'He rebut el teu missatge!';
+      doneTitle.textContent = first ? copy.doneTitleNamed.replace('{name}', () => first) : copy.doneTitle;
       done.style.minHeight = `${form.offsetHeight}px`;
       form.hidden = true;
       done.hidden = false;
@@ -137,7 +158,7 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       button.disabled = true;
-      button.textContent = 'Enviant…';
+      button.textContent = copy.sending;
       status.textContent = '';
       try {
         const res = await fetch(form.action, {
@@ -151,15 +172,15 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
           form.reset();
           showDone(name);
         } else {
-          status.textContent = data?.message ?? 'No s\'ha pogut enviar. Escriu-me a fortea.gerard@mail.com.';
+          status.textContent = data?.message ?? copy.sendFailed;
           status.focus();
         }
       } catch {
-        status.textContent = 'No hi ha connexió. Torna-ho a provar o escriu-me a fortea.gerard@mail.com.';
+        status.textContent = copy.offline;
         status.focus();
       } finally {
         button.disabled = false;
-        button.textContent = 'Envia el missatge';
+        button.textContent = copy.send;
       }
     });
   }

@@ -9,8 +9,10 @@ const props = withDefaults(
     buttonClass?: string;
     copyLabel?: string;
     copiedLabel?: string;
+    /** Screen-reader announcement once copied. Pages pass the texts from ui[lang].copy. */
+    srCopied?: string;
   }>(),
-  { prompt: '', codeClass: '', buttonClass: '', copyLabel: 'Copia', copiedLabel: 'Copiat' },
+  { prompt: '', codeClass: '', buttonClass: '', copyLabel: 'Copia', copiedLabel: 'Copiat', srCopied: 'Ordre copiada' },
 );
 
 const copied = ref(false);
@@ -43,6 +45,6 @@ async function copy() {
     >
       {{ copied ? copiedLabel : copyLabel }}
     </button>
-    <span class="sr-only" role="status">{{ copied ? 'Ordre copiada' : '' }}</span>
+    <span class="sr-only" role="status">{{ copied ? srCopied : '' }}</span>
   </div>
 </template>

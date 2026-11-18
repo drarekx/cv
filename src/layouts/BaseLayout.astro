@@ -1,7 +1,17 @@
 ---
 import '../styles/global.css';
+import { alternates, defaultLang, ogLocale, type Lang } from '../i18n';
+import { useUi } from '../i18n/ui';
 
 interface Props {
+  /** Language of this page: sets `<html lang>`, og:locale and the default texts. */
+  lang: Lang;
+  /**
+   * Languages this page exists in, for hreflang and og:locale:alternate. Normally left out: it is worked out
+   * from the route files (a page exists in es/en when src/pages/es|en/<slug>.astro does). With only one
+   * language there are no alternates.
+   */
+  alternateLangs?: Lang[];
   title?: string;
   description?: string;
   /** Absolute or root-relative URL; defaults to this page's URL on the production domain. */
@@ -13,12 +23,15 @@ interface Props {
   /** Keep the page out of search results (legal pages). */
   noindex?: boolean;
 }
+const t = useUi(Astro.props.lang).layout;
 const {
-  title = 'Gerard Fortea — Programador sènior a la Garrotxa',
-  description = 'Gerard Fortea, programador sènior a la Garrotxa (Olot) especialitzat en aplicacions de gestió a mida.',
+  lang,
+  alternateLangs,
+  title = t.title,
+  description = t.description,
   canonical,
   ogImage = '/og.png',
-  ogImageAlt = 'Gerard Fortea, programador sènior a la Garrotxa: aplicacions de gestió a mida',
+  ogImageAlt = t.ogImageAlt,
   bodyClass = 'bg-paper font-display text-ink antialiased',
   noindex = false,
 } = Astro.props;
@@ -28,9 +41,13 @@ const site = Astro.site ?? new URL('https://www.gerardfortea.com');
 const path = (canonical ?? Astro.url.pathname).replace(/(.)\/$/, '$1');
 const canonicalUrl = new URL(path, site).href;
 const ogImageUrl = new URL(ogImage, site).href;
+// The same page in the other languages (only those it exists in). x-default is the Catalan version.
+const versions = alternates(Astro.url.pathname, alternateLangs);
+const others = versions.length > 1 ? versions : [];
+const xDefault = others.find((a) => a.lang === defaultLang);
 ---
 <!DOCTYPE html>
-<html lang="ca">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -39,6 +56,8 @@ const ogImageUrl = new URL(ogImage, site).href;
     <meta name="author" content="Gerard Fortea Castellsague" />
     <link rel="canonical" href={canonicalUrl} />
     {noindex && <meta name="robots" content="noindex, follow" />}
+    {others.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault.href} />}
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -47,7 +66,8 @@ const ogImageUrl = new URL(ogImage, site).href;
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Gerard Fortea" />
-    <meta property="og:locale" content="ca_ES" />
+    <meta property="og:locale" content={ogLocale[lang]} />
+    {others.filter((a) => a.lang !== lang).map((a) => <meta property="og:locale:alternate" content={ogLocale[a.lang]} />)}
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -63,7 +83,7 @@ const ogImageUrl = new URL(ogImage, site).href;
     <slot name="head" />
   </head>
   <body class={bodyClass}>
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-ink focus:px-5 focus:py-3 focus:font-medium focus:text-paper">Salta al contingut</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:bg-ink focus:px-5 focus:py-3 focus:font-medium focus:text-paper">{t.skipLink}</a>
     <slot />
   </body>
 </html>

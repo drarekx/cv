@@ -1,0 +1,50 @@
+---
+/**
+ * Language switcher: "CA · ES · EN", linking to this same page in the other languages.
+ *
+ * Props:
+ *   lang       language of the current page (shown as current, not a link)
+ *   available  languages to offer; normally left out: worked out from the route files (see `hasRoute` in
+ *              src/i18n). With fewer than two, nothing renders, so Catalan-only pages show no switcher.
+ *   class      extra classes for the <nav> (position, spacing). Colour is inherited (`text-current`),
+ *              so it works on every page palette.
+ *
+ * Usage in a page header: <LangSwitch lang={lang} class="ml-auto" />
+ */
+import { canonicalPath, langLabels, langNames, localePath, routeLangs, stripLang, type Lang } from '../../i18n';
+import { useUi } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  available?: Lang[];
+  class?: string;
+}
+const { lang, available, class: className = '' } = Astro.props;
+const base = stripLang(canonicalPath(Astro.url.pathname));
+const items = routeLangs(base).filter((l) => !available || available.includes(l)).map((l) => ({ lang: l, href: localePath(l, base) }));
+---
+{items.length > 1 && (
+  <nav aria-label={useUi(lang).langSwitch.label} class:list={['text-current', className]}>
+    <ul class="flex items-center text-sm font-medium">
+      {items.map((item, i) => (
+        <li class="flex items-center">
+          {i > 0 && <span aria-hidden="true" class="px-1 opacity-40">·</span>}
+          {item.lang === lang ? (
+            <span aria-current="true" lang={item.lang} class="flex min-h-11 min-w-8 items-center justify-center">
+              <span aria-hidden="true">{langLabels[item.lang]}</span><span class="sr-only">{langNames[item.lang]}</span>
+            </span>
+          ) : (
+            <a
+              href={item.href}
+              hreflang={item.lang}
+              lang={item.lang}
+              class="flex min-h-11 min-w-8 items-center justify-center opacity-60 hover:opacity-100 focus-visible:opacity-100"
+            >
+              <span aria-hidden="true">{langLabels[item.lang]}</span><span class="sr-only">{langNames[item.lang]}</span>
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

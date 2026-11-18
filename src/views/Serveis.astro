@@ -1,0 +1,173 @@
+---
+/** /serveis: services for small businesses. Texts: src/i18n/pages/serveis.ts. Routes: src/pages/serveis.astro, src/pages/es/serveis.astro, src/pages/en/serveis.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import spaceGroteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import ContactFooter from '../components/site/ContactFooter.astro';
+import BrandSymbol from '../components/site/BrandSymbol.astro';
+import { canonicalPath, localePath, localizeLinks, site, type Lang } from '../i18n';
+import { serveis } from '../i18n/pages/serveis';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = serveis[lang];
+
+/** One icon per service, in the same order as t.services.items. */
+const icons = [
+  `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5"/>`,
+  `<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z"/>`,
+  `<path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.653-4.655m5.8-2.079 1.323-1.612a4.5 4.5 0 0 0-6.364-6.364L8.198 6.168"/>`,
+  `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 3m8.5-3 1 3m0 0 .5 1.5m-.5-1.5h-9.5m0 0-.5 1.5"/>`,
+];
+const services = t.services.items.map((s, i) => ({ ...s, icon: icons[i] }));
+
+const pageUrl = `${site}${canonicalPath(localePath(lang, '/serveis'))}`;
+const stack = ['PHP', 'JavaScript', 'TypeScript', 'Vue.js', 'MySQL'];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://www.gerardfortea.com/#gerard",
+      "name": "Gerard Fortea Castellsague",
+      "jobTitle": t.meta.jobTitle,
+      "email": "fortea.gerard@mail.com",
+      "telephone": "+34616271011",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Maià de Montcal",
+        "addressRegion": "la Garrotxa, Girona",
+        "addressCountry": "ES"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/gerard-fortea-a3863741/",
+        "https://github.com/drarekx"
+      ]
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.gerardfortea.com/serveis#servei",
+      "url": pageUrl,
+      "founder": { "@id": "https://www.gerardfortea.com/#gerard" },
+      "name": t.meta.serviceName,
+      "description": t.meta.description,
+      "email": "fortea.gerard@mail.com",
+      "telephone": "+34616271011",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Maià de Montcal",
+        "addressRegion": "la Garrotxa",
+        "addressCountry": "ES"
+      },
+      // Place names, the same in every language.
+      "areaServed": [
+        { "@type": "AdministrativeArea", "name": "la Garrotxa" },
+        { "@type": "City", "name": "Olot" },
+        { "@type": "AdministrativeArea", "name": "el Ripollès" },
+        { "@type": "AdministrativeArea", "name": "la Selva" },
+        { "@type": "AdministrativeArea", "name": "Girona" },
+        { "@type": "AdministrativeArea", "name": "Catalunya" }
+      ],
+      "knowsAbout": [
+        ...t.meta.knowsAboutBefore,
+        "PHP", "JavaScript", "TypeScript", "Vue.js", "MySQL",
+        ...t.meta.knowsAboutAfter
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": t.meta.catalogName,
+        "itemListElement": t.meta.offers.map((name) => ({ "@type": "Offer", "itemOffered": { "@type": "Service", name } }))
+      }
+    }
+  ]
+};
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-paper font-display text-ink antialiased"
+>
+  <Fragment slot="head">
+    <link rel="preload" href={spaceGroteskLatin} as="font" type="font/woff2" crossorigin />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <SiteHeader lang={lang} current="serveis" />
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="relative overflow-hidden border-b border-line">
+      <BrandSymbol class="pointer-events-none absolute -right-24 bottom-[-6%] h-auto w-[min(900px,90vw)] text-line max-md:hidden" stroke={0.8} />
+      <div class="relative mx-auto flex max-w-[1200px] flex-wrap items-end gap-x-16 gap-y-12 px-6 pt-20 pb-24">
+        <div class="flex min-w-0 flex-[1_1_600px] flex-col gap-7">
+          <p class="text-xl tracking-[-0.01em] text-graphite">{t.hero.kicker}</p>
+          <h1 class="font-display text-[clamp(44px,6.8vw,96px)] leading-[0.94] font-medium tracking-[-0.04em]">
+            {t.hero.title}
+          </h1>
+          <p class="max-w-[640px] text-lg leading-relaxed text-graphite [&_strong]:font-medium [&_strong]:text-ink" set:html={t.hero.intro} />
+          <div class="flex flex-wrap gap-3">
+            <a href="#contacte" class="flex min-h-[52px] items-center gap-3 bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">{t.hero.ctaContact}</a>
+            <a href="#serveis" class="flex min-h-[52px] items-center border border-ink px-7 text-[15px] font-medium hover:bg-ink hover:text-paper">{t.hero.ctaServices}</a>
+          </div>
+        </div>
+        <dl class="m-0 flex-[0_1_330px] border-t border-ink text-[15px]">
+          {t.hero.facts.map(([k, v]) => (
+            <div class="grid grid-cols-[120px_1fr] border-b border-line py-2.5">
+              <dt class="text-graphite">{k}</dt><dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section id="serveis" aria-labelledby="serveis-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-20 pb-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+        <h2 id="serveis-titol" class="font-display text-[clamp(34px,4.4vw,60px)] leading-[1] font-medium tracking-[-0.03em]">{t.services.title}</h2>
+        <p class="max-w-[440px] leading-relaxed text-graphite">{t.services.text}</p>
+      </div>
+      <div class="grid gap-px border border-ink bg-ink md:grid-cols-2">
+        {services.map(({ title, description }) => (
+          <article class="flex flex-col gap-5 bg-paper p-8 transition-colors hover:bg-white">
+            <h3 class="font-display text-[26px] leading-tight font-medium tracking-[-0.02em]">{title}</h3>
+            <p class="text-[15px] leading-relaxed text-graphite">{description}</p>
+          </article>
+        ))}
+      </div>
+      <p
+        class="max-w-[760px] text-lg leading-relaxed text-graphite [&_a]:text-ink [&_a]:underline [&_a]:decoration-fageda [&_a]:underline-offset-4"
+        set:html={localizeLinks(lang, t.services.examples)}
+      />
+    </section>
+
+    <section class="border-t border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-20 pb-24">
+        <div class="grid gap-x-16 gap-y-10 md:grid-cols-[2fr_1fr]">
+          <div class="flex min-w-0 flex-col gap-5">
+            <h2 class="font-display text-[clamp(34px,4.4vw,60px)] leading-[1] font-medium tracking-[-0.03em]">{t.nearby.title}</h2>
+            <p class="max-w-[640px] text-[17px] leading-relaxed text-graphite [&_strong]:font-medium [&_strong]:text-ink" set:html={t.nearby.text} />
+          </div>
+          <div class="flex flex-col gap-4">
+            <h3 class="text-[15px] text-graphite">{t.nearby.whereTitle}</h3>
+            <ul class="flex flex-wrap gap-2 text-[15px]">
+              {t.nearby.areas.map((a) => <li class="border border-ink px-3 py-1.5">{a}</li>)}
+            </ul>
+            <h3 class="mt-4 text-[15px] text-graphite">{t.nearby.stackTitle}</h3>
+            <ul class="flex flex-wrap gap-2 font-mono text-sm">
+              {stack.map((s) => <li class="border border-ink px-3 py-1.5">{s}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ContactFooter lang={lang} title={t.contact.title} voice="vos">
+    {t.contact.text}
+  </ContactFooter>
+</BaseLayout>

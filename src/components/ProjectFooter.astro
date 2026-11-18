@@ -1,30 +1,34 @@
 ---
 import { projects, type ProjectSlug } from '../data/projects';
+import { localePath, type Lang } from '../i18n';
+import { useUi } from '../i18n/ui';
 
 interface Props {
+  lang: Lang;
   current: ProjectSlug;
   /** Classes for the top border and the link colour of each page's palette. */
   class?: string;
   lowercase?: boolean;
 }
-const { current, class: className = '', lowercase = false } = Astro.props;
+const { lang, current, class: className = '', lowercase = false } = Astro.props;
+const t = useUi(lang);
 const others = projects.filter((p) => p.slug !== current);
 const label = (s: string) => (lowercase ? s.toLowerCase() : s);
 ---
 <footer class={`border-t ${className}`}>
-  <nav aria-label="Altres projectes" class="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-x-7 gap-y-1 px-6 py-5 text-sm">
+  <nav aria-label={t.projectFooter.navLabel} class="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-x-7 gap-y-1 px-6 py-5 text-sm">
     <div class="flex flex-wrap gap-x-7 gap-y-1">
-      <a href="/#projectes" class="flex min-h-11 items-center hover:underline">← {label('Tots els projectes')}</a>
-      <a href="/serveis" class="flex min-h-11 items-center hover:underline">{label('Programador web a Olot per a pimes')} →</a>
+      <a href={localePath(lang, '/#projectes')} class="flex min-h-11 items-center hover:underline">← {label(t.projectFooter.allProjects)}</a>
+      <a href={localePath(lang, '/serveis')} class="flex min-h-11 items-center hover:underline">{label(t.projectFooter.services)} →</a>
     </div>
     <div class="flex flex-wrap gap-x-7 gap-y-1">
       {others.map((p) => (
-        <a href={`/${p.slug}`} class="flex min-h-11 items-center hover:underline">{label(p.name)} →</a>
+        <a href={localePath(lang, `/${p.slug}`)} class="flex min-h-11 items-center hover:underline">{label(p.name)} →</a>
       ))}
     </div>
   </nav>
   <div class="mx-auto flex max-w-[1240px] flex-wrap gap-x-6 px-6 pb-4 text-xs opacity-80">
-    <a href="/avis-legal" class="flex min-h-11 items-center hover:underline">{label('Avís legal')}</a>
-    <a href="/privacitat" class="flex min-h-11 items-center hover:underline">{label('Privacitat')}</a>
+    <a href={localePath(lang, '/avis-legal')} class="flex min-h-11 items-center hover:underline">{label(t.legal.notice)}</a>
+    <a href={localePath(lang, '/privacitat')} class="flex min-h-11 items-center hover:underline">{label(t.legal.privacy)}</a>
   </div>
 </footer>

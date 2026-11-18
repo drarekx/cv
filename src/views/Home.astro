@@ -1,0 +1,416 @@
+---
+/** Home page. Texts: src/i18n/pages/home.ts. Routes: src/pages/index.astro, src/pages/es/index.astro, src/pages/en/index.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import spaceGroteskLatin from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto-slab/400.css';
+import '@fontsource/caveat/700.css';
+import SiteHeader from '../components/site/SiteHeader.astro';
+import ContactFooter from '../components/site/ContactFooter.astro';
+import BrandSymbol from '../components/site/BrandSymbol.astro';
+import ProjectList from '../components/site/ProjectList.astro';
+import { project } from '../data/projects';
+import { canonicalPath, langs, localePath, localizeLinks, site, type Lang } from '../i18n';
+import { home } from '../i18n/pages/home';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = home[lang];
+/** Internal link in this page's language. */
+const href = (path: string) => localePath(lang, path);
+
+const skills = [
+  { group: t.skills.development, items: ['PHP', 'JavaScript', 'TypeScript', 'Java', 'Vue.js', 'HTML', 'CSS / Tailwind', 'MySQL', 'Swift'] },
+  { group: t.skills.systems, items: ['Linux', 'macOS'] },
+  { group: t.skills.management, items: t.skills.managementItems },
+];
+
+const personId = `${site}/#gerard`;
+/** This page's own URL, in the canonical form (no trailing slash except the Catalan root). */
+const pageUrl = `${site}${canonicalPath(localePath(lang, '/'))}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Gerard Fortea Castellsague',
+      alternateName: 'Gerard Fortea',
+      url: pageUrl,
+      jobTitle: t.meta.jobTitle,
+      description: t.meta.personDescription,
+      email: 'fortea.gerard@mail.com',
+      telephone: '+34616271011',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Maià de Montcal',
+        addressRegion: 'la Garrotxa, Girona',
+        addressCountry: 'ES',
+      },
+      homeLocation: { '@type': 'Place', name: 'Olot, la Garrotxa' },
+      alumniOf: [
+        { '@type': 'EducationalOrganization', name: 'Institut Obert de Catalunya (IOC)' },
+        { '@type': 'EducationalOrganization', name: 'Gesem' },
+      ],
+      knowsAbout: [
+        ...t.meta.knowsAbout,
+        'Vue.js', 'TypeScript', 'JavaScript', 'PHP', 'Laravel', 'MySQL', 'CSS', 'Swift',
+        'Linux', 'macOS', ...t.meta.knowsAboutManagement,
+      ],
+      knowsLanguage: ['ca', 'es', 'en'],
+      sameAs: ['https://www.linkedin.com/in/gerard-fortea-a3863741/', 'https://github.com/drarekx'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${site}/#web`,
+      url: `${site}/`,
+      name: 'Gerard Fortea',
+      // The site as a whole is in three languages; each page says its own below.
+      inLanguage: langs,
+      publisher: { '@id': personId },
+    },
+    {
+      '@type': 'ProfilePage',
+      '@id': `${pageUrl}#perfil`,
+      url: pageUrl,
+      name: t.meta.profileName,
+      inLanguage: lang,
+      isPartOf: { '@id': `${site}/#web` },
+      mainEntity: { '@id': personId },
+    },
+  ],
+};
+
+/** Free web utilities, shown as a compact list above the apps. Add new ones here. */
+const utilities = [
+  { href: href('/sepa-generator'), name: 'sepa-gen', version: 'web', swatch: '#a6f36b', text: project('sepa-generator').summary[lang] },
+  { href: href('/xml-viewer'), name: 'XML Viewer', version: 'web', swatch: '#0ea5e9', text: project('xml-viewer').summary[lang] },
+];
+
+/** Apps and tools, shown as a compact list under the utilities. Add new ones here. */
+const openSource = [
+  { href: href('/clientitos'), name: 'Clientitos', version: 'Node.js', swatch: '#b08d57', text: project('clientitos').summary[lang] },
+  { href: href('/chordy'), name: 'Chordy', version: project('chordy').version, swatch: '#5c8cff', text: project('chordy').summary[lang] },
+  { href: href('/ledly'), name: 'Ledly', version: project('ledly').version, swatch: '#38a8ff', text: project('ledly').summary[lang] },
+  { href: href('/wallpy'), name: 'Wallpy', version: project('wallpy').version, swatch: '#f2a65a', text: project('wallpy').summary[lang] },
+  { href: href('/atajoly'), name: 'Atajoly', version: project('atajoly').version, swatch: '#ff6a3d', text: project('atajoly').summary[lang] },
+  { href: href('/terminaly'), name: 'Terminaly', version: project('terminaly').version, swatch: '#6fdd8b', text: project('terminaly').summary[lang] },
+];
+
+const cardClass = 'group flex flex-col border border-ink bg-white text-ink no-underline';
+/** Card previews start a little dark and light up on hover or keyboard focus. */
+const previewClass = 'brightness-80 transition-[filter] duration-300 group-hover:brightness-100 group-focus-visible:brightness-100';
+const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-line decoration-2 underline-offset-[6px] group-hover:decoration-fageda';
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-paper font-display text-ink antialiased"
+>
+  <Fragment slot="head">
+    <link rel="preload" href={spaceGroteskLatin} as="font" type="font/woff2" crossorigin />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <SiteHeader lang={lang} current="home" />
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section id="inici" class="mx-auto max-w-[1200px] px-6 pt-16 pb-10">
+      <div class="flex flex-wrap items-end gap-x-16 gap-y-10">
+        <div class="flex min-w-0 flex-[1_1_600px] flex-col gap-7">
+          <h1 class="flex flex-col gap-5 font-display font-medium">
+            <span class="text-xl tracking-[-0.01em] text-graphite">{t.hero.kicker}</span>
+            <span class="text-[clamp(46px,7.2vw,104px)] leading-[0.92] tracking-[-0.045em]">{t.hero.title}</span>
+          </h1>
+          <p class="max-w-[600px] text-lg leading-relaxed text-graphite [&_strong]:font-medium [&_strong]:text-ink" set:html={t.hero.intro} />
+          <div class="flex flex-wrap gap-3">
+            <a href="#contacte" class="flex min-h-[52px] items-center bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">{t.hero.ctaContact}</a>
+            <a href="#experiencia" class="flex min-h-[52px] items-center border border-ink px-7 text-[15px] font-medium hover:bg-ink hover:text-paper">{t.hero.ctaCv}</a>
+          </div>
+        </div>
+        <dl class="m-0 flex-[0_1_330px] border-t border-ink text-[15px]">
+          {t.hero.facts.map(([k, v]) => (
+            <div class="grid grid-cols-[120px_1fr] border-b border-line py-2.5">
+              <dt class="text-graphite">{k}</dt><dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <!-- The brand relief: three volcanic ridges of la Garrotxa that become circuit traces and end in
+           pads. Each pad is a way into the page; hovering a link lights its trace. -->
+      <nav aria-label={t.relief.label} class="relief relative mt-14">
+        <svg class="block h-auto w-full" viewBox="0 0 1200 320" fill="none" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+          <path class="trace t1" pathLength="1" d="M0 300 L 90 250 L 170 160 L 205 118 L 222 134 L 240 116 L 300 186 L 340 200 H 700 L 780 120 H 1150"></path>
+          <path class="trace t2" pathLength="1" d="M300 300 L 380 252 L 420 222 L 432 214 L 444 222 L 470 236 L 520 262 H 800 L 872 190 H 1150"></path>
+          <path class="trace t3" pathLength="1" d="M0 300 H 900 L 940 260 H 1150"></path>
+          <rect class="pad t1" x="1150" y="112" width="16" height="16"></rect>
+          <rect class="pad t2" x="1150" y="182" width="16" height="16"></rect>
+          <rect class="pad t3" x="1150" y="252" width="16" height="16"></rect>
+        </svg>
+        <ul class="flex flex-col border-t border-line text-lg font-medium md:contents">
+          <li class="md:absolute md:top-[37.5%] md:right-[6%] md:-translate-y-full"><a class="r1 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-fageda" href="#gestio">{t.relief.management}</a></li>
+          <li class="md:absolute md:top-[59.4%] md:right-[6%] md:-translate-y-full"><a class="r2 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-violeta" href="#webs">{t.relief.web}</a></li>
+          <li class="md:absolute md:top-[81.2%] md:right-[6%] md:-translate-y-full"><a class="r3 flex min-h-12 items-center border-b border-line md:min-h-0 md:border-0 md:pb-2 md:underline md:decoration-transparent md:decoration-2 md:underline-offset-[6px] hover:decoration-lava" href="#utilitats">{t.relief.apps}</a></li>
+        </ul>
+      </nav>
+    </section>
+
+    <section id="gestio" aria-labelledby="gestio-titol" class="mx-auto flex max-w-[1200px] flex-col gap-14 px-6 pt-24 pb-24">
+      <div class="flex flex-wrap gap-x-16 gap-y-10">
+        <div class="flex min-w-0 flex-[1_1_480px] flex-col gap-5">
+          <h2 id="gestio-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">
+            {t.management.title}
+          </h2>
+          <p class="max-w-[600px] text-lg leading-relaxed text-graphite">{t.management.text}</p>
+        </div>
+        <ul class="flex flex-[1_1_380px] flex-col gap-6 pt-2 text-[16px] leading-relaxed text-graphite">
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-fageda"></span><span><strong class="font-medium text-ink">{t.management.points.custom.title}</strong> {t.management.points.custom.text}</span></li>
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-violeta"></span><span class="[&_a]:text-ink [&_a]:underline [&_a]:decoration-violeta [&_a]:decoration-2 [&_a]:underline-offset-4"><strong class="font-medium text-ink">{t.management.points.panels.title}</strong> <Fragment set:html={localizeLinks(lang, t.management.points.panels.text)} /></span></li>
+          <li class="flex gap-4"><span aria-hidden="true" class="mt-2 h-2.5 w-2.5 shrink-0 bg-lava"></span><span class="[&_a]:text-ink [&_a]:underline [&_a]:decoration-lava [&_a]:decoration-2 [&_a]:underline-offset-4"><strong class="font-medium text-ink">{t.management.points.current.title}</strong> <Fragment set:html={localizeLinks(lang, t.management.points.current.text)} /></span></li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-8">
+        <h3 class="font-display text-2xl font-medium tracking-[-0.02em]">{t.management.howTitle}</h3>
+        <dl class="grid gap-x-12 gap-y-8 sm:grid-cols-2">
+          {t.management.ways.map((w) => (
+            <div class="flex flex-col gap-2">
+              <dt class="font-display text-xl font-medium">{w.title}</dt>
+              <dd class="max-w-[46ch] text-[16px] leading-relaxed text-graphite">{w.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+
+    <section id="projectes" aria-labelledby="projectes-titol" class="border-y border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-12 px-6 pt-24 pb-24">
+        <div class="flex flex-col gap-5">
+          <h2 id="projectes-titol" class="max-w-[16ch] font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">
+            {t.projects.title}
+          </h2>
+          <p class="max-w-[620px] text-lg leading-relaxed text-graphite">{t.projects.text}</p>
+        </div>
+        <ul class="grid gap-x-12 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+          {t.projects.kinds.map((k) => (
+            <li class="flex flex-col gap-1.5 border-t border-ink pt-3">
+              <h3 class="font-display text-lg leading-tight font-medium">{k.title}</h3>
+              <p class="text-[15px] leading-relaxed text-graphite">{k.text}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- Featured project: the newest and biggest personal one. -->
+    <section id="canconers" aria-labelledby="canconers-titol" class="mx-auto max-w-[1200px] px-6 pt-24">
+      <div class="grid items-center gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div class="flex flex-col gap-5">
+          <p class="text-[15px] text-graphite">{t.songbooks.kicker}</p>
+          <h2 id="canconers-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">Cançoners</h2>
+          <p class="max-w-[520px] text-lg leading-relaxed text-graphite">{t.songbooks.text}</p>
+          <p class="flex flex-wrap gap-x-5 font-mono text-xs text-graphite"><span>Python, Flask, Vue 3, Pinia, Tiptap</span><span>{project('canconers').version}</span></p>
+          <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a href={href('/canconers')} class="flex min-h-[52px] items-center bg-ink px-7 text-[15px] font-medium text-paper hover:bg-fageda hover:text-ink">{t.songbooks.cta}</a>
+            <a href={project('canconers').repo} class="flex min-h-11 items-center text-[15px] font-medium underline decoration-line decoration-2 underline-offset-[6px] hover:decoration-fageda">{t.songbooks.repo}</a>
+          </div>
+        </div>
+        <a href={href('/canconers')} class="block border border-ink bg-white p-2" tabindex="-1" aria-hidden="true">
+          <img
+            src="/img/canconers-editor-1600.webp"
+            srcset="/img/canconers-editor-960.webp 960w, /img/canconers-editor-1600.webp 1600w"
+            sizes="(min-width: 1200px) 660px, (min-width: 1024px) 56vw, 100vw"
+            width="1600" height="1000" alt="" loading="lazy" decoding="async" class="block h-auto w-full"
+          />
+        </a>
+      </div>
+    </section>
+
+    <section id="webs" aria-labelledby="webs-titol" class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-20">
+      <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+        <h2 id="webs-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">{t.web.title}</h2>
+        <p class="max-w-[420px] leading-relaxed text-graphite">{t.web.text}</p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <a href={href('/casino-tortella')} class={cardClass}>
+          <div aria-hidden="true" class:list={['flex h-[260px] flex-col bg-white font-roboto text-[#1c1c1c]', previewClass]}>
+            <div class="flex h-9 items-center gap-2 bg-[#1c1c1c] px-4 font-slab text-sm text-white">
+              <svg viewBox="0 0 24 22" class="h-3.5 w-3.5"><path d="M12 0 24 22H0Z" fill="#55d8d2"></path></svg>Casino de Tortellà
+            </div>
+            <div class="flex items-end justify-between gap-4 bg-[#55d8d2] px-5 py-4">
+              <div class="font-slab text-xl leading-tight">5è Combat de Glosa<br />de Tortellà</div>
+              <div class="text-right font-slab text-4xl leading-none">21<span class="block text-xs uppercase">nov</span></div>
+            </div>
+            <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">15</span><span class="font-slab">Mostra de Cinema Espiritual</span></div>
+            <div class="flex items-center gap-4 border-b border-[#c3c8cf] px-5 py-2.5"><span class="w-8 font-slab text-2xl">31</span><span class="font-slab">Festa de la Castanyada</span></div>
+          </div>
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Casino de Tortellà</h3>
+              <span class="font-mono text-xs text-graphite">October CMS</span>
+            </div>
+            <p class="grow text-[15px] leading-relaxed text-graphite">{t.web.casinoText}</p>
+            <span class={goClass}>{t.web.seeProject}</span>
+          </div>
+        </a>
+
+        <a href={href('/combat-glosa')} class={cardClass}>
+          <div aria-hidden="true" class:list={['flex h-[260px] items-center justify-center bg-[repeating-linear-gradient(90deg,#f4a3b9_0_46px,#8fd94a_46px_52px,#f4a3b9_52px_96px)] p-6', previewClass]}>
+            <div class="flex flex-col items-center gap-2 border-[3px] border-[#111111] bg-[#fdf6ec] px-6 py-4 text-center text-[#111111] shadow-[6px_6px_0_#111111]">
+              <span class="font-hand text-[34px] leading-none font-bold text-[#e5006d]">Combat de Glosa</span>
+              <span class="text-xs font-bold">{t.web.glosaDate}</span>
+              <span class="flex gap-1.5 text-white">
+                <span class="bg-[#111111] px-2 py-1 text-xs font-bold"><span class="text-[#ff2e88]" data-glosa-days>--</span> <span data-glosa-unit data-one={t.web.glosaDayOne}>{t.web.glosaDayOther}</span></span>
+                <span class="bg-[#111111] px-2 py-1 text-xs font-bold">Casino de Tortellà</span>
+              </span>
+            </div>
+          </div>
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Combat de Glosa</h3>
+              <span class="font-mono text-xs text-graphite">Nuxt 4</span>
+            </div>
+            <p class="grow text-[15px] leading-relaxed text-graphite">{project('combat-glosa').summary[lang]}</p>
+            <span class={goClass}>{t.web.seeProject}</span>
+          </div>
+        </a>
+
+        <a href="https://www.cianomprovisional.com/" target="_blank" rel="noopener" class={cardClass}>
+          <div aria-hidden="true" class:list={['relative flex h-[260px] flex-col items-center justify-center gap-3 overflow-hidden bg-[#3d8fd4] text-white', previewClass]}>
+            <picture>
+              <source type="image/webp" srcset="/img/cia-nom-provisional-bg-480.webp 480w, /img/cia-nom-provisional-bg-800.webp 800w" sizes="(min-width: 1024px) 366px, (min-width: 768px) 50vw, 100vw" />
+              <img src="/img/cia-nom-provisional-bg-800.jpg" alt="" width="800" height="398" loading="lazy" decoding="async" class="absolute inset-x-0 top-9 bottom-0 h-[calc(100%-2.25rem)] w-full object-cover object-top" />
+            </picture>
+            <div class="absolute inset-x-0 top-9 bottom-0 bg-[#1d2b5c]/25"></div>
+            <div class="absolute inset-x-0 top-0 z-10 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-xs font-bold tracking-wider text-[#1c1b19]">
+              <span>ESPECTACLE</span><span>COMPANYIA</span><span>AGENDA</span>
+            </div>
+            <img src="/img/cia-nom-provisional-logo.png" alt="" width="356" height="253" loading="lazy" class="relative mt-9 h-auto w-[140px] drop-shadow-[2px_2px_0_#1d2b5c]" />
+            <span class="relative bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
+          </div>
+          <div class="flex grow flex-col gap-3 border-t border-ink p-6">
+            <div class="flex items-baseline justify-between gap-3">
+              <h3 class="font-display text-[26px] font-medium tracking-[-0.02em]">Cia Nom Provisional</h3>
+              <span class="font-mono text-xs text-graphite">{t.web.circusTag}</span>
+            </div>
+            <p class="grow text-[15px] leading-relaxed text-graphite">{t.web.circusText}</p>
+            <span class={goClass}>{t.web.visitSite}<span class="sr-only">{t.web.newTab}</span></span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section id="utilitats" aria-labelledby="utilitats-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-16">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
+        <h2 id="utilitats-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">{t.utilities.title}</h2>
+        <p class="text-[15px] text-graphite">{t.utilities.text}</p>
+      </div>
+      <ProjectList items={utilities} />
+    </section>
+
+    <section id="apps" aria-labelledby="apps-titol" class="mx-auto flex max-w-[1200px] flex-col gap-5 px-6 pb-24">
+      <div class="flex flex-wrap items-baseline justify-between gap-x-12 gap-y-2">
+        <h2 id="apps-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">{t.apps.title}</h2>
+        <p class="text-[15px] text-graphite">{t.apps.text}</p>
+      </div>
+      <ProjectList items={openSource} />
+    </section>
+
+    <section id="experiencia" aria-labelledby="experiencia-titol" class="border-t border-ink bg-white">
+      <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 pt-24 pb-10">
+        <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-4">
+          <h2 id="experiencia-titol" class="font-display text-[clamp(34px,4.4vw,58px)] leading-[1] font-medium tracking-[-0.03em]">{t.experience.title}</h2>
+          <p class="max-w-[420px] leading-relaxed text-graphite">{t.experience.text}</p>
+        </div>
+        <ol class="flex flex-col border-t border-ink">
+          {t.experience.jobs.map(({ role, period, company, location, tasks }) => (
+            <li class="grid gap-x-8 gap-y-2 border-b border-line py-7 md:grid-cols-[200px_1fr]">
+              <div class="pt-1 font-mono text-[13px] text-graphite">{period}</div>
+              <div class="flex min-w-0 flex-col gap-1.5">
+                <h3 class="font-display text-[22px] font-medium tracking-[-0.02em]">{role}</h3>
+                <div class="text-[15px] text-graphite">{company}, {location}</div>
+                <ul class="mt-2 flex max-w-[72ch] flex-col gap-1.5 text-[15px] leading-relaxed">
+                  {tasks.map((task) => (
+                    <li class="flex gap-3"><span aria-hidden="true" class="mt-[0.7em] h-px w-3 shrink-0 bg-graphite"></span><span>{task}</span></li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div id="habilitats" class="mx-auto grid max-w-[1200px] gap-x-12 gap-y-10 px-6 pt-10 pb-24 md:grid-cols-[2fr_1fr_1fr]">
+        <div class="flex min-w-0 flex-col gap-6">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">{t.skills.title}</h2>
+          {skills.map(({ group, items }) => (
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-[15px] text-graphite">{group}</h3>
+              <ul class="flex flex-wrap gap-2 font-mono text-sm">
+                {items.map((s) => <li class="border border-ink px-3 py-1.5">{s}</li>)}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="flex flex-col gap-4">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">{t.education.title}</h2>
+          {t.education.items.map(({ period, title, center }) => (
+            <div class="border-t border-line pt-3 text-[15px] leading-snug">{title}, {center}<br /><span class="font-mono text-xs text-graphite">{period}</span></div>
+          ))}
+        </div>
+        <div class="flex flex-col gap-4">
+          <h2 class="font-display text-2xl font-medium tracking-[-0.02em]">{t.languages.title}</h2>
+          {t.languages.items.map(({ lang, level }) => <div class="flex justify-between border-t border-line pt-3 text-[15px]"><span>{lang}</span><span class="text-graphite">{level}</span></div>)}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    /* Hero relief: thin ink traces that draw in once, and light up in their accent when their link is hovered. */
+    .relief .trace,
+    .relief .pad {
+      stroke: var(--color-ink);
+      stroke-width: 1.5;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease;
+    }
+    .relief .pad { fill: var(--color-paper); }
+    .relief .trace { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.6s cubic-bezier(0.6, 0, 0.2, 1) forwards; }
+    .relief .t2 { animation-delay: 0.15s; }
+    .relief .t3 { animation-delay: 0.3s; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    .relief:has(.r1:hover, .r1:focus-visible) .t1 { stroke: var(--color-fageda-deep); stroke-width: 3; }
+    .relief:has(.r2:hover, .r2:focus-visible) .t2 { stroke: var(--color-violeta-deep); stroke-width: 3; }
+    .relief:has(.r3:hover, .r3:focus-visible) .t3 { stroke: var(--color-lava-deep); stroke-width: 3; }
+    .relief:has(.r1:hover, .r1:focus-visible) rect.t1 { fill: var(--color-fageda); }
+    .relief:has(.r2:hover, .r2:focus-visible) rect.t2 { fill: var(--color-violeta); }
+    .relief:has(.r3:hover, .r3:focus-visible) rect.t3 { fill: var(--color-lava); }
+    @media (prefers-reduced-motion: reduce) {
+      .relief .trace { animation: none; stroke-dashoffset: 0; }
+    }
+  </style>
+
+  <ContactFooter lang={lang} title={t.contact.title}>
+    <Fragment set:html={localizeLinks(lang, t.contact.text)} />
+  </ContactFooter>
+
+  <script>
+    const glosaDays = document.querySelector('[data-glosa-days]');
+    if (glosaDays) {
+      const ms = new Date('2026-11-21T16:30:00+01:00').getTime() - Date.now();
+      const days = Math.max(0, Math.ceil(ms / 86_400_000));
+      glosaDays.textContent = String(days);
+      // The unit next to it: singular for 1 (the plural is already in the markup).
+      const unit = document.querySelector<HTMLElement>('[data-glosa-unit]');
+      if (unit && days === 1) unit.textContent = unit.dataset.one ?? unit.textContent;
+    }
+
+  </script>
+</BaseLayout>

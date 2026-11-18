@@ -1,10 +1,13 @@
 import type { APIRoute } from 'astro';
 import { projects } from '../data/projects';
 
-/** /llms.txt (llmstxt.org): a Markdown summary of the site for LLMs and agents, built from projects.ts so it never goes stale. */
+/**
+ * /llms.txt (llmstxt.org): a Markdown summary of the site for LLMs and agents, built from projects.ts so it never goes stale.
+ * Written in Catalan (uses summary.ca); the Idiomes section points to the Spanish and English versions of the site.
+ */
 export const GET: APIRoute = ({ site }) => {
   const base = (site ?? new URL('https://www.gerardfortea.com')).href.replace(/\/$/, '');
-  const link = (p: (typeof projects)[number]) => `[${p.name}](${base}/${p.slug}): ${p.summary}`;
+  const link = (p: (typeof projects)[number]) => `[${p.name}](${base}/${p.slug}): ${p.summary.ca}`;
 
   const apps = projects
     .filter((p) => p.kind === 'mac' || p.kind === 'tool')
@@ -33,7 +36,13 @@ export const GET: APIRoute = ({ site }) => {
 
 > Programador sènior fullstack a la Garrotxa (Olot, Girona) amb més de 15 anys d'experiència. Fa aplicacions de gestió a mida per a empreses, escoles i entitats, assessora pimes en tecnologia i publica apps i eines pròpies.
 
-La web és en català. Treballa amb Vue, TypeScript, PHP i Laravel, i parla català, castellà i anglès.
+La web és en català, castellà i anglès. Treballa amb Vue, TypeScript, PHP i Laravel, i parla català, castellà i anglès.
+
+## Idiomes
+
+- [Català](${base}/)
+- [Español](${base}/es/)
+- [English](${base}/en/)
 
 ## Serveis per a pimes
 

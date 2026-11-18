@@ -1,0 +1,32 @@
+---
+/** /avis-legal. Texts: src/i18n/pages/avis-legal.ts. Routes: src/pages/avis-legal.astro, src/pages/es/avis-legal.astro, src/pages/en/avis-legal.astro. */
+import LegalPage from '../components/site/LegalPage.astro';
+import { localizeLinks, type Lang } from '../i18n';
+import { avisLegal } from '../i18n/pages/avis-legal';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = avisLegal[lang];
+---
+<LegalPage lang={lang} title={t.title} description={t.description} updated={t.updated}>
+  <p>{t.intro}</p>
+
+  <h2>{t.holder.title}</h2>
+  <dl>
+    <dt>{t.holder.name}</dt><dd>Gerard Fortea Castellsague</dd>
+    <dt>{t.holder.nif}</dt><dd>77619179K</dd>
+    <dt>{t.holder.address}</dt><dd>Maià de Montcal (la Garrotxa, Girona)</dd>
+    <dt>{t.holder.email}</dt><dd><a href="mailto:fortea.gerard@mail.com">fortea.gerard@mail.com</a></dd>
+    <dt>{t.holder.phone}</dt><dd><a href="tel:+34616271011">+34 616 27 10 11</a></dd>
+    <dt>{t.holder.web}</dt><dd>https://www.gerardfortea.com</dd>
+  </dl>
+
+  {t.sections.map((s) => (
+    <>
+      <h2>{s.title}</h2>
+      <p set:html={localizeLinks(lang, s.html)} />
+    </>
+  ))}
+</LegalPage>

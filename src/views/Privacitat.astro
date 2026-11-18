@@ -1,0 +1,22 @@
+---
+/** /privacitat. Texts: src/i18n/pages/privacitat.ts. Routes: src/pages/privacitat.astro, src/pages/es/privacitat.astro, src/pages/en/privacitat.astro. */
+import LegalPage from '../components/site/LegalPage.astro';
+import { localizeLinks, type Lang } from '../i18n';
+import { privacitat } from '../i18n/pages/privacitat';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = privacitat[lang];
+---
+<LegalPage lang={lang} title={t.title} description={t.description} updated={t.updated}>
+  <p>{t.intro}</p>
+
+  {t.sections.map((s) => (
+    <>
+      <h2>{s.title}</h2>
+      <Fragment set:html={localizeLinks(lang, s.html)} />
+    </>
+  ))}
+</LegalPage>
