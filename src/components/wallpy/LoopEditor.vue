@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { WallpyText } from '../../i18n/pages/wallpy';
+
+// Texts come from the page (src/i18n/pages/wallpy.ts): islands can't import the dictionaries.
+defineProps<{ t: WallpyText['loop'] }>();
 
 const thumbs = ['#161d47', '#1f2a5c', '#2c4a7a', '#3f7f9a', '#6fb3c4', '#9fd3f0', '#cfe3c0', '#f0d48a', '#f2a65a', '#d9743c', '#a8502f', '#5e261f'];
 
@@ -54,13 +58,13 @@ const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 b
     class="flex min-w-0 flex-col gap-4 rounded-[20px] border border-[#232838] bg-[#10131c] p-[22px] focus-visible:outline-[#ffb454]"
     tabindex="0"
     role="group"
-    aria-label="Editor de bucles. Tecles: Espai reprodueix o atura, I marca l'entrada, O marca la sortida."
+    :aria-label="t.label"
     @keydown="onKey"
   >
     <div class="flex justify-between font-mono text-[13px] text-[#c5c9d6]">
-      <span>entrada {{ inLabel }}</span>
-      <span class="text-[#ffb454]">cap {{ posLabel }}</span>
-      <span>sortida {{ outLabel }}</span>
+      <span>{{ t.in }} {{ inLabel }}</span>
+      <span class="text-[#ffb454]">{{ t.head }} {{ posLabel }}</span>
+      <span>{{ t.out }} {{ outLabel }}</span>
     </div>
     <div class="relative flex h-[84px] overflow-hidden rounded-[10px]" aria-hidden="true">
       <div v-for="c in thumbs" :key="c" class="flex-1" :style="{ background: c }"></div>
@@ -70,10 +74,10 @@ const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 b
       <div class="absolute inset-y-0 w-[3px] bg-white" :style="{ left: pos + '%' }"></div>
     </div>
     <div class="flex flex-wrap gap-2.5 font-mono text-[13px]">
-      <button type="button" :class="keyClass" @click="playing = !playing">Espai · {{ playing ? 'pausa' : 'reprodueix' }}</button>
-      <button type="button" :class="keyClass" @click="markIn">I · entrada</button>
-      <button type="button" :class="keyClass" @click="markOut">O · sortida</button>
-      <button type="button" :class="keyClass" @click="resetLoop">Tot el vídeo</button>
+      <button type="button" :class="keyClass" @click="playing = !playing">{{ playing ? t.pause : t.play }}</button>
+      <button type="button" :class="keyClass" @click="markIn">{{ t.markIn }}</button>
+      <button type="button" :class="keyClass" @click="markOut">{{ t.markOut }}</button>
+      <button type="button" :class="keyClass" @click="resetLoop">{{ t.whole }}</button>
     </div>
   </div>
 </template>

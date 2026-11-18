@@ -1,0 +1,120 @@
+---
+/** /wallpy: Mac app page. Texts: src/i18n/pages/wallpy.ts. Routes: src/pages/wallpy.astro, src/pages/es/wallpy.astro, src/pages/en/wallpy.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/sora';
+import soraLatin from '@fontsource-variable/sora/files/sora-latin-wght-normal.woff2?url';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import LangSwitch from '../components/site/LangSwitch.astro';
+import WallpyHero from '../components/wallpy/WallpyHero.vue';
+import LoopEditor from '../components/wallpy/LoopEditor.vue';
+import ScheduleGrid from '../components/wallpy/ScheduleGrid.vue';
+import { project } from '../data/projects';
+import { canonicalPath, localePath, site, type Lang } from '../i18n';
+import { wallpy } from '../i18n/pages/wallpy';
+import { useUi } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = wallpy[lang];
+const ui = useUi(lang);
+
+const p = project('wallpy');
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `${site}${canonicalPath(localePath(lang, `/${p.slug}`))}`,
+  description: t.meta.description,
+  operatingSystem: 'macOS',
+  applicationCategory: 'MultimediaApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: lang,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+
+const code = (s: string) => `<code class="font-mono text-sm">${s}</code>`;
+const installText = t.install.text.replace('{yt}', () => code('yt-dlp')).replace('{ff}', () => code('ffmpeg'));
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-[#07090f] font-sans text-[#f3f1ec] antialiased"
+>
+  <Fragment slot="head">
+    <link rel="preload" href={soraLatin} as="font" type="font/woff2" crossorigin />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <main id="main" tabindex="-1" class="outline-none">
+    <WallpyHero client:load t={t.hero} homeHref={localePath(lang, '/')}>
+      <LangSwitch slot="lang" lang={lang} />
+    </WallpyHero>
+
+    <section class="mx-auto flex max-w-[1280px] flex-col gap-9 px-6 pt-[88px] pb-10">
+      <h2 class="max-w-[760px] font-sora text-[clamp(30px,3.6vw,46px)] leading-[1.08] font-bold tracking-[-0.02em]">
+        {t.features.title}
+      </h2>
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+        {t.features.items.map((f) => (
+          <article class="flex flex-col gap-2 rounded-[20px] border border-[#232838] bg-[#10131c] p-[26px]">
+            <h3 class="font-sora text-[19px] font-semibold">{f.title}</h3>
+            <p class="text-[15px] text-[#c5c9d6]">{f.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1280px] flex-wrap items-center gap-x-14 gap-y-8 px-6 pt-14 pb-10">
+      <div class="flex min-w-0 flex-[1_1_320px] flex-col gap-3.5">
+        <p class="font-mono text-[13px] text-[#ffb454]">{t.loopSection.kicker}</p>
+        <h2 class="font-sora text-[clamp(28px,3.2vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">{t.loopSection.title}</h2>
+        <p class="text-[#c5c9d6]">{t.loopSection.text}</p>
+        <p class="text-sm text-[#a9afc0]">{t.loopSection.hint}</p>
+      </div>
+      <div class="min-w-0 flex-[999_1_520px]">
+        <LoopEditor client:visible t={t.loop} />
+      </div>
+    </section>
+
+    <section class="mx-auto flex max-w-[1280px] flex-col gap-5 px-6 pt-14 pb-10">
+      <p class="font-mono text-[13px] text-[#ffb454]">{t.scheduleSection.kicker}</p>
+      <h2 class="max-w-[720px] font-sora text-[clamp(28px,3.2vw,40px)] leading-[1.1] font-bold tracking-[-0.02em]">
+        {t.scheduleSection.title}
+      </h2>
+      <ScheduleGrid client:visible t={t.schedule} />
+      <p class="text-sm text-[#a9afc0]">{t.scheduleSection.hint}</p>
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1280px] px-6 pt-14 pb-24">
+      <div class="flex flex-col gap-5 rounded-[28px] bg-[#ffb454] p-[clamp(28px,4vw,56px)] text-[#1c1206]">
+        <h2 class="font-sora text-[clamp(30px,3.8vw,48px)] leading-[1.05] font-bold tracking-[-0.02em]">{t.install.title}</h2>
+        <CopyCommand
+          client:visible
+          command={p.install}
+          copyLabel={ui.copy.copy}
+          copiedLabel={ui.copy.copied}
+          srCopied={ui.copy.srCopied}
+          codeClass="rounded-[14px] bg-[#1c1206] text-[#ffe7c2]"
+          buttonClass="rounded-[14px] border-2 border-[#1c1206] bg-transparent text-[#1c1206] hover:bg-[#1c1206] hover:text-[#ffb454]"
+        />
+        <p class="max-w-[760px]" set:html={installText} />
+        <div class="flex flex-wrap gap-x-7 gap-y-2 font-mono text-[13px] font-bold">
+          <span>{t.install.os}</span><span>{t.install.arch}</span><span>{p.version}</span>
+          <a href={p.repo} class="underline">github.com/drarekx/Wallpy</a>
+        </div>
+        <p class="text-[13px]">{t.install.legal}</p>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter lang={lang} current="wallpy" class="border-[#232838] text-[#ffb454]" />
+</BaseLayout>

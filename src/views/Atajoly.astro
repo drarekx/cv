@@ -1,0 +1,123 @@
+---
+/** /atajoly: Mac app page. Texts: src/i18n/pages/atajoly.ts. Routes: src/pages/atajoly.astro, src/pages/es/atajoly.astro, src/pages/en/atajoly.astro. */
+import BaseLayout from '../layouts/BaseLayout.astro';
+// Self-hosted fonts (no request to Google): only the families this page uses.
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/space-grotesk';
+import CopyCommand from '../components/CopyCommand.vue';
+import ProjectFooter from '../components/ProjectFooter.astro';
+import LangSwitch from '../components/site/LangSwitch.astro';
+import AtajolyDemo from '../components/atajoly/AtajolyDemo.vue';
+import { project } from '../data/projects';
+import { canonicalPath, localePath, site, type Lang } from '../i18n';
+import { atajoly } from '../i18n/pages/atajoly';
+import { useUi } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = atajoly[lang];
+const ui = useUi(lang);
+
+const p = project('atajoly');
+
+/** Structured data: a macOS app by the same person as the home page (#gerard). */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: p.name,
+  url: `${site}${canonicalPath(localePath(lang, `/${p.slug}`))}`,
+  description: t.meta.description,
+  operatingSystem: 'macOS',
+  applicationCategory: 'UtilitiesApplication',
+  softwareVersion: p.version?.replace(/^v/, ''),
+  codeRepository: p.repo,
+  inLanguage: lang,
+  author: { '@id': 'https://www.gerardfortea.com/#gerard' },
+};
+
+const heroText = t.hero.text.replace('{key}', () => `<strong class="font-semibold text-[#1c1b19]">${t.hero.key}</strong>`);
+---
+<BaseLayout
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  bodyClass="bg-[#ecebe6] font-sans text-[#1c1b19] antialiased"
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <header class="mx-auto flex max-w-[1120px] flex-wrap items-center justify-between gap-x-7 gap-y-1 px-6 py-4 text-sm font-medium">
+    <a href={localePath(lang, '/')} class="flex min-h-11 items-center hover:text-[#a8370f]">{t.header.back}</a>
+    <div class="flex items-center gap-2.5 font-display text-lg font-bold">
+      <span aria-hidden="true" class="box-border flex h-[30px] w-[30px] items-center justify-center rounded-lg border-b-[3px] border-[#c2441d] bg-[#ff6a3d] font-mono text-[15px]">⌘</span>Atajoly
+    </div>
+    <div class="flex items-center gap-x-5">
+      <a href="#installa" class="flex min-h-11 items-center text-[#a8370f] hover:text-[#1c1b19]">{t.header.install}</a>
+      <LangSwitch lang={lang} />
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1" class="outline-none">
+    <section class="mx-auto flex max-w-[1120px] flex-col items-center gap-[18px] px-6 pt-12 pb-8 text-center">
+      <h1 class="font-display text-[clamp(42px,7vw,96px)] leading-[0.98] font-bold tracking-[-0.035em]">{t.hero.h1Line1}<br />{t.hero.h1Line2}</h1>
+      <p class="max-w-[620px] text-[19px] text-[#46443d]" set:html={heroText} />
+      <p class="font-mono text-[13px] text-[#a8370f]">{t.hero.hint}</p>
+    </section>
+
+    <section class="mx-auto max-w-[1120px] px-6 pb-[72px]">
+      <AtajolyDemo client:load t={t.demo} />
+    </section>
+
+    <section class="bg-[#f7f6f2]">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-7 px-6 py-20">
+        <h2 class="font-display text-[clamp(30px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.03em]">{t.shortcuts.title}</h2>
+        <div tabindex="0" role="region" aria-label={t.shortcuts.label} class="overflow-x-auto">
+          <table class="w-full min-w-[600px] border-collapse">
+            <tbody>
+              {t.shortcuts.items.map(([keys, action], i) => (
+                <tr class={i === 0 ? 'border-t-2 border-[#1c1b19]' : 'border-t border-[#cfcdc4]'}>
+                  <th scope="row" class="py-4 pr-4 text-left font-mono text-sm whitespace-nowrap">{keys}</th>
+                  <td class="py-4">{action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-[1120px] grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-4 px-6 pt-20 pb-10">
+      {t.features.map((f) => (
+        <article class="flex flex-col gap-2 rounded-[20px] border-b-[5px] border-[#cfcdc4] bg-[#f7f6f2] p-6">
+          <h3 class="font-display text-xl font-semibold">{f.title}</h3>
+          <p class="text-[15px] text-[#46443d]">{f.text}</p>
+        </article>
+      ))}
+    </section>
+
+    <section id="installa" class="mx-auto max-w-[1120px] px-6 pt-10 pb-[88px]">
+      <div class="flex flex-col gap-5 rounded-[28px] border-b-8 border-[#c2441d] bg-[#ff6a3d] p-[clamp(28px,4vw,56px)]">
+        <h2 class="font-display text-[clamp(30px,4vw,52px)] leading-[1.02] font-bold tracking-[-0.03em]">{t.install.title}</h2>
+        <CopyCommand
+          client:visible
+          command={p.install}
+          copyLabel={ui.copy.copy}
+          copiedLabel={ui.copy.copied}
+          srCopied={ui.copy.srCopied}
+          codeClass="rounded-[14px] bg-[#1c1b19] text-[#f7f6f2]"
+          buttonClass="rounded-[14px] border-0 border-b-4 border-[#b9b6ab] bg-[#f7f6f2] text-[#1c1b19] hover:bg-white active:translate-y-0.5"
+        />
+        <p class="max-w-[760px]">{t.install.text}</p>
+        <div class="flex flex-wrap gap-x-7 gap-y-2 font-mono text-[13px] font-bold">
+          <span>{t.install.os}</span><span>{t.install.arch}</span><span>{p.version}</span><span>ca · es · en</span>
+          <a href={p.repo} class="underline">github.com/drarekx/atajoly</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <ProjectFooter lang={lang} current="atajoly" class="border-[#cfcdc4] text-[#a8370f]" />
+</BaseLayout>

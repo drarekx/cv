@@ -1,53 +1,59 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import type { AtajolyText } from '../../i18n/pages/atajoly';
 
-/** Open apps by initial, in "most used first" order, like Atajoly's automatic letters. */
-const map: Record<string, string[]> = {
-  A: ['App Store'],
-  C: ['Calendari', 'Calculadora'],
-  F: ['Finder', 'Fotos'],
-  M: ['Mail', 'Mapes', 'Música'],
-  N: ['Notes'],
-  P: ['Podcasts'],
-  S: ['Safari'],
-  T: ['Terminal'],
-  X: ['Xcode'],
-};
-const colors: Record<string, string> = {
-  'App Store': '#8ec5ff', Calendari: '#ff9d94', Calculadora: '#c9c6bb', Finder: '#9ad0f5', Fotos: '#ffd166',
-  Mail: '#7fb8ff', Mapes: '#9be0a8', 'Música': '#ff8fa3', Notes: '#ffe08a', Podcasts: '#d4a5ff',
-  Safari: '#8fd3ff', Terminal: '#b7f0c0', Xcode: '#a9c4ff',
+// Texts come from the page (src/i18n/pages/atajoly.ts): islands can't import the dictionaries.
+const props = defineProps<{ t: AtajolyText['demo'] }>();
+
+type AppId = keyof AtajolyText['demo']['apps'];
+/** Neutral ids (not shown), in "most used first" order: it decides the order among apps that share a letter. */
+const order: AppId[] = ['appstore', 'calendar', 'calculator', 'finder', 'photos', 'mail', 'maps', 'music', 'notes', 'podcasts', 'safari', 'terminal', 'xcode'];
+const name = (id: AppId) => props.t.apps[id];
+
+/** Open apps by initial of their name in this language, like Atajoly's automatic letters. */
+const map: Record<string, AppId[]> = {};
+for (const id of order) (map[name(id)[0].toUpperCase()] ??= []).push(id);
+const letters = Object.keys(map).sort();
+const names = (letter: string) => map[letter].map(name);
+
+const colors: Record<AppId, string> = {
+  appstore: '#8ec5ff', calendar: '#ff9d94', calculator: '#c9c6bb', finder: '#9ad0f5', photos: '#ffd166',
+  mail: '#7fb8ff', maps: '#9be0a8', music: '#ff8fa3', notes: '#ffe08a', podcasts: '#d4a5ff',
+  safari: '#8fd3ff', terminal: '#b7f0c0', xcode: '#a9c4ff',
 };
 const rows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((r) => r.split(''));
 const rowPad = ['0', '0 5%', '0 15%'];
 
-const front = ref<string | null>('Safari');
-const held = ref(true);
-const log = ref('⌘ dret + S → Safari al davant');
+/** Fills {letter} and {app} in a log template. */
+const fmt = (tpl: string, v: { letter?: string; app?: string }) => tpl.replace('{letter}', () => v.letter ?? '').replace('{app}', () => v.app ?? '');
 
-const frontLetter = computed(() => (front.value ? Object.keys(map).find((l) => map[l].includes(front.value!)) : ''));
-const dock = computed(() => Object.entries(map).flatMap(([letter, apps]) => apps.map((name) => ({ name, letter }))));
+const front = ref<AppId | null>('safari');
+const held = ref(true);
+const log = ref(fmt(props.t.log.front, { letter: 'S', app: name('safari') }));
+
+const frontLetter = computed(() => (front.value ? letters.find((l) => map[l].includes(front.value!)) : ''));
+const dock = computed(() => letters.flatMap((letter) => map[letter].map((id) => ({ id, letter }))));
 
 function press(letter: string) {
   const apps = map[letter];
-  if (!held.value) return void (log.value = `Primer mantén ⌘ dret: sense ell, la ${letter} és una lletra normal.`);
-  if (!apps) return void (log.value = `Cap app oberta comença per ${letter}.`);
+  if (!held.value) return void (log.value = fmt(props.t.log.needHeld, { letter }));
+  if (!apps) return void (log.value = fmt(props.t.log.noApp, { letter }));
   const i = front.value ? apps.indexOf(front.value) : -1;
   if (i < 0) {
     front.value = apps[0];
-    log.value = `⌘ dret + ${letter} → ${apps[0]} al davant`;
+    log.value = fmt(props.t.log.front, { letter, app: name(apps[0]) });
   } else if (apps.length > 1) {
     front.value = apps[(i + 1) % apps.length];
-    log.value = `Una altra vegada → següent app amb la ${letter}: ${front.value}`;
+    log.value = fmt(props.t.log.next, { letter, app: name(front.value) });
   } else {
     front.value = null;
-    log.value = `Una altra vegada → ${apps[0]} s'amaga`;
+    log.value = fmt(props.t.log.hide, { app: name(apps[0]) });
   }
 }
 
 function toggleHeld() {
   held.value = !held.value;
-  log.value = held.value ? '⌘ dret premut: tria una lletra.' : '⌘ dret deixat anar.';
+  log.value = held.value ? props.t.log.held : props.t.log.released;
 }
 
 function keyClass(letter: string) {
@@ -68,30 +74,30 @@ function keyClass(letter: string) {
             :style="{ background: colors[front] }"
           >{{ frontLetter }}</span>
           <div class="text-left">
-            <div class="font-display text-[32px] leading-[1.1] font-bold text-[#1c1b19]">{{ front }}</div>
-            <div class="text-sm text-[#46443d]">al davant</div>
+            <div class="font-display text-[32px] leading-[1.1] font-bold text-[#1c1b19]">{{ name(front) }}</div>
+            <div class="text-sm text-[#46443d]">{{ t.inFront }}</div>
           </div>
         </div>
-        <div v-else class="font-display text-2xl font-semibold text-[#d9d6cc]">Escriptori buit · tot amagat</div>
+        <div v-else class="font-display text-2xl font-semibold text-[#d9d6cc]">{{ t.empty }}</div>
       </div>
       <div role="status" class="min-h-[22px] text-center font-mono text-sm text-[#ffb59c]">{{ log }}</div>
-      <ul aria-label="Apps obertes" class="flex flex-wrap justify-center gap-2">
+      <ul :aria-label="t.openApps" class="flex flex-wrap justify-center gap-2">
         <li
           v-for="app in dock"
-          :key="app.name"
+          :key="app.id"
           class="flex items-center gap-2 rounded-xl py-1.5 pr-3 pl-1.5 text-[13px] transition-colors"
-          :class="app.name === front ? 'bg-[#f7f6f2] text-[#1c1b19]' : 'bg-[#2e2c28] text-[#d9d6cc]'"
+          :class="app.id === front ? 'bg-[#f7f6f2] text-[#1c1b19]' : 'bg-[#2e2c28] text-[#d9d6cc]'"
         >
           <span
             aria-hidden="true"
             class="flex h-6 w-6 items-center justify-center rounded-[7px] font-mono text-xs font-bold text-[#1c1b19]"
-            :style="{ background: colors[app.name] }"
-          >{{ app.letter }}</span>{{ app.name }}
+            :style="{ background: colors[app.id] }"
+          >{{ app.letter }}</span>{{ name(app.id) }}
         </li>
       </ul>
     </div>
 
-    <div aria-label="Teclat" role="group" class="flex flex-col gap-[clamp(4px,0.8vw,10px)] rounded-3xl bg-[#d9d6cc] p-[clamp(10px,2vw,24px)] font-mono font-bold">
+    <div :aria-label="t.keyboard" role="group" class="flex flex-col gap-[clamp(4px,0.8vw,10px)] rounded-3xl bg-[#d9d6cc] p-[clamp(10px,2vw,24px)] font-mono font-bold">
       <div
         v-for="(row, r) in rows"
         :key="r"
@@ -104,7 +110,7 @@ function keyClass(letter: string) {
           type="button"
           class="aspect-square min-h-7 sm:min-h-11 cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 border-b-4 p-0 text-[clamp(14px,2.2vw,28px)] transition-transform active:translate-y-[3px]"
           :class="keyClass(letter)"
-          :aria-label="map[letter] ? `${letter}: ${map[letter].join(', ')}` : `${letter}: cap app`"
+          :aria-label="map[letter] ? `${letter}: ${names(letter).join(', ')}` : `${letter}: ${t.noApp}`"
           @click="press(letter)"
         >
           {{ letter }}
@@ -120,11 +126,11 @@ function keyClass(letter: string) {
           :aria-pressed="held"
           @click="toggleHeld"
         >
-          ⌘ dret
+          {{ t.heldKey }}
         </button>
         <div aria-hidden="true" class="box-border flex min-h-14 flex-1 items-center justify-center rounded-[clamp(6px,1vw,14px)] border-b-4 border-[#b9b6ab] bg-[#e2e0d9] text-sm text-[#5a584f]">⌥</div>
       </div>
     </div>
-    <p class="-mt-2.5 text-center text-sm text-[#46443d]">Tecles blanques: lletres amb una app oberta. A la M n'hi ha tres: prem-la uns quants cops.</p>
+    <p class="-mt-2.5 text-center text-sm text-[#46443d]">{{ t.hint }}</p>
   </div>
 </template>

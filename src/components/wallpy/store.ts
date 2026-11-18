@@ -1,6 +1,7 @@
 import { computed, reactive } from 'vue';
 
-export type Scene = 'matinada' | 'mati' | 'tarda' | 'nit';
+/** Neutral ids (not shown): the visible labels come from src/i18n/pages/wallpy.ts. */
+export type Scene = 'dawn' | 'morning' | 'afternoon' | 'night';
 export type Moment = 'auto' | Scene;
 
 /** Shared by the hero (which picks the moment) and the schedule grid (which highlights it). */
@@ -20,7 +21,7 @@ export function startClock() {
 
 export const scene = computed<Scene>(() => {
   if (wallpy.moment !== 'auto') return wallpy.moment;
-  if (!wallpy.now) return 'tarda';
+  if (!wallpy.now) return 'afternoon';
   const h = wallpy.now.getHours();
-  return h < 7 ? 'matinada' : h < 13 ? 'mati' : h < 20 ? 'tarda' : 'nit';
+  return h < 7 ? 'dawn' : h < 13 ? 'morning' : h < 20 ? 'afternoon' : 'night';
 });

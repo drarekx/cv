@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { TerminalyText } from '../../i18n/pages/terminaly';
+
+// Texts come from the page (src/i18n/pages/terminaly.ts): islands can't import the dictionaries.
+const props = defineProps<{ text: TerminalyText['demo'] }>();
+const X = props.text;
 
 type Status = 'working' | 'ready' | 'needs';
 type Line = [text: string, color: string];
@@ -7,19 +12,24 @@ type SessionId = 's1' | 's2' | 'lead' | 'w1' | 'w2' | 'w3' | 'sh';
 type Session = { agent: string; title: string; status: Status; lines: Line[]; started: boolean; worktree?: string };
 
 const C: Record<Status, string> = { working: '#f2b84b', ready: '#6fdd8b', needs: '#7ab7ff' };
-const L: Record<Status, string> = { working: 'treballant', ready: 'a punt', needs: 'et necessita' };
+/** Visible state labels, from the dictionary. The ids (working, ready, needs) are neutral. */
+const L: Record<Status, string> = X.status;
 const dim = '#aab2bd';
 const txt = '#d6dbe2';
 const ok = '#6fdd8b';
 const white = '#ffffff';
 const cmd = '#c9a7ff';
 
+/** Colours the plain texts of the dictionary by position: w white, t text, o green, d dim, c command. */
+const hue: Record<string, string> = { w: white, t: txt, o: ok, d: dim, c: cmd };
+const paint = (texts: string[], kinds: string): Line[] => texts.map((text, i) => [text, hue[kinds[i]]]);
+
 const sel = ref<SessionId>('lead');
 const view = ref<'one' | 'split' | 'swarm'>('one');
 /** Steps since the swarm started (one every 1.1 s). */
 const t = ref(0);
 /** The permission the third worker asks for: unanswered, allowed or denied, and when. */
-const answer = ref<'s' | 'n' | null>(null);
+const answer = ref<'yes' | 'no' | null>(null);
 const answeredAt = ref(0);
 let timer: ReturnType<typeof setInterval> | undefined;
 
@@ -38,7 +48,7 @@ function restart() {
   t.value = reduceMotion.value ? FAR : 0;
 }
 
-function reply(a: 's' | 'n') {
+function reply(a: 'yes' | 'no') {
   answer.value = a;
   answeredAt.value = reduceMotion.value ? t.value - FAR : t.value;
 }
@@ -49,39 +59,15 @@ function worker(start: number, script: Line[]) {
   return { started: t.value >= start, lines: script.slice(0, n), readyAt: start + script.length };
 }
 
-const w1 = computed(() =>
-  worker(2, [
-    ['> rutes de pagament', white],
-    ['● Llegint routes/api.php', txt],
-    ['● Creat routes/pagaments.php', txt],
-    ['● Editant PagamentController.php', txt],
-    ['  ✓ rutes verificades', ok],
-    ['Fet. Branca swarm/rutes a punt.', dim],
-  ]),
-);
-const w2 = computed(() =>
-  worker(3, [
-    ['> tests del flux de pagament', white],
-    ['● Creat tests/Feature/PagamentTest.php', txt],
-    ['● Executant php artisan test', txt],
-    ['  ✓ 12 proves superades', ok],
-    ['● Afegint els casos d\'error', txt],
-    ['  ✓ 15 proves superades', ok],
-    ['Fet. Branca swarm/tests a punt.', dim],
-  ]),
-);
+const W = X.workers;
+const w1 = computed(() => worker(2, paint(W.routes.lines, 'wtttod')));
+const w2 = computed(() => worker(3, paint(W.tests.lines, 'wttotod')));
 /** The third worker stops to ask for a permission: it only goes on once you answer. */
 const w3 = computed(() => {
   const start = 4;
-  const before: Line[] = [
-    ['> taula de pagaments', white],
-    ['● Creat la migració create_pagaments', txt],
-  ];
-  const ask: Line = ['? Permís: executar php artisan migrate (s/n)', C.needs];
-  const after: Line[] =
-    answer.value === 'n'
-      ? [['> n', white], ['Sense executar. Branca swarm/migracio a punt.', dim]]
-      : [['> s', white], ['● Executant php artisan migrate', txt], ['  ✓ migració aplicada', ok], ['Fet. Branca swarm/migracio a punt.', dim]];
+  const before = paint(W.migration.before, 'wt');
+  const ask: Line = [W.migration.ask, C.needs];
+  const after = answer.value === 'no' ? paint(W.migration.denied, 'wd') : paint(W.migration.allowed, 'wtod');
   const shown = Math.max(0, Math.min(before.length, t.value - start));
   if (shown < before.length) return { started: t.value >= start, status: 'working' as Status, lines: before.slice(0, shown), readyAt: Infinity };
   if (answer.value === null) return { started: true, status: 'needs' as Status, lines: [...before, ask], readyAt: Infinity };
@@ -97,61 +83,45 @@ const w3 = computed(() => {
 
 /** The lead splits the task, waits for its workers, then reviews and merges their branches. */
 const lead = computed(() => {
-  const plan: Line[] = [
-    ['> afegeix pagaments a les reserves, amb un swarm', white],
-    ['● Reparteixo la feina en tres workers', txt],
-    ['$ tly new --worktree rutes --prompt "rutes de pagament"', cmd],
-    ['$ tly new --worktree tests --prompt "tests del flux"', cmd],
-    ['$ tly new --worktree migracio --prompt "taula de pagaments"', cmd],
-    ['$ tly wait w1 w2 w3', cmd],
-  ];
+  const plan: Line[] = [...paint(X.lead.lines, 'wt'), ...paint(X.lead.commands, 'ccc'), ['$ tly wait w1 w2 w3', cmd]];
   const lines = plan.slice(0, Math.min(plan.length, t.value + 1));
   const workers = [
-    { id: 'w1', name: 'rutes', at: w1.value.readyAt },
-    { id: 'w2', name: 'tests', at: w2.value.readyAt },
-    { id: 'w3', name: 'migracio', at: w3.value.readyAt },
+    { id: 'w1', name: W.routes.wt, at: w1.value.readyAt },
+    { id: 'w2', name: W.tests.wt, at: w2.value.readyAt },
+    { id: 'w3', name: W.migration.wt, at: w3.value.readyAt },
   ].sort((a, b) => a.at - b.at);
-  for (const w of workers) if (t.value >= w.at) lines.push([`  ✓ ${w.id} · ${w.name}: a punt`, ok]);
+  for (const w of workers) if (t.value >= w.at) lines.push([`  ✓ ${w.id} · ${w.name}: ${L.ready}`, ok]);
   const allDone = Math.max(...workers.map((w) => w.at));
-  const merge: Line[] = [
-    ['● Revisant les tres branques', txt],
-    ['● Fusionant swarm/rutes, swarm/tests i swarm/migracio', txt],
-    ['  ✓ 15 proves superades a main', ok],
-    ['Fet. Esperant instruccions.', dim],
-  ];
+  const merge = paint(X.lead.merge, 'ttod');
   const m = Number.isFinite(allDone) ? Math.max(0, Math.min(merge.length, t.value - allDone)) : 0;
   lines.push(...merge.slice(0, m));
   return { status: (m >= merge.length ? 'ready' : 'working') as Status, lines };
 });
 
+/** Width of the title column of the `tly ls` table in the shell session (titles are at most this long). */
+const TITLE_COL = 19;
+
 const sessions = computed<Record<SessionId, Session>>(() => {
-  const loop = [
-    ['● Llegint src/components/Cistella.vue', txt],
-    ['● Editant src/components/Cistella.vue', txt],
-    ['● Llegint src/components/Producte.vue', txt],
-    ['● Editant src/components/Producte.vue', txt],
-    ['● Executant npm run test', txt],
-    ['  ✓ proves superades', ok],
-  ] as Line[];
-  const ws: [SessionId, string, string][] = [['w1', 'claude', 'rutes'], ['w2', 'codex', 'tests'], ['w3', 'opencode', 'migracio']];
+  const loop = paint(X.s1.loop, 'ttttto');
+  const ws: [SessionId, string, typeof W.routes][] = [['w1', 'claude', W.routes], ['w2', 'codex', W.tests], ['w3', 'opencode', W.migration]];
   const wstate = { w1: { ...w1.value, status: (t.value >= w1.value.readyAt ? 'ready' : 'working') as Status }, w2: { ...w2.value, status: (t.value >= w2.value.readyAt ? 'ready' : 'working') as Status }, w3: w3.value };
   const list: Record<string, Session> = {
-    s1: { agent: 'claude', title: 'migració a Vue 3', status: 'working', started: true, lines: [['> migra la botiga a Vue 3', white], ...loop.slice(0, 1 + (t.value % loop.length))] },
-    s2: { agent: 'codex', title: 'tests de la cistella', status: 'ready', started: true, lines: [['> escriu tests per a la cistella', white], ['● Creat tests/cistella.spec.ts', txt], ['  ✓ proves superades', ok], ['Fet. Esperant instruccions.', dim]] },
-    lead: { agent: 'claude', title: 'pagaments (swarm)', started: true, ...lead.value },
+    s1: { agent: 'claude', title: X.s1.title, status: 'working', started: true, lines: [[X.s1.prompt, white], ...loop.slice(0, 1 + (t.value % loop.length))] },
+    s2: { agent: 'codex', title: X.s2.title, status: 'ready', started: true, lines: paint(X.s2.lines, 'wtod') },
+    lead: { agent: 'claude', title: X.lead.title, started: true, ...lead.value },
   };
-  for (const [id, agent, wt] of ws) {
+  for (const [id, agent, wk] of ws) {
     const w = wstate[id as 'w1' | 'w2' | 'w3'];
-    list[id] = { agent, title: wt === 'migracio' ? 'taula de pagaments' : wt === 'rutes' ? 'rutes de pagament' : 'tests del flux', status: w.status, lines: w.lines, started: w.started, worktree: wt };
+    list[id] = { agent, title: wk.title, status: w.status, lines: w.lines, started: w.started, worktree: wk.wt };
   }
   const started = ws.filter(([id]) => list[id].started);
   list.sh = {
     agent: 'zsh', title: 'shell', status: 'ready', started: true,
     lines: [
-      ['api-reserves % tly ls', white],
-      [`lead  claude    pagaments (swarm)   ${L[list.lead.status]}`, dim],
-      ...started.map(([id, agent]): Line => [` └ ${id}  ${agent.padEnd(8)} ${list[id].title.padEnd(19)} ${L[list[id].status]}`, dim]),
-      ['api-reserves %', white],
+      [`${X.projects.api} % tly ls`, white],
+      [`lead  claude    ${list.lead.title.padEnd(TITLE_COL)} ${L[list.lead.status]}`, dim],
+      ...started.map(([id, agent]): Line => [` └ ${id}  ${agent.padEnd(8)} ${list[id].title.padEnd(TITLE_COL)} ${L[list[id].status]}`, dim]),
+      [`${X.projects.api} %`, white],
     ],
   };
   return list as Record<SessionId, Session>;
@@ -166,8 +136,8 @@ const summary = computed(() => {
 });
 
 const projects: { name: string; color: string; ids: SessionId[] }[] = [
-  { name: 'botiga-web', color: '#f2b84b', ids: ['s1', 's2'] },
-  { name: 'api-reserves', color: '#7ab7ff', ids: ['lead', 'sh'] },
+  { name: X.projects.shop, color: '#f2b84b', ids: ['s1', 's2'] },
+  { name: X.projects.api, color: '#7ab7ff', ids: ['lead', 'sh'] },
 ];
 
 const panes = computed<SessionId[]>(() => {
@@ -186,30 +156,30 @@ function toggle(v: 'split' | 'swarm') {
   <div class="overflow-hidden rounded-[14px] border border-[#262c36] bg-[#0d1014]">
     <div class="flex flex-wrap items-center gap-x-2.5 gap-y-2 border-b border-[#262c36] bg-[#12161c] px-3.5 py-1.5 text-xs">
       <span aria-hidden="true" class="flex gap-[7px]"><span v-for="n in 3" :key="n" class="h-3 w-3 rounded-full bg-[#3a424f]"></span></span>
-      <span class="grow pl-1 text-[#aab2bd]">Terminaly</span>
+      <span class="grow pl-1 text-[#aab2bd]">{{ text.window }}</span>
       <button
         v-if="done"
         type="button"
         class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] bg-transparent px-3.5 text-[#d6dbe2] hover:border-[#6fdd8b]"
         @click="restart"
-      >torna a començar</button>
+      >{{ text.restart }}</button>
       <button
         type="button"
         class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] px-3.5"
         :class="view === 'swarm' ? 'bg-[#6fdd8b] text-[#04140a]' : 'bg-transparent text-[#d6dbe2] hover:border-[#6fdd8b]'"
         :aria-pressed="view === 'swarm'"
         @click="toggle('swarm')"
-      >mostra el swarm</button>
+      >{{ text.showSwarm }}</button>
       <button
         type="button"
         class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] px-3.5"
         :class="view === 'split' ? 'bg-[#6fdd8b] text-[#04140a]' : 'bg-transparent text-[#d6dbe2] hover:border-[#6fdd8b]'"
         :aria-pressed="view === 'split'"
         @click="toggle('split')"
-      >⌘D divideix</button>
+      >{{ text.split }}</button>
     </div>
     <div class="flex flex-wrap">
-      <nav aria-label="Sessions" class="box-border flex flex-[1_1_250px] flex-col gap-3.5 border-r border-[#262c36] bg-[#0a0c10] px-2.5 py-3.5 text-[13px]">
+      <nav :aria-label="text.sessionsLabel" class="box-border flex flex-[1_1_250px] flex-col gap-3.5 border-r border-[#262c36] bg-[#0a0c10] px-2.5 py-3.5 text-[13px]">
         <div v-for="p in projects" :key="p.name" class="flex flex-col gap-0.5">
           <div class="flex items-center gap-2 px-2 py-1 font-bold text-[#aab2bd]">
             <span aria-hidden="true" class="h-2.5 w-2.5 rounded-[3px]" :style="{ background: p.color }"></span>{{ p.name }}
@@ -266,8 +236,8 @@ function toggle(v: 'split' | 'swarm') {
           <div class="flex grow flex-col gap-[3px] overflow-x-auto p-3.5" :class="view === 'swarm' ? 'text-[12px]' : 'text-[13px]'">
             <div v-for="([text, color], i) in sessions[id].lines" :key="i" class="whitespace-pre" :style="{ color }">{{ text }}</div>
             <div v-if="sessions[id].status === 'needs'" class="mt-2.5 flex flex-wrap items-center gap-2.5">
-              <button type="button" class="min-h-11 cursor-pointer rounded-lg border-0 bg-[#7ab7ff] px-[18px] font-bold text-[#06121f] hover:bg-white" @click="reply('s')">s · permet</button>
-              <button type="button" class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] bg-transparent px-[18px] text-[#d6dbe2] hover:border-[#d6dbe2]" @click="reply('n')">n · denega</button>
+              <button type="button" class="min-h-11 cursor-pointer rounded-lg border-0 bg-[#7ab7ff] px-[18px] font-bold text-[#06121f] hover:bg-white" @click="reply('yes')">{{ text.allow }}</button>
+              <button type="button" class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] bg-transparent px-[18px] text-[#d6dbe2] hover:border-[#d6dbe2]" @click="reply('no')">{{ text.deny }}</button>
             </div>
             <div v-else aria-hidden="true" class="animate-blink text-[#6fdd8b]">█</div>
           </div>

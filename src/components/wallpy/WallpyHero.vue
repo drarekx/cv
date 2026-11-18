@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { scene, startClock, wallpy, type Moment, type Scene } from './store';
+import type { WallpyText } from '../../i18n/pages/wallpy';
+
+/**
+ * Texts and the home link come from the page (src/i18n/pages/wallpy.ts): islands can't import the dictionaries.
+ * The language switcher is an Astro component, so the page passes it in through the `lang` slot.
+ */
+const props = defineProps<{ t: WallpyText['hero']; homeHref: string }>();
 
 const scenes: Record<Scene, { sky: string; hillA: string; hillB: string; orb: string; orbLeft: string; orbTop: string; cloud: string; stars: number; clock: string }> = {
-  matinada: { sky: '#0b1030', hillA: '#161d47', hillB: '#0a0e26', orb: '#dfe6ff', orbLeft: '72%', orbTop: '90px', cloud: '#1c2454', stars: 1, clock: '#ffffff' },
-  mati: { sky: '#9fd3f0', hillA: '#3f8f6b', hillB: '#245a44', orb: '#fff0a8', orbLeft: '58%', orbTop: '250px', cloud: '#e6f4fb', stars: 0, clock: '#0b2a3d' },
-  tarda: { sky: '#f2a65a', hillA: '#a8502f', hillB: '#5e261f', orb: '#ffe2a6', orbLeft: '80%', orbTop: '300px', cloud: '#f7c592', stars: 0, clock: '#2a1208' },
-  nit: { sky: '#1a1440', hillA: '#2e2266', hillB: '#130d2e', orb: '#f4f0ff', orbLeft: '46%', orbTop: '70px', cloud: '#2a2160', stars: 0.9, clock: '#ffffff' },
+  dawn: { sky: '#0b1030', hillA: '#161d47', hillB: '#0a0e26', orb: '#dfe6ff', orbLeft: '72%', orbTop: '90px', cloud: '#1c2454', stars: 1, clock: '#ffffff' },
+  morning: { sky: '#9fd3f0', hillA: '#3f8f6b', hillB: '#245a44', orb: '#fff0a8', orbLeft: '58%', orbTop: '250px', cloud: '#e6f4fb', stars: 0, clock: '#0b2a3d' },
+  afternoon: { sky: '#f2a65a', hillA: '#a8502f', hillB: '#5e261f', orb: '#ffe2a6', orbLeft: '80%', orbTop: '300px', cloud: '#f7c592', stars: 0, clock: '#2a1208' },
+  night: { sky: '#1a1440', hillA: '#2e2266', hillB: '#130d2e', orb: '#f4f0ff', orbLeft: '46%', orbTop: '70px', cloud: '#2a2160', stars: 0.9, clock: '#ffffff' },
 };
 
-const moments: { id: Moment; label: string }[] = [
-  { id: 'auto', label: 'Automàtic' },
-  { id: 'matinada', label: 'Matinada' },
-  { id: 'mati', label: 'Matí' },
-  { id: 'tarda', label: 'Tarda' },
-  { id: 'nit', label: 'Nit' },
-];
+const moments: { id: Moment; label: string }[] = (['auto', 'dawn', 'morning', 'afternoon', 'night'] as Moment[]).map((id) => ({ id, label: props.t.moments[id] }));
 
 const stars = [
   [8, 16, 3, true], [22, 30, 2, false], [41, 12, 3, true], [56, 26, 2, false],
@@ -31,20 +32,20 @@ const clouds = [
 const covered = ref(false);
 const sc = computed(() => scenes[scene.value]);
 
-const days = ['diumenge', 'dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres', 'dissabte'];
-const months = ['gener', 'febrer', 'març', 'abril', 'maig', 'juny', 'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre'];
 const pad = (n: number) => String(n).padStart(2, '0');
+/** Fills the {day} {date} {month} {time} placeholders of a date template (order differs between languages). */
+const fill = (tpl: string, v: Record<string, string>) => tpl.replace(/\{(\w+)\}/g, (_, k: string) => v[k]);
 
 const clock = computed(() => (wallpy.now ? `${pad(wallpy.now.getHours())}:${pad(wallpy.now.getMinutes())}` : '--:--'));
 const dateLong = computed(() => {
   const d = wallpy.now;
   if (!d) return '';
-  const m = months[d.getMonth()];
-  return `${days[d.getDay()]}, ${d.getDate()} ${/^[aeiou]/.test(m) ? "d'" : 'de '}${m}`;
+  return fill(props.t.dateLong, { day: props.t.days[d.getDay()], date: String(d.getDate()), month: props.t.monthsOf[d.getMonth()], time: clock.value });
 });
 const menuDate = computed(() => {
   const d = wallpy.now;
-  return d ? `${days[d.getDay()].slice(0, 2)}. ${d.getDate()} ${months[d.getMonth()].slice(0, 3)}. ${clock.value}` : '';
+  if (!d) return '';
+  return fill(props.t.dateMenu, { day: props.t.daysShort[d.getDay()], date: String(d.getDate()), month: props.t.monthsShort[d.getMonth()], time: clock.value });
 });
 
 onMounted(startClock);
@@ -83,11 +84,12 @@ onMounted(startClock);
     </svg>
 
     <div class="relative flex flex-wrap items-center justify-between gap-x-5 gap-y-1 bg-[#07090f]/80 px-5 font-sora text-[13px]">
-      <a href="/" class="flex min-h-11 items-center text-[#f3f1ec] no-underline hover:text-[#ffb454]">← Gerard Fortea</a>
+      <a :href="homeHref" class="flex min-h-11 items-center text-[#f3f1ec] no-underline hover:text-[#ffb454]">{{ t.back }}</a>
       <div class="flex items-center gap-[18px]">
-        <span v-if="covered" class="font-semibold text-[#ffb454]">❙❙ fons en pausa</span>
+        <span v-if="covered" class="font-semibold text-[#ffb454]">{{ t.paused }}</span>
         <span class="font-semibold">Wallpy</span>
-        <span>{{ menuDate }}</span>
+        <span class="hidden sm:inline">{{ menuDate }}</span>
+        <slot name="lang" />
       </div>
     </div>
 
@@ -102,24 +104,21 @@ onMounted(startClock);
         </div>
         <div class="flex flex-col gap-[18px] p-8">
           <h1 class="font-sora text-[clamp(34px,4.6vw,60px)] leading-[1.04] font-bold tracking-[-0.03em]">
-            Wallpy: el teu escriptori, <span class="text-[#ffb454]">en moviment.</span>
+            {{ t.h1Start }} <span class="text-[#ffb454]">{{ t.h1Accent }}</span>
           </h1>
-          <p class="max-w-[560px] text-lg text-[#c5c9d6]">
-            Fons de pantalla amb vídeo per a macOS. Viu a la barra de menús, posa un vídeo en bucle darrere les teves
-            finestres i es posa en pausa tot sol quan no el veus.
-          </p>
+          <p class="max-w-[560px] text-lg text-[#c5c9d6]">{{ t.text }}</p>
           <div class="flex flex-wrap gap-3">
-            <a href="#installa" class="flex min-h-[50px] items-center rounded-full bg-[#ffb454] px-6 font-semibold text-[#1c1206] no-underline hover:bg-white">Instal·la'l</a>
+            <a href="#installa" class="flex min-h-[50px] items-center rounded-full bg-[#ffb454] px-6 font-semibold text-[#1c1206] no-underline hover:bg-white">{{ t.install }}</a>
             <button
               type="button"
               class="min-h-[50px] cursor-pointer rounded-full border border-[#5a6178] bg-transparent px-6 font-semibold text-[#f3f1ec] hover:border-[#f3f1ec]"
               :aria-pressed="covered"
               @click="covered = !covered"
             >
-              {{ covered ? 'Torna a deixar veure el fons' : 'Maximitza la finestra' }}
+              {{ covered ? t.unmaximize : t.maximize }}
             </button>
           </div>
-          <p class="text-[13px] text-[#a9afc0]">Prova-ho: quan una finestra tapa l'escriptori, Wallpy atura el vídeo per no gastar bateria.</p>
+          <p class="text-[13px] text-[#a9afc0]">{{ t.tryIt }}</p>
         </div>
       </div>
       <div
@@ -133,7 +132,7 @@ onMounted(startClock);
     </div>
 
     <div class="relative flex flex-col items-center gap-2.5 px-6 pb-7">
-      <div role="group" aria-label="Moment del dia" class="flex flex-wrap justify-center gap-1.5 rounded-[30px] bg-[#07090f]/80 p-1.5">
+      <div role="group" :aria-label="t.momentLabel" class="flex flex-wrap justify-center gap-1.5 rounded-[30px] bg-[#07090f]/80 p-1.5">
         <button
           v-for="m in moments"
           :key="m.id"
@@ -146,7 +145,7 @@ onMounted(startClock);
           {{ m.label }}
         </button>
       </div>
-      <div class="rounded-xl bg-[#07090f]/80 px-3 py-1 text-[13px] text-[#c5c9d6]">Canvia el moment del dia: el fons canvia amb una fosa, com a l'app.</div>
+      <div class="rounded-xl bg-[#07090f]/80 px-3 py-1 text-[13px] text-[#c5c9d6]">{{ t.momentHint }}</div>
     </div>
   </section>
 </template>
