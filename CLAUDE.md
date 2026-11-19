@@ -11,8 +11,9 @@ Web personal: CV, servicios de programador para pymes y una página por proyecto
 
 ```sh
 npm run dev       # astro dev
-npm run build     # tsc --noEmit (solo los .ts de src/: p. ej. una clave que falta en un idioma) + astro build → dist/. No hay tests ni lint
+npm run build     # tsc --noEmit (solo los .ts de src/: p. ej. una clave que falta en un idioma) + astro build → dist/ + comprueba los hashes de la CSP. No hay tests ni lint
 npm run preview   # sirve dist/, útil para capturas con Chrome headless
+npm run csp       # build + reescribe los hashes de scripts inline en la CSP de vercel.json
 ```
 
 - El formulario de contacto (`/api/contacte`) es una función de Vercel fuera de Astro: con `astro dev` da 404. Para probarlo, `vercel dev`.
@@ -37,13 +38,13 @@ Astro 4 + Vue 3 (islas) + Tailwind 4 (`@tailwindcss/vite`, sin `tailwind.config`
 | `src/pages/sitemap.xml.ts` | Sitemap a mano: `/`, `/serveis` y un `/<slug>` por proyecto de `projects.ts`, en cada idioma que exista, con `xhtml:link` hreflang |
 | `src/pages/llms.txt.ts` | `/llms.txt` para LLMs y agentes: quién soy, servicios, contacto y proyectos, generado desde `projects.ts` |
 | `src/data/projects.ts` | Lista de proyectos (`slug`, `name`, `kind`: `mac` / `web` / `tool` / `utility`, `summary` por idioma, `version`, `repo`, `install`, `url`). Alimenta `ProjectFooter`, el sitemap y `project('slug')` |
-| `src/layouts/BaseLayout.astro` | `lang` (obligatorio), `title`, `description`, `bodyClass`, `canonical`, `ogImage`, `noindex`, `alternateLangs`; slot `head` para el JSON-LD. Canonical sin barra final, hreflang y `og:locale:alternate` de los idiomas en que existe la página, enlace de salto a `#main` |
+| `src/layouts/BaseLayout.astro` | `lang` (obligatorio), `title`, `description`, `bodyClass`, `canonical`, `ogImage`, `noindex`, `alternateLangs`; slot `head` para el JSON-LD. Canonical sin barra final, hreflang y `og:locale:alternate` de los idiomas en que existe la página, enlace de salto a `#main`. `<script is:inline type="speculationrules">` (prefetch al pasar el ratón, prerender al pulsar; excluye `/api/*` y ficheros con extensión; `.no-prefetch` para excluir un enlace) |
 | `src/components/site/` | `SiteHeader`, `ContactFooter` (tu/vos), `LegalPage`, `LangSwitch` (CA · ES · EN), `BrandSymbol` |
 | `src/components/ProjectFooter.astro` | Pie de cada página de proyecto: enlaces a los demás proyectos y a `/serveis` |
 | `src/components/CopyCommand.vue` | Comando de instalación con botón de copiar |
 | `src/components/<proyecto>/` | Islas Vue de las demos de algunas páginas |
 | `api/contacte.ts` | Función de Vercel: envía el formulario por Gmail SMTP. Variables: `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `CONTACT_TO` (opcional). Comprueba el origen, un campo trampa (`web`) y un tiempo mínimo |
-| `vercel.json` | Cabeceras: CSP, HSTS, caché de `/img/*` (30 días) |
+| `vercel.json` | Cabeceras: CSP (scripts inline por hash, ver `scripts/csp.mjs`), HSTS con `includeSubDomains`, caché de `/img/*` (30 días) |
 
 ## Añadir un proyecto
 
@@ -78,7 +79,7 @@ Las versiones de las apps de Mac (`version` en `projects.ts`) se actualizan a ma
 ## Cosas que ya costaron (no repetir)
 
 - **`import.meta.glob` de páginas**: `hasRoute` (en `src/i18n/index.ts`) lista las rutas de `src/pages/es|en` con `query: '?url'`. Sin eso, Astro trata las páginas como dependencias de todo lo que importa `src/i18n` y mete su CSS y scripts en todas las páginas.
-- **CSP** (`vercel.json`): `default-src 'self'`. No se pueden cargar fuentes de Google, imágenes, vídeos, scripts ni `fetch` de otros dominios, ni iframes. Todo va autoalojado en `public/` o en el bundle. Los enlaces `<a>` externos sí.
+- **CSP** (`vercel.json`): `default-src 'self'`. No se pueden cargar fuentes de Google, imágenes, vídeos, scripts ni `fetch` de otros dominios, ni iframes. Todo va autoalojado en `public/` o en el bundle. Los enlaces `<a>` externos sí. Los scripts inline van por hash en `script-src`: `npm run build` falla si un script inline cambia y su hash no está en `vercel.json`; entonces `npm run csp` (rebuild + reescribe los hashes). `'unsafe-inline'` sigue solo como respaldo para navegadores muy viejos (con hash, los modernos lo ignoran). Nada de `onclick=` ni `javascript:`: los hashes no los cubren y el build falla. Las fuentes no se inlinean como `data:` (`assetsInlineLimit` en `astro.config.mjs`): `font-src 'self'` las bloquearía.
 - **`/img/*` se cachea 30 días**: para cambiar una imagen, nombre nuevo.
 - **Clases de Tailwind dinámicas**: Tailwind solo ve las clases escritas enteras en el código. `` `border-[${color}]` `` no funciona; escribir la clase literal.
 - **Fechas fijas en la portada**: la cuenta atrás del Combat de Glosa (21-11-2026 16:30, script de `Home.astro`; la fecha visible está en `src/i18n/pages/home.ts`) y «Més de 50 projectes». Revisar cuando caduquen, en los tres idiomas.

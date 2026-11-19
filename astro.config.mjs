@@ -13,5 +13,9 @@ export default defineConfig({
   integrations: [vue()],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      // Never inline fonts as data: URIs: the CSP has `font-src 'self'` and would block them.
+      assetsInlineLimit: (file) => (/\.(woff2?|ttf|otf|eot)$/.test(file) ? false : undefined),
+    },
   },
 });

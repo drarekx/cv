@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "tsc --noEmit -p . && astro build",
+    "build": "tsc --noEmit -p . && astro build && node scripts/csp.mjs",
+    "csp": "astro build && node scripts/csp.mjs --write",
     "preview": "astro preview"
   },
   "dependencies": {
