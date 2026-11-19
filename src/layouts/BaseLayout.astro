@@ -63,6 +63,7 @@ const xDefault = others.find((a) => a.lang === defaultLang);
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
     <meta name="theme-color" content="#f7f7f4" />
+    <meta name="color-scheme" content="light" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Gerard Fortea" />
@@ -79,6 +80,30 @@ const xDefault = others.find((a) => a.lang === defaultLang);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Speculation Rules: Chrome/Edge prefetch internal pages on hover and prerender them on click start; other browsers ignore it. -->
+    <script is:inline type="speculationrules">
+    {
+      "prefetch": [{
+        "where": { "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/api/*" } },
+          { "not": { "href_matches": "/*.*" } },
+          { "not": { "selector_matches": "[target=_blank], [download], .no-prefetch" } }
+        ] },
+        "eagerness": "moderate"
+      }],
+      "prerender": [{
+        "where": { "and": [
+          { "href_matches": "/*" },
+          { "not": { "href_matches": "/api/*" } },
+          { "not": { "href_matches": "/*.*" } },
+          { "not": { "selector_matches": "[target=_blank], [download], .no-prefetch" } }
+        ] },
+        "eagerness": "conservative"
+      }]
+    }
+    </script>
 
     <slot name="head" />
   </head>
