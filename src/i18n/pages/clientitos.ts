@@ -51,8 +51,8 @@ const ca = {
   },
   /** Lines of the demo's log. `{x}` are filled in by the script. */
   log: {
-    devices: { computer: 'ordinador', phone: 'mòbil', tablet: 'tauleta' },
-    enters: 'entra des del {device} {emoji}: {motive}. Té {budget} €/nit.',
+    devices: { computer: "de l'ordinador", phone: 'del mòbil', tablet: 'de la tauleta' },
+    enters: 'entra des {device} {emoji}: {motive}. Té {budget} €/nit.',
     search: 'busca per a {guests} {people} i {nights} {nightsWord}.',
     person: 'persona',
     persons: 'persones',
@@ -173,8 +173,8 @@ const es: ClientitosText = {
     },
   },
   log: {
-    devices: { computer: 'ordenador', phone: 'móvil', tablet: 'tableta' },
-    enters: 'entra desde el {device} {emoji}: {motive}. Tiene {budget} €/noche.',
+    devices: { computer: 'desde el ordenador', phone: 'desde el móvil', tablet: 'desde la tableta' },
+    enters: 'entra {device} {emoji}: {motive}. Tiene {budget} €/noche.',
     search: 'busca para {guests} {people} y {nights} {nightsWord}.',
     person: 'persona',
     persons: 'personas',
