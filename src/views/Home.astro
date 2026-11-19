@@ -292,7 +292,10 @@ const goClass = 'mt-2 self-start text-[15px] font-medium underline decoration-li
             <div class="absolute inset-x-0 top-0 z-10 flex h-9 items-center gap-4 bg-[#ff6633] px-4 font-mono text-xs font-bold tracking-wider text-[#1c1b19]">
               <span>ESPECTACLE</span><span>COMPANYIA</span><span>AGENDA</span>
             </div>
-            <img src="/img/cia-nom-provisional-logo.png" alt="" width="356" height="253" loading="lazy" class="relative mt-9 h-auto w-[140px] drop-shadow-[2px_2px_0_#1d2b5c]" />
+            <picture class="relative mt-9 w-[140px]">
+              <source type="image/webp" srcset="/img/cia-nom-provisional-logo-356.webp" />
+              <img src="/img/cia-nom-provisional-logo.png" alt="" width="356" height="253" loading="lazy" decoding="async" class="h-auto w-full drop-shadow-[2px_2px_0_#1d2b5c]" />
+            </picture>
             <span class="relative bg-[#1d2b5c] px-3 py-1 text-xs font-bold">Premis Zirkòlika 2019 · Millor companyia emergent</span>
           </div>
           <div class="flex grow flex-col gap-3 border-t border-ink p-6">
