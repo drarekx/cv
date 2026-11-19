@@ -80,7 +80,7 @@ const chip = (on: boolean) =>
     </div>
 
     <div v-if="upcoming.length" class="flex flex-col">
-      <h3 class="border-b-2 border-[#1c1c1c] pb-2 font-slab text-xl">{{ t.upcoming }}</h3>
+      <h3 class="text-wrap border-b-2 border-[#1c1c1c] pb-2 font-slab text-xl">{{ t.upcoming }}</h3>
       <article v-for="e in upcoming" :key="e.id" class="flex items-start gap-5 border-b border-[#c3c8cf] py-5">
         <div class="w-16 shrink-0 text-center">
           <div class="font-slab text-[44px] leading-none text-[#1c1c1c]">{{ e.day }}</div>
@@ -95,7 +95,7 @@ const chip = (on: boolean) =>
     </div>
 
     <div v-if="past.length" class="flex flex-col">
-      <h3 class="border-b-2 border-[#1c1c1c] pb-2 font-slab text-xl">{{ t.past }}</h3>
+      <h3 class="text-wrap border-b-2 border-[#1c1c1c] pb-2 font-slab text-xl">{{ t.past }}</h3>
       <article v-for="e in past" :key="e.id" class="flex items-baseline gap-5 border-b border-[#c3c8cf] py-3.5">
         <div class="w-16 shrink-0 text-center font-slab text-2xl text-[#3d4756]">{{ e.day }} <span class="text-xs uppercase">{{ t.months[e.month] }}</span></div>
         <div class="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">

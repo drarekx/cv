@@ -11,10 +11,9 @@ const order: AppId[] = ['appstore', 'calendar', 'calculator', 'finder', 'photos'
 const name = (id: AppId) => props.t.apps[id];
 
 /** Open apps by initial of their name in this language, like Atajoly's automatic letters. */
-const map: Record<string, AppId[]> = {};
-for (const id of order) (map[name(id)[0].toUpperCase()] ??= []).push(id);
+const map: Partial<Record<string, AppId[]>> = Object.groupBy(order, (id) => name(id)[0].toUpperCase());
 const letters = Object.keys(map).sort();
-const names = (letter: string) => map[letter].map(name);
+const names = (letter: string) => (map[letter] ?? []).map(name);
 
 const colors: Record<AppId, string> = {
   appstore: '#8ec5ff', calendar: '#ff9d94', calculator: '#c9c6bb', finder: '#9ad0f5', photos: '#ffd166',
@@ -58,7 +57,7 @@ function toggleHeld() {
 
 function keyClass(letter: string) {
   if (letter === frontLetter.value) return 'bg-[#ff6a3d] text-[#1c1b19] border-b-[#c2441d]';
-  if (map[letter]) return 'bg-white text-[#1c1b19] border-b-[#b9b6ab] hover:-translate-y-0.5';
+  if (map[letter]) return 'bg-white text-[#1c1b19] border-b-[#b9b6ab] motion-safe:hover:-translate-y-0.5';
   return 'bg-[#e2e0d9] text-[#5a584f] border-b-[#c6c3b8]';
 }
 </script>
@@ -67,7 +66,7 @@ function keyClass(letter: string) {
   <div class="flex flex-col gap-6">
     <div class="flex flex-col gap-4 rounded-3xl bg-[#1c1b19] p-[clamp(16px,2.4vw,28px)]">
       <div class="flex min-h-[200px] flex-wrap items-center justify-center gap-x-10 gap-y-5 p-3">
-        <div v-if="front" :key="front" class="animate-pop flex items-center gap-5 rounded-2xl bg-[#f7f6f2] px-[30px] py-[22px]">
+        <div v-if="front" :key="front" class="motion-safe:animate-pop flex items-center gap-5 rounded-2xl bg-[#f7f6f2] px-[30px] py-[22px]">
           <span
             aria-hidden="true"
             class="flex h-[84px] w-[84px] items-center justify-center rounded-[20px] font-display text-[44px] font-bold text-[#1c1b19]"
@@ -108,7 +107,7 @@ function keyClass(letter: string) {
           v-for="letter in row"
           :key="letter"
           type="button"
-          class="aspect-square min-h-7 sm:min-h-11 cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 border-b-4 p-0 text-[clamp(14px,2.2vw,28px)] transition-transform active:translate-y-[3px]"
+          class="aspect-square min-h-7 sm:min-h-11 cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 border-b-4 p-0 text-[clamp(14px,2.2vw,28px)] motion-safe:transition-transform motion-safe:active:translate-y-[3px]"
           :class="keyClass(letter)"
           :aria-label="map[letter] ? `${letter}: ${names(letter).join(', ')}` : `${letter}: ${t.noApp}`"
           @click="press(letter)"
@@ -121,8 +120,8 @@ function keyClass(letter: string) {
         <div aria-hidden="true" class="box-border min-h-14 flex-[5] rounded-[clamp(6px,1vw,14px)] border-b-4 border-[#b9b6ab] bg-[#f7f6f2]"></div>
         <button
           type="button"
-          class="min-h-14 flex-[2.2] cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 px-2 text-sm text-[#1c1b19] transition-transform"
-          :class="held ? 'translate-y-0.5 border-b-2 border-b-[#c2441d] bg-[#ff6a3d]' : 'border-b-4 border-b-[#b9b6ab] bg-white'"
+          class="min-h-14 flex-[2.2] cursor-pointer rounded-[clamp(6px,1vw,14px)] border-0 px-2 text-sm text-[#1c1b19] motion-safe:transition-transform"
+          :class="held ? 'motion-safe:translate-y-0.5 border-b-2 border-b-[#c2441d] bg-[#ff6a3d]' : 'border-b-4 border-b-[#b9b6ab] bg-white'"
           :aria-pressed="held"
           @click="toggleHeld"
         >

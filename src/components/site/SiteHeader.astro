@@ -29,11 +29,11 @@ const links = [
 -->
 <header
   data-site-header
-  class="group sticky top-0 z-50 border-b border-line bg-paper transition-[background-color,border-color,margin] duration-300 data-[scrolled]:mb-5 data-[scrolled]:border-ink data-[scrolled]:bg-paper/95 data-[scrolled]:backdrop-blur-md"
+  class="group sticky top-0 z-50 border-b border-line bg-paper transition-[background-color,border-color] duration-300 motion-safe:transition-[background-color,border-color,margin] data-[scrolled]:mb-5 data-[scrolled]:border-ink data-[scrolled]:bg-paper/95 data-[scrolled]:backdrop-blur-md"
 >
-  <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-1 px-6 py-4 transition-[padding] duration-300 sm:group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:py-1.5">
+  <div class="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-x-8 gap-y-1 px-6 py-4 motion-safe:transition-[padding] duration-300 sm:group-data-[scrolled]:flex-nowrap group-data-[scrolled]:gap-x-4 group-data-[scrolled]:py-1.5">
     <a href={localePath(lang, '/')} class="flex min-h-11 items-center gap-3 text-ink" aria-label={t.homeLabel}>
-      <BrandSymbol class="h-auto w-11 transition-[width] duration-300 group-data-[scrolled]:w-9" stroke={4} />
+      <BrandSymbol class="h-auto w-11 motion-safe:transition-[width] duration-300 group-data-[scrolled]:w-9" stroke={4} />
       <span class="font-display text-[19px] leading-none font-medium tracking-[-0.02em] max-sm:group-data-[scrolled]:sr-only">Gerard Fortea</span>
     </a>
     <LangSwitch lang={lang} class="ml-auto sm:order-last sm:ml-0" />
@@ -56,11 +56,17 @@ const links = [
   const header = document.querySelector<HTMLElement>('[data-site-header]');
   if (header) {
     const root = document.documentElement;
-    const update = () => header.toggleAttribute('data-scrolled', window.scrollY > 24);
     // Anchor targets must land just under the header as it looks once the page has scrolled: the compact
-    // bar. Measure it whenever it is compact and settled (its padding transition takes 300ms).
+    // bar. Measure it whenever it is compact and settled (its padding transition takes 300ms; with reduced
+    // motion there is no transition, so also measure right after the state flips).
     const measure = () => {
       if (header.hasAttribute('data-scrolled')) root.style.setProperty('--header-h', `${header.offsetHeight}px`);
+    };
+    const update = () => {
+      const scrolled = window.scrollY > 24;
+      if (scrolled === header.hasAttribute('data-scrolled')) return;
+      header.toggleAttribute('data-scrolled', scrolled);
+      measure();
     };
     update();
     measure();

@@ -50,7 +50,7 @@ function onKey(e: KeyboardEvent) {
   e.preventDefault();
 }
 
-const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 border-[#454c60] bg-[#1b2030] px-4 text-[#f3f1ec] hover:bg-[#242b3e] active:translate-y-0.5';
+const keyClass = 'min-h-[46px] cursor-pointer rounded-[10px] border border-b-4 border-[#454c60] bg-[#1b2030] px-4 text-[#f3f1ec] hover:bg-[#242b3e] motion-safe:active:translate-y-0.5';
 </script>
 
 <template>

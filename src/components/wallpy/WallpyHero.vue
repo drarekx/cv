@@ -58,23 +58,23 @@ onMounted(startClock);
         v-for="([x, y, size, anim], i) in stars"
         :key="i"
         class="absolute rounded-full bg-white"
-        :class="anim && 'animate-twinkle'"
+        :class="anim && 'motion-safe:animate-twinkle'"
         :style="{ left: x + '%', top: y + '%', width: size + 'px', height: size + 'px', animationDelay: i * 0.6 + 's' }"
       ></span>
     </div>
     <div
       aria-hidden="true"
-      class="absolute h-[150px] w-[150px] rounded-full transition-all duration-[1800ms]"
+      class="absolute h-[150px] w-[150px] rounded-full transition-[background] duration-[1800ms] motion-safe:transition-all"
       :style="{ left: sc.orbLeft, top: sc.orbTop, background: sc.orb }"
     ></div>
     <div
       v-for="(c, i) in clouds"
       :key="i"
       aria-hidden="true"
-      class="absolute left-0 rounded-full transition-[background] duration-[1800ms]"
+      class="cloud-drift absolute left-0 rounded-full transition-[background] duration-[1800ms]"
       :style="{
         top: c.top + 'px', width: c.w + 'px', height: c.h + 'px', background: sc.cloud,
-        animation: `drift-wide ${c.dur}s linear infinite ${c.delay}s`,
+        '--drift-dur': c.dur + 's', '--drift-delay': c.delay + 's',
         animationPlayState: covered ? 'paused' : 'running',
       }"
     ></div>
@@ -95,7 +95,7 @@ onMounted(startClock);
 
     <div class="relative mx-auto box-border flex w-full max-w-[1280px] grow flex-wrap items-start justify-between gap-8 px-6 pt-12 pb-6">
       <div
-        class="box-border min-w-0 overflow-hidden rounded-2xl border border-[#2c3242] bg-[#10131c] transition-[flex-basis] duration-500"
+        class="box-border min-w-0 overflow-hidden rounded-2xl border border-[#2c3242] bg-[#10131c] motion-safe:transition-[flex-basis] duration-500"
         :style="{ flex: covered ? '1 1 100%' : '0 1 600px' }"
       >
         <div class="flex h-10 items-center gap-2 border-b border-[#2c3242] bg-[#171b27] px-3.5">

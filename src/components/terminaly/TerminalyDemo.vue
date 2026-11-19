@@ -192,7 +192,7 @@ function toggle(v: 'split' | 'swarm') {
               :aria-current="id === sel ? 'true' : undefined"
               @click="sel = id; view = view === 'swarm' ? 'one' : view"
             >
-              <span aria-hidden="true" class="h-[9px] w-[9px] shrink-0 rounded-full" :class="sessions[id].status === 'working' && 'animate-pulse-soft'" :style="{ background: C[sessions[id].status] }"></span>
+              <span aria-hidden="true" class="h-[9px] w-[9px] shrink-0 rounded-full" :class="sessions[id].status === 'working' && 'motion-safe:animate-pulse-soft'" :style="{ background: C[sessions[id].status] }"></span>
               <span class="min-w-0 grow">
                 <span class="block truncate">{{ sessions[id].title }}</span>
                 <span class="block text-[11px]" :style="{ color: C[sessions[id].status] }">{{ sessions[id].agent }} · {{ L[sessions[id].status] }}</span>
@@ -212,7 +212,7 @@ function toggle(v: 'split' | 'swarm') {
                 :aria-current="w === sel ? 'true' : undefined"
                 @click="sel = w; view = view === 'swarm' ? 'one' : view"
               >
-                <span aria-hidden="true" class="h-[7px] w-[7px] shrink-0 rounded-full" :class="sessions[w].status === 'working' && 'animate-pulse-soft'" :style="{ background: C[sessions[w].status] }"></span>
+                <span aria-hidden="true" class="h-[7px] w-[7px] shrink-0 rounded-full" :class="sessions[w].status === 'working' && 'motion-safe:animate-pulse-soft'" :style="{ background: C[sessions[w].status] }"></span>
                 <span class="min-w-0 grow">
                   <span class="block truncate text-[12px]">{{ sessions[w].title }}</span>
                   <span class="block text-[11px]" :style="{ color: C[sessions[w].status] }">{{ sessions[w].agent }} · {{ L[sessions[w].status] }}</span>
@@ -239,7 +239,7 @@ function toggle(v: 'split' | 'swarm') {
               <button type="button" class="min-h-11 cursor-pointer rounded-lg border-0 bg-[#7ab7ff] px-[18px] font-bold text-[#06121f] hover:bg-white" @click="reply('yes')">{{ text.allow }}</button>
               <button type="button" class="min-h-11 cursor-pointer rounded-lg border border-[#3a424f] bg-transparent px-[18px] text-[#d6dbe2] hover:border-[#d6dbe2]" @click="reply('no')">{{ text.deny }}</button>
             </div>
-            <div v-else aria-hidden="true" class="animate-blink text-[#6fdd8b]">█</div>
+            <div v-else aria-hidden="true" class="motion-safe:animate-blink text-[#6fdd8b]">█</div>
           </div>
         </div>
       </div>
