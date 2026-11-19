@@ -22,8 +22,14 @@ const scriptCopy = {
   sending: t.sending,
 };
 
-const field = 'w-full border border-fog bg-ink px-4 py-3 text-base text-paper placeholder:text-fog focus:border-fageda focus:outline-none focus-visible:ring-2 focus-visible:ring-fageda';
+// Errors only show under `:user-invalid` (after the visitor touches the field or tries to send), never `:invalid`.
+// Lava on ink: 5:1, the same colour as the send error below the button.
+const field = 'w-full border border-fog bg-ink px-4 py-3 text-base text-paper placeholder:text-fog focus:border-fageda focus:outline-none focus-visible:ring-2 focus-visible:ring-fageda user-invalid:border-lava focus:user-invalid:border-lava';
 const label = 'flex flex-col gap-2 text-[15px] text-fog';
+/** Field + its error. The error sits outside the <label> so it doesn't end up in the field's accessible name. */
+const fieldWrap = 'group/field flex flex-col gap-2';
+/** Hidden until the field is :user-invalid. The script links it with aria-describedby only while it's visible. */
+const fieldError = 'hidden text-[15px] font-medium text-lava group-has-[:user-invalid]/field:block';
 ---
 <footer id="contacte" class="bg-ink text-paper">
   <div class="mx-auto flex max-w-[1200px] flex-col gap-12 px-6 pt-24 pb-16">
@@ -50,23 +56,32 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
       >
         <h3 id="contacte-form-titol" class="font-display text-2xl font-medium tracking-[-0.02em]">{copy.heading}</h3>
         <div class="grid gap-5 sm:grid-cols-2">
-          <label class={label}>
-            {t.nameField}
-            <input class={field} type="text" name="nom" required minlength="2" maxlength="100" autocomplete="name" />
-          </label>
-          <label class={label}>
-            {t.emailField}
-            <input class={field} type="email" name="email" required maxlength="200" autocomplete="email" />
-          </label>
+          <div class={fieldWrap}>
+            <label class={label}>
+              {t.nameField}
+              <input class={field} type="text" name="nom" required minlength="2" maxlength="100" autocomplete="name" data-error="contacte-nom-error" />
+            </label>
+            <p id="contacte-nom-error" class={fieldError}>{copy.nameError}</p>
+          </div>
+          <div class={fieldWrap}>
+            <label class={label}>
+              {t.emailField}
+              <input class={field} type="email" name="email" required maxlength="200" autocomplete="email" data-error="contacte-email-error" />
+            </label>
+            <p id="contacte-email-error" class={fieldError}>{copy.emailError}</p>
+          </div>
         </div>
         <label class={label}>
           <span>{t.phoneField}</span>
           <input class={field} type="tel" name="telefon" maxlength="30" autocomplete="tel" />
         </label>
-        <label class={label}>
-          {copy.need}
-          <textarea class={`${field} min-h-36 resize-y`} name="missatge" required minlength="10" maxlength="5000" rows="5"></textarea>
-        </label>
+        <div class={fieldWrap}>
+          <label class={label}>
+            {copy.need}
+            <textarea class={`${field} min-h-36 resize-y`} name="missatge" required minlength="10" maxlength="5000" rows="5" data-error="contacte-missatge-error"></textarea>
+          </label>
+          <p id="contacte-missatge-error" class={fieldError}>{copy.needError}</p>
+        </div>
 
         <!-- Anti-spam: people never see or fill `web`; `t` records when the form was shown. -->
         <div aria-hidden="true" class="absolute -left-[9999px] h-px w-px overflow-hidden">
@@ -92,7 +107,7 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
         hidden
         class="flex min-w-0 flex-[1_1_440px] flex-col items-start justify-center gap-6 border border-fageda p-8 sm:p-10"
       >
-        <span aria-hidden="true" class="animate-pop flex h-14 w-14 items-center justify-center bg-fageda text-ink">
+        <span aria-hidden="true" class="motion-safe:animate-pop flex h-14 w-14 items-center justify-center bg-fageda text-ink">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" class="h-7 w-7">
             <path d="M5 12.5 10 17.5 19 7"></path>
           </svg>
@@ -139,6 +154,101 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
     const doneTitle = done.querySelector<HTMLElement>('[data-contact-done-title]')!;
     started.value = String(Date.now());
 
+    // Field errors: the message is in the markup and CSS shows it under :user-invalid. This keeps
+    // aria-invalid and aria-describedby in step with it and announces the error once, on leaving the field.
+    type Field = HTMLInputElement | HTMLTextAreaElement;
+    const fields = Array.from(form.querySelectorAll<Field>('[data-error]'));
+    /** Fields whose aria-invalid="true" was set by this script (any other one is left alone). */
+    const flagged = new WeakSet<Element>();
+    /** Fields whose current error has already been spoken. */
+    const announced = new WeakSet<Element>();
+    const announcer = document.createElement('div');
+    announcer.className = 'sr-only';
+    announcer.setAttribute('aria-live', 'polite');
+    document.body.append(announcer);
+    let announcing: Element | null = null;
+    let announceTimer: number | undefined;
+
+    const describedBy = (el: Element) => (el.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean);
+
+    /** What a screen reader says as the field's label: no control, no error text, no aria-hidden nodes. */
+    const labelText = (el: Field, error: Element | null) => {
+      const lbl = el.labels?.[0];
+      if (!lbl) return el.getAttribute('aria-label') ?? '';
+      const clone = lbl.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('input, textarea, select, [aria-hidden="true"]').forEach((n) => n.remove());
+      if (error?.id) clone.querySelector(`#${CSS.escape(error.id)}`)?.remove();
+      return (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
+    };
+
+    const announce = (el: Field, error: Element) => {
+      announced.add(el);
+      announcing = el;
+      window.clearTimeout(announceTimer);
+      announcer.textContent = '';
+      const text = `${labelText(el, error)}: ${(error.textContent ?? '').trim()}`;
+      announceTimer = window.setTimeout(() => {
+        if (announcing === el) announcer.textContent = text;
+      }, 500);
+    };
+
+    const syncAria = (el: Field, speak = false) => {
+      const errorId = el.dataset.error;
+      if (!errorId) return;
+      const error = document.getElementById(errorId);
+      const ids = describedBy(el).filter((id) => id !== errorId);
+      if (el.matches(':user-invalid')) {
+        if (el.getAttribute('aria-invalid') !== 'true') flagged.add(el);
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', [...ids, errorId].join(' '));
+        if (speak && error && !announced.has(el)) announce(el, error);
+      } else {
+        if (flagged.has(el) || el.getAttribute('aria-invalid') !== 'true') {
+          el.setAttribute('aria-invalid', 'false');
+          flagged.delete(el);
+        }
+        if (ids.length) el.setAttribute('aria-describedby', ids.join(' '));
+        else el.removeAttribute('aria-describedby');
+        announced.delete(el);
+        if (announcing === el) {
+          window.clearTimeout(announceTimer);
+          announcer.textContent = '';
+          announcing = null;
+        }
+      }
+    };
+    const syncAll = () => fields.forEach((el) => syncAria(el));
+
+    // Empty required fields are exposed as invalid from load in some browsers: start them as valid.
+    fields.forEach((el) => {
+      if (!el.hasAttribute('aria-invalid')) el.setAttribute('aria-invalid', 'false');
+    });
+
+    const asField = (target: EventTarget | null) =>
+      target instanceof Element && fields.includes(target as Field) ? (target as Field) : null;
+    form.addEventListener('blur', (e) => {
+      const el = asField(e.target);
+      if (el) syncAria(el, true);
+    }, true);
+    form.addEventListener('input', (e) => {
+      const el = asField(e.target);
+      if (el?.hasAttribute('aria-invalid')) syncAria(el);
+    }, true);
+    form.addEventListener('change', (e) => {
+      const el = asField(e.target);
+      if (el) syncAria(el, true);
+    }, true);
+    form.addEventListener('invalid', (e) => {
+      const el = asField(e.target);
+      if (!el) return;
+      // The browser moves focus to the first invalid field, which reads its error: don't repeat it.
+      announced.add(el);
+      syncAria(el);
+      // :user-invalid may only start matching once the submit attempt is over.
+      window.setTimeout(() => syncAria(el));
+    }, true);
+    form.addEventListener('reset', () => window.setTimeout(syncAll), true);
+
     const showDone = (name: string) => {
       const first = name.trim().split(/\s+/)[0];
       doneTitle.textContent = first ? copy.doneTitleNamed.replace('{name}', () => first) : copy.doneTitle;
@@ -158,6 +268,7 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       button.disabled = true;
+      button.setAttribute('aria-busy', 'true');
       button.textContent = copy.sending;
       status.textContent = '';
       try {
@@ -180,6 +291,7 @@ const label = 'flex flex-col gap-2 text-[15px] text-fog';
         status.focus();
       } finally {
         button.disabled = false;
+        button.removeAttribute('aria-busy');
         button.textContent = copy.send;
       }
     });
